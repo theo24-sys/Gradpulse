@@ -7,17 +7,21 @@ django.setup()
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-username = "Grad Admin"
-password = "GradP2026"
-email = "admin@gradpulse.com"
+def ensure_admin(uname, email, pwd):
+    if not User.objects.filter(username=uname).exists():
+        user = User.objects.create_superuser(uname, email, pwd)
+        user.portal_type = 'employer'
+        user.save()
+        print(f"Superuser '{uname}' created.")
+    else:
+        user = User.objects.get(username=uname)
+        user.set_password(pwd)
+        user.is_superuser = True
+        user.is_staff = True
+        user.portal_type = 'employer'
+        user.save()
+        print(f"Superuser '{uname}' updated.")
 
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username, email, password)
-    print(f"Superuser '{username}' created.")
-else:
-    user = User.objects.get(username=username)
-    user.set_password(password)
-    user.is_superuser = True
-    user.is_staff = True
-    user.save()
-    print(f"Superuser '{username}' updated with new password.")
+# Create both with and without space
+ensure_admin("Grad Admin", "admin@gradpulse.com", "GradP2026")
+ensure_admin("GradAdmin", "admin2@gradpulse.com", "GradP2026")

@@ -28,11 +28,7 @@
       </a>
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
-          {% if user.company_logo %}
             <img src="{{ user.get_logo_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
-          {% else %}
-            <div class="gp-avatar-sm" style="background:var(--gp-navy-light);">{{ user.company_name|first|upper }}</div>
-          {% endif %}
           <span class="text-white d-none d-md-inline small fw-500">{{ user.company_name|truncatechars:20 }}</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow">
@@ -56,11 +52,7 @@
 <div class="gp-sidebar-layout">
   <aside class="gp-sidebar d-none d-lg-block">
     <div class="gp-sidebar-brand">
-      {% if user.company_logo %}
-        <img src="{{ user.company_logo.url }}" alt="Logo">
-      {% else %}
-        <div class="sb-avatar" style="background:var(--gp-green);">{{ user.company_name|first|upper }}</div>
-      {% endif %}
+        <img src="{{ user.get_logo_url }}" alt="Logo" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;margin-right:12px;">
       <div>
         <div class="sb-name">{{ user.company_name|truncatechars:20 }}</div>
         <div class="sb-sub">{{ user.sector }}</div>
@@ -91,6 +83,26 @@
   <main class="gp-content">
     {% block corporate_content %}{% endblock %}
   </main>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="gp-mobile-nav d-lg-none">
+  <a href="{% url 'corporate_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_dashboard' %}active{% endif %}">
+    <i class="fa fa-th-large"></i>
+    <span>Dashboard</span>
+  </a>
+  <a href="{% url 'post_opportunity' %}" class="nav-item {% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}">
+    <i class="fa fa-plus-circle"></i>
+    <span>Post</span>
+  </a>
+  <a href="{% url 'corporate_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}">
+    <i class="fa fa-file-alt"></i>
+    <span>Apps</span>
+  </a>
+  <a href="{% url 'corporate_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_profile' %}active{% endif %}">
+    <i class="fa fa-building"></i>
+    <span>Profile</span>
+  </a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

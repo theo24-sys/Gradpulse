@@ -68,18 +68,20 @@ class CustomUser(AbstractUser):
     def get_avatar_url(self):
         if self.profile_photo:
             try:
-                return self.profile_photo.url
-            except:
+                if self.profile_photo.storage.exists(self.profile_photo.name):
+                    return self.profile_photo.url
+            except Exception:
                 pass
-        return f"https://ui-avatars.com/api/?name={self.display_name}&background=1A3C59&color=fff"
+        return f"https://ui-avatars.com/api/?name={self.display_name}&background=008b8b&color=fff"
 
     def get_logo_url(self):
         if self.company_logo:
             try:
-                return self.company_logo.url
-            except:
+                if self.company_logo.storage.exists(self.company_logo.name):
+                    return self.company_logo.url
+            except Exception:
                 pass
-        return None  # Or a default company logo
+        return f"https://ui-avatars.com/api/?name={self.company_name or self.username}&background=00ced1&color=fff"
 
     class Meta:
         verbose_name = 'User'

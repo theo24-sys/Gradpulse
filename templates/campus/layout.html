@@ -30,11 +30,7 @@
       </a>
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
-          {% if user.profile_photo %}
-            <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
-          {% else %}
-            <div class="gp-avatar-sm" style="background:var(--gp-green);">{{ user.display_name|first|upper }}</div>
-          {% endif %}
+           <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
           <span class="text-white d-none d-md-inline small fw-500">{{ user.display_name }}</span>
           <i class="fa fa-chevron-down text-white-50 small"></i>
         </a>
@@ -63,11 +59,7 @@
   <!-- Sidebar -->
   <aside class="gp-sidebar d-none d-lg-block">
     <div class="gp-sidebar-brand">
-      {% if user.profile_photo %}
-        <img src="{{ user.profile_photo.url }}" alt="Avatar">
-      {% else %}
-        <div class="sb-avatar">{{ user.display_name|first|upper }}</div>
-      {% endif %}
+      <img src="{{ user.get_avatar_url }}" alt="Avatar" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;margin-right:12px;">
       <div>
         <div class="sb-name">{{ user.display_name }}</div>
         <div class="sb-sub">{{ user.institution|truncatechars:22 }}</div>
@@ -112,10 +104,27 @@
     </ul>
   </aside>
 
-  <!-- Main Content -->
-  <main class="gp-content">
-    {% block campus_content %}{% endblock %}
   </main>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="gp-mobile-nav d-lg-none">
+  <a href="{% url 'campus_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}">
+    <i class="fa fa-home"></i>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'opportunity_list' %}" class="nav-item {% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}">
+    <i class="fa fa-briefcase"></i>
+    <span>Jobs</span>
+  </a>
+  <a href="{% url 'simulations_list' %}" class="nav-item {% if request.resolver_match.url_name == 'simulations_list' %}active{% endif %}">
+    <i class="fa fa-brain"></i>
+    <span>Learn</span>
+  </a>
+  <a href="{% url 'campus_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}">
+    <i class="fa fa-user"></i>
+    <span>Profile</span>
+  </a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

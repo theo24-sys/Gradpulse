@@ -45,13 +45,7 @@
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
-              {% if user.is_employer and user.company_logo %}
-                <img src="{{ user.company_logo.url }}" class="rounded-circle" width="32" height="32" style="object-fit:cover;">
-              {% elif user.profile_photo %}
-                <img src="{{ user.profile_photo.url }}" class="rounded-circle" width="32" height="32" style="object-fit:cover;">
-              {% else %}
-                <div class="gp-avatar-sm">{{ user.display_name|first|upper }}</div>
-              {% endif %}
+              <img src="{% if user.is_employer %}{{ user.get_logo_url }}{% else %}{{ user.get_avatar_url }}{% endif %}" class="rounded-circle" width="32" height="32" style="object-fit:cover;">
               <span class="d-none d-md-inline">{{ user.display_name }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg">
