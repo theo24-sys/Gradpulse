@@ -1,0 +1,137 @@
+{% extends 'campus/layout.html' %}
+
+{% block title %}Dashboard — GradPulse{% endblock %}
+
+{% block campus_content %}
+<!-- Dash header -->
+<div class="dash-header">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+      <div class="dash-greeting">Good day 👋</div>
+      <h1 class="dash-title">{{ user.display_name }}</h1>
+      <div class="d-flex flex-wrap gap-2 mt-1">
+        {% if user.institution %}<span class="hero-badge"><i class="fa fa-university me-1"></i>{{ user.institution }}</span>{% endif %}
+        {% if user.course %}<span class="hero-badge"><i class="fa fa-book me-1"></i>{{ user.course }}</span>{% endif %}
+        {% if user.open_to_work %}<span class="hero-badge"><span class="otw-dot active"></span> Open to Work</span>{% endif %}
+      </div>
+    </div>
+    <a href="{% url 'opportunity_list' %}" class="btn gp-btn-primary px-4">
+      <i class="fa fa-search me-2"></i>Browse Opportunities
+    </a>
+  </div>
+</div>
+
+<!-- Metric Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-navy">
+      <div class="metric-icon ic-navy"><i class="fa fa-chart-line"></i></div>
+      <div class="metric-value">{{ user.gpa|default:"—" }}</div>
+      <div class="metric-label">Current GPA</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-green">
+      <div class="metric-icon ic-green"><i class="fa fa-file-alt"></i></div>
+      <div class="metric-value">{{ applications_count }}</div>
+      <div class="metric-label">Applications</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-accent">
+      <div class="metric-icon ic-accent"><i class="fa fa-users"></i></div>
+      <div class="metric-value">{{ connections_count }}</div>
+      <div class="metric-label">Connections</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-purple">
+      <div class="metric-icon ic-purple"><i class="fa fa-certificate"></i></div>
+      <div class="metric-value">{{ user.enrollments.count }}</div>
+      <div class="metric-label">Credentials</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent Applications -->
+  <div class="col-lg-7">
+    <div class="gp-card h-100">
+      <div class="gp-card-header">
+        <h6 class="fw-bold mb-0"><i class="fa fa-file-alt text-muted me-2"></i>My Applications</h6>
+        <a href="{% url 'opportunity_list' %}" class="btn gp-btn-primary btn-sm px-3">Browse More</a>
+      </div>
+      <div class="gp-card-body p-0">
+        {% if my_applications %}
+        <div class="table-responsive">
+          <table class="table gp-table mb-0">
+            <thead><tr><th>Opportunity</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+              {% for app in my_applications %}
+              <tr>
+                <td>
+                  <div class="fw-500 small">{{ app.opportunity.title }}</div>
+                  <div class="text-muted" style="font-size:.75rem;">{{ app.opportunity.get_type_display }}</div>
+                </td>
+                <td class="small">{{ app.opportunity.company.company_name }}</td>
+                <td><span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                <td class="text-muted small">{{ app.applied_at|date:"M d" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="fa fa-briefcase fa-2x mb-3 d-block opacity-30"></i>
+          <p class="small">No applications yet.</p>
+          <a href="{% url 'opportunity_list' %}" class="btn gp-btn-primary btn-sm px-3">Explore Opportunities</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Events + Active Opportunities -->
+  <div class="col-lg-5 d-flex flex-column gap-4">
+    <!-- Upcoming Events -->
+    <div class="gp-card">
+      <div class="gp-card-header">
+        <h6 class="fw-bold mb-0"><i class="fa fa-calendar text-muted me-2"></i>Upcoming Events</h6>
+        <a href="{% url 'events_list' %}" class="btn btn-link btn-sm p-0 text-success">View All</a>
+      </div>
+      <div class="gp-card-body">
+        {% if upcoming_events %}
+          {% for event in upcoming_events %}
+          <div class="d-flex gap-3 {% if not forloop.last %}mb-3 pb-3 border-bottom{% endif %}">
+            <div style="width:42px;height:42px;background:var(--gp-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fa fa-calendar-day text-muted"></i>
+            </div>
+            <div>
+              <div class="fw-600 small">{{ event.title|truncatechars:35 }}</div>
+              <div class="text-muted" style="font-size:.78rem;">{{ event.date|date:"M d, Y · H:i" }}</div>
+              <div class="text-muted" style="font-size:.75rem;"><i class="fa fa-map-marker-alt me-1"></i>{{ event.location|truncatechars:25 }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted small text-center py-2 mb-0">No upcoming events.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="gp-card">
+      <div class="gp-card-body">
+        <h6 class="fw-bold mb-3">Quick Actions</h6>
+        <div class="d-grid gap-2">
+          <a href="{% url 'grades' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-chart-line me-2"></i>Update My Grades</a>
+          <a href="{% url 'campus_profile' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-user-edit me-2"></i>Edit Profile</a>
+          <a href="{% url 'credentials_list' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-certificate me-2"></i>Browse Credentials</a>
+          <a href="{% url 'networking' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-users me-2"></i>Network with Peers</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

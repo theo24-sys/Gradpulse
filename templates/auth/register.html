@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Account — GradPulse{% endblock %}
+
+{% block content %}
+<div class="gp-auth-page py-5">
+  <div class="container">
+    <!-- Portal switcher -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-auto">
+        <div class="d-flex gap-2">
+          <a href="?portal=student" class="btn {% if portal == 'student' %}gp-btn-navy{% else %}btn-outline-secondary{% endif %} px-4">
+            <i class="fa fa-user-graduate me-2"></i>Student
+          </a>
+          <a href="?portal=employer" class="btn {% if portal == 'employer' %}gp-btn-primary{% else %}btn-outline-secondary{% endif %} px-4">
+            <i class="fa fa-building me-2"></i>Employer
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-6">
+        <div class="gp-form-card" style="max-width:600px;">
+          <div class="text-center mb-4">
+            {% if portal == 'employer' %}
+            <div style="font-size:2rem;">🏢</div>
+            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Employer Registration</h2>
+            <p class="text-muted small">Create your company account to start hiring</p>
+            {% else %}
+            <div style="font-size:2rem;">🎓</div>
+            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Student Registration</h2>
+            <p class="text-muted small">Join 500+ students on GradPulse</p>
+            {% endif %}
+          </div>
+
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="portal_type" value="{{ portal }}">
+            {{ form|crispy }}
+            <button type="submit" class="btn {% if portal == 'employer' %}gp-btn-primary{% else %}gp-btn-navy{% endif %} w-100 py-2 mt-3 justify-content-center">
+              Create Account <i class="fa fa-arrow-right ms-2"></i>
+            </button>
+          </form>
+
+          <hr class="my-4">
+          <p class="text-center text-muted small">Already have an account? <a href="{% url 'login' %}" class="text-success fw-600">Sign In</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

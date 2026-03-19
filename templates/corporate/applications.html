@@ -1,0 +1,69 @@
+{% extends 'corporate/layout.html' %}
+
+{% block title %}Applications — GradPulse{% endblock %}
+
+{% block corporate_content %}
+<h2 class="fw-bold mb-1" style="color:var(--gp-navy);">Applications</h2>
+<p class="text-muted small mb-4">Review and manage candidate applications</p>
+
+<form method="get" class="gp-filter-bar mb-4">
+  <select name="opportunity" class="form-select" style="max-width:220px;">
+    <option value="">All Listings</option>
+    {% for o in opportunities %}<option value="{{ o.pk }}" {% if filters.opportunity == o.pk|stringformat:"s" %}selected{% endif %}>{{ o.title|truncatechars:28 }}</option>{% endfor %}
+  </select>
+  <select name="status" class="form-select" style="max-width:160px;">
+    <option value="">All Statuses</option>
+    <option value="pending" {% if filters.status == "pending" %}selected{% endif %}>Pending</option>
+    <option value="shortlisted" {% if filters.status == "shortlisted" %}selected{% endif %}>Shortlisted</option>
+    <option value="rejected" {% if filters.status == "rejected" %}selected{% endif %}>Rejected</option>
+    <option value="hired" {% if filters.status == "hired" %}selected{% endif %}>Hired</option>
+  </select>
+  <button type="submit" class="btn gp-btn-primary px-3">Filter</button>
+  <a href="{% url 'corporate_applications' %}" class="btn btn-outline-secondary px-3">Clear</a>
+</form>
+
+{% if applications %}
+<div class="gp-card">
+  <div class="table-responsive">
+    <table class="table gp-table mb-0">
+      <thead><tr><th>Student</th><th>Opportunity</th><th>Applied</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for app in applications %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="gp-avatar-sm" style="background:var(--gp-navy);">{{ app.student.display_name|first|upper }}</div>
+              <div>
+                <div class="fw-600 small">{{ app.student.display_name }}</div>
+                <div class="text-muted" style="font-size:.75rem;">{{ app.student.institution }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="small">{{ app.opportunity.title|truncatechars:30 }}</td>
+          <td class="text-muted small">{{ app.applied_at|date:"M d, Y" }}</td>
+          <td><span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span></td>
+          <td>
+            <form method="post" action="{% url 'update_application_status' app.pk %}" class="d-flex gap-1">
+              {% csrf_token %}
+              <select name="status" class="form-select form-select-sm" style="max-width:130px;">
+                <option value="pending" {% if app.status == "pending" %}selected{% endif %}>Pending</option>
+                <option value="shortlisted" {% if app.status == "shortlisted" %}selected{% endif %}>Shortlisted</option>
+                <option value="rejected" {% if app.status == "rejected" %}selected{% endif %}>Rejected</option>
+                <option value="hired" {% if app.status == "hired" %}selected{% endif %}>Hired</option>
+              </select>
+              <button type="submit" class="btn gp-btn-primary btn-sm px-2">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+  <i class="fa fa-file-alt fa-2x mb-3 d-block opacity-30"></i>
+  <p>No applications found{% if filters.status %} with status "{{ filters.status }}"{% endif %}.</p>
+</div>
+{% endif %}
+{% endblock %}

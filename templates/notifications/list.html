@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications — GradPulse{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:720px;">
+  <h2 class="fw-bold mb-4" style="color:var(--gp-navy);">Notifications</h2>
+  {% if notifications %}
+  <div class="gp-card">
+    <div class="p-0">
+      {% for n in notifications %}
+      <div class="d-flex align-items-start gap-3 p-3 {% if not forloop.last %}border-bottom{% endif %} {% if not n.is_read %}bg-light{% endif %}">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--gp-green);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa fa-bell text-white small"></i>
+        </div>
+        <div class="flex-grow-1">
+          <div class="small {% if not n.is_read %}fw-600{% endif %}">{{ n.message }}</div>
+          <div class="text-muted" style="font-size:.75rem;">{{ n.created_at|timesince }} ago</div>
+        </div>
+        {% if not n.is_read %}<span class="pill pill-shortlisted" style="font-size:.7rem;">New</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="fa fa-bell fa-2x mb-3 d-block opacity-30"></i>
+    <p>You're all caught up! No notifications.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

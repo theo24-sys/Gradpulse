@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ opportunity.title }} — GradPulse{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="gp-card">
+        <div class="gp-card-body">
+          <div class="d-flex align-items-start gap-3 mb-3">
+            {% if opportunity.company.company_logo %}
+              <img src="{{ opportunity.company.company_logo.url }}" width="60" height="60" style="border-radius:12px;object-fit:cover;" alt="Logo">
+            {% else %}
+              <div style="width:60px;height:60px;border-radius:12px;background:var(--gp-navy);display:flex;align-items:center;justify-content:center;color:white;font-size:1.4rem;font-weight:700;">
+                {{ opportunity.company.company_name|first|upper }}
+              </div>
+            {% endif %}
+            <div>
+              <h2 class="fw-bold mb-1" style="color:var(--gp-navy);">{{ opportunity.title }}</h2>
+              <div class="text-muted small">{{ opportunity.company.company_name }} · {{ opportunity.location }}</div>
+              <div class="d-flex flex-wrap gap-2 mt-2">
+                <span class="pill pill-pending">{{ opportunity.get_type_display }}</span>
+                <span class="pill pill-shortlisted">{{ opportunity.sector }}</span>
+                {% if opportunity.stipend_min %}<span class="pill pill-hired">KSh {{ opportunity.stipend_min|floatformat:0 }}{% if opportunity.stipend_max %}–{{ opportunity.stipend_max|floatformat:0 }}{% endif %}/mo</span>{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold mt-4 mb-2">Description</h6>
+          <div class="text-muted" style="font-size:.9rem;line-height:1.7;">{{ opportunity.description|linebreaks }}</div>
+
+          {% if opportunity.requirements %}
+          <h6 class="fw-bold mt-4 mb-2">Requirements</h6>
+          <div class="text-muted" style="font-size:.9rem;line-height:1.7;">{{ opportunity.requirements|linebreaks }}</div>
+          {% endif %}
+
+          {% if opportunity.get_skills_list %}
+          <h6 class="fw-bold mt-4 mb-2">Skills Required</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for skill in opportunity.get_skills_list %}
+            <span class="badge bg-light text-dark border">{{ skill }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="gp-card mb-3">
+        <div class="gp-card-body">
+          <h6 class="fw-bold mb-3">Opportunity Details</h6>
+          <div class="d-flex flex-column gap-2 text-muted small">
+            {% if opportunity.deadline %}
+            <div><i class="fa fa-clock me-2 text-warning"></i><strong>Deadline:</strong> {{ opportunity.deadline|date:"M d, Y" }}</div>
+            {% endif %}
+            <div><i class="fa fa-map-marker-alt me-2 text-danger"></i><strong>Location:</strong> {{ opportunity.location }}</div>
+            <div><i class="fa fa-eye me-2 text-muted"></i><strong>Views:</strong> {{ opportunity.views_count }}</div>
+            <div><i class="fa fa-users me-2 text-info"></i><strong>Applications:</strong> {{ opportunity.application_count }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gp-card">
+        <div class="gp-card-body">
+          {% if user.is_authenticated and user.is_student %}
+            {% if applied %}
+            <div class="text-center py-3">
+              <span class="pill pill-hired"><i class="fa fa-check-circle me-2"></i>Already Applied</span>
+            </div>
+            {% else %}
+            <h6 class="fw-bold mb-3">Apply Now</h6>
+            <form method="post" action="{% url 'apply_opportunity' opportunity.pk %}">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <button type="submit" class="btn gp-btn-primary w-100 py-2 mt-2 justify-content-center">
+                <i class="fa fa-paper-plane me-2"></i>Submit Application
+              </button>
+            </form>
+            {% endif %}
+          {% elif not user.is_authenticated %}
+          <div class="text-center">
+            <p class="text-muted small mb-3">Sign in to apply for this opportunity</p>
+            <a href="{% url 'login' %}?next={{ request.path }}" class="btn gp-btn-primary w-100 justify-content-center">Sign In to Apply</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-3">
+    <a href="{% url 'opportunity_list' %}" class="btn btn-outline-secondary"><i class="fa fa-arrow-left me-2"></i>Back to Listings</a>
+  </div>
+</div>
+{% endblock %}

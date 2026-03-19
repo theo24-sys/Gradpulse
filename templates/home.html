@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GradPulse Campus — Launch Your Career{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="gp-hero">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        
+        <div class="hero-badge" style="border-radius:100px; border:1px solid rgba(220,94,56,0.5); padding:6px 16px; display:inline-flex; align-items:center; gap:8px; margin-bottom:2rem; font-size:0.65rem; color:var(--gp-accent); text-transform:uppercase; letter-spacing:1px; font-weight:700;">
+          /// ACCELERATING CAREERS FOR KENYA /// EMPOWERING FUTURE LEADERS ///
+        </div>
+        
+        <h1 class="hero-title">
+          Your career<br>
+          starts <span class="accent">before</span><br>
+          you graduate.
+        </h1>
+        
+        <p class="hero-subtitle">
+          GradPulse connects university students with top employers. 
+          Credentials, internships, professional networking, inter-university 
+          collaborations, and youth development programmes — all matched 
+          to your interests.
+        </p>
+        
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary px-4 py-2" style="border-radius:100px;">
+            I am a student <i class="fa fa-arrow-right ms-2 small"></i>
+          </a>
+          <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline px-4 py-2" style="border-radius:100px;">
+            I am an employer
+          </a>
+        </div>
+        
+      </div>
+    </div>
+    
+    <div class="hero-stats">
+      <div>
+        <div class="hs-num">900+</div>
+        <div class="hs-label">Opportunities Listed</div>
+      </div>
+      <div>
+        <div class="hs-num">40+</div>
+        <div class="hs-label">Corporate Partners</div>
+      </div>
+      <div>
+        <div class="hs-num">30+</div>
+        <div class="hs-label">Kenyan Universities</div>
+      </div>
+      <div>
+        <div class="hs-num">12K+</div>
+        <div class="hs-label">Student Profiles</div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<!-- Portal Cards -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4 align-items-stretch">
+      <div class="col-md-6">
+        <div class="portal-card pc-student">
+          <div class="portal-tag">● FOR TOP STUDENTS & EMPLOYERS</div>
+          <h2 class="portal-title">GradPulse Placement</h2>
+          <p class="portal-desc">For those who want exclusive access to premium internships and direct hires. Connect directly with hiring managers.</p>
+          <ul class="pc-list">
+            <li>Demographic screening & auto-matching</li>
+            <li>Skills-based vetting via credential integrations</li>
+            <li>Direct messaging with talent / hiring professionals</li>
+            <li>Status tracking on all applications</li>
+          </ul>
+          <a href="{% url 'register' %}?portal=employer" class="portal-btn mt-3 text-decoration-none">
+            Enter Placement Portal <i class="fa fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="portal-card pc-employer">
+          <div class="portal-tag" style="color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.1);">● LEARNING, NETWORKING & COMMUNITY</div>
+          <h2 class="portal-title">GradPulse Campus</h2>
+          <p class="portal-desc">The ultimate student workspace. Track grades, earn credentials, and join project collaborations matched to your learning path.</p>
+          <ul class="pc-list">
+            <li>Grade tracking (GPA) across all semesters</li>
+            <li>Integrated verified credentials & certificates</li>
+            <li>RSVP to events (fairs, hackathons, webinars)</li>
+            <li>Peer networking, alumni mentorship & collaborations</li>
+          </ul>
+          <a href="{% url 'register' %}?portal=student" class="portal-btn mt-3 text-decoration-none">
+            Enter Campus Portal <i class="fa fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recent Opportunities -->
+{% if recent_opportunities %}
+<section class="py-5 border-top" style="border-color:var(--gp-border) !important;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="portal-title mb-1">Latest Opportunities</h2>
+        <p class="text-muted small mb-0">Fresh listings from our corporate partners</p>
+      </div>
+      <a href="{% url 'opportunity_list' %}" class="btn gp-btn-outline px-3 py-2" style="border-radius:100px; font-size:0.8rem;">View All <i class="fa fa-arrow-right ms-1"></i></a>
+    </div>
+    <div class="row g-3">
+      {% for opp in recent_opportunities %}
+      <div class="col-md-6 col-lg-3">
+        <div class="opp-card">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="pill pill-{{ opp.type }}">{{ opp.get_type_display }}</span>
+            <span class="pill pill-active">Active</span>
+          </div>
+          <h6 class="fw-bold mb-1 mt-3" style="color:var(--text);">{{ opp.title }}</h6>
+          <div class="text-muted small mb-1">
+            <i class="fa fa-building me-1"></i>{{ opp.company.company_name }}
+          </div>
+          <div class="text-muted small mb-3">
+            <i class="fa fa-map-marker-alt me-1"></i>{{ opp.location }}
+          </div>
+          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-navy w-100 btn-sm" style="border-radius:100px;">View Details</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

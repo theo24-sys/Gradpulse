@@ -1,0 +1,33 @@
+{% extends 'corporate/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Company Profile — GradPulse{% endblock %}
+
+{% block corporate_content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+  {% if user.company_logo %}
+    <img src="{{ user.company_logo.url }}" width="72" height="72" style="border-radius:12px;object-fit:cover;">
+  {% else %}
+    <div style="width:72px;height:72px;border-radius:12px;background:var(--gp-navy);display:flex;align-items:center;justify-content:center;color:white;font-size:1.6rem;font-weight:700;">{{ user.company_name|first|upper }}</div>
+  {% endif %}
+  <div>
+    <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">{{ user.company_name }}</h2>
+    <div class="text-muted small">{{ user.sector }} · {{ user.company_size }}</div>
+    {% if user.is_verified %}<span class="pill pill-hired mt-1"><i class="fa fa-check-circle me-1"></i>Verified</span>{% endif %}
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="gp-card">
+      <div class="gp-card-header"><h6 class="fw-bold mb-0">Edit Company Profile</h6></div>
+      <div class="gp-card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn gp-btn-primary px-4 mt-2"><i class="fa fa-save me-2"></i>Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
