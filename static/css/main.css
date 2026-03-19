@@ -6,35 +6,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Brand Colors explicitly from the uploaded logo */
-  --gp-blue: #1A3C59; /* Deeper Navy */
-  --gp-blue-hover: #142e45;
-  --gp-blue-light: #295A83; /* Original Logo Blue */
+  /* Brand Colors - Aqua/Cyan Theme */
+  --gp-navy: #008b8b; /* Dark Cyan */
+  --gp-blue: #00ced1; /* Dark Turquoise / Cyan */
+  --gp-orange: #e55a40;
+  --gp-green: #2ecc71;
+  --gp-gray: #f4f6f9;
   
-  --gp-orange: #D97E1B;
-  --gp-orange-hover: #b86915;
-  --gp-orange-light: #f5952c;
-  
-  --gp-charcoal: #2D2D2D;
-  --gp-charcoal-light: #4a4a4a;
-  
-  /* Background & Surface - Ultra Premium Dark Theme */
-  --gp-bg: #0A1929; /* Very Dark Navy */
-  --gp-bg-gradient: linear-gradient(135deg, #0A1929 0%, #1A3C59 100%);
-  --gp-surface: #102A43; /* Dark Slate Navy */
-  --gp-surface-light: #243B53;
-  --gp-glass: rgba(16, 42, 67, 0.9);
+  /* Layout Colors - Light Theme */
+  --gp-bg: #f8f9fa; /* Light Grey Background */
+  --gp-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  --gp-surface: #ffffff;
+  --gp-surface-light: #ffffff;
+  --gp-glass: rgba(255, 255, 255, 0.9);
   
   /* Text */
-  --gp-text: #F0F4F8;
-  --gp-text-muted: #9FB3C8;
+  --gp-text: #2c3e50;
+  --gp-text-muted: #6c757d;
   
-  /* Borders & Shadows - Refined for Dark Theme */
-  --gp-border: rgba(51, 78, 104, 0.4);
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
-  --shadow: 0 10px 30px -5px rgba(26, 60, 89, 0.08);
-  --shadow-lg: 0 25px 50px -12px rgba(26, 60, 89, 0.12);
-  --shadow-glow: 0 10px 30px rgba(217, 126, 27, 0.2);
+  /* Borders & Shadows - Refined for Light Theme */
+  --gp-border: rgba(0, 139, 139, 0.15);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow: 0 10px 30px rgba(0, 139, 139, 0.05);
+  --shadow-lg: 0 25px 50px rgba(0, 139, 139, 0.1);
+  --shadow-glow: 0 10px 30px rgba(0, 206, 209, 0.2);
   
   --radius: 14px;
   --radius-lg: 24px;
@@ -42,10 +37,10 @@
   --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   
   /* Mappings */
-  --gp-navy: var(--gp-blue);
-  --gp-navy-dark: var(--gp-blue-hover);
-  --gp-navy-light: var(--gp-blue-light);
+  --gp-navy-dark: #006666;
+  --gp-navy-light: #20b2aa; /* Light Sea Green */
   --gp-accent: var(--gp-orange);
+  --gp-accent-gradient: linear-gradient(135deg, #008b8b 0%, #00ced1 100%);
   --gp-light: var(--gp-bg);
   --gp-white: var(--gp-surface);
 }
@@ -58,8 +53,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--gp-bg);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(26, 60, 89, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(217, 126, 27, 0.03) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(0, 206, 209, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 139, 139, 0.03) 0px, transparent 50%);
   color: var(--gp-text);
   line-height: 1.6;
   overflow-x: hidden;
@@ -152,8 +147,8 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 }
 
 .gp-navbar .nav-link:hover { 
-  color: var(--gp-orange); 
-  background: rgba(217,126,27,0.1);
+  color: var(--gp-navy); 
+  background: var(--gp-sidebar-active);
   transform: translateY(-2px);
 }
 
@@ -458,10 +453,10 @@ h1, h2, h3, h4, h5, h6, .brand-text {
   position: relative;
   background: var(--gp-bg-gradient);
   overflow: hidden;
-  color: white;
+  color: var(--gp-text);
 }
 .gp-footer {
-  background: var(--gp-bg);
+  background: var(--gp-surface);
   border-top: 1px solid var(--gp-border);
   color: var(--gp-text);
 }
@@ -482,7 +477,7 @@ h1, h2, h3, h4, h5, h6, .brand-text {
   font-size: 4.8rem; 
   line-height: 1.1; 
   margin-bottom: 1.5rem; 
-  color: white;
+  color: var(--gp-navy);
 }
 
 .hero-title .accent { 
@@ -612,11 +607,11 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 }
 
 .dash-greeting { font-size: 0.95rem; color: var(--gp-text-muted); font-weight: 500; margin-bottom: 0.25rem; }
-.dash-title { font-size: 2.2rem; font-weight: 800; color: white !important; letter-spacing: -1px; }
+.dash-title { font-size: 2.2rem; font-weight: 800; color: var(--gp-navy) !important; letter-spacing: -1px; }
 
 .otw-badge {
   display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,0.05); color: var(--gp-orange-light); font-weight: 600;
+  background: var(--gp-sidebar-active); color: var(--gp-navy); font-weight: 600;
   padding: 8px 16px; border-radius: 100px; font-size: 0.85rem;
   border: 1px solid var(--gp-border);
 }
@@ -637,13 +632,23 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 .gp-progress { height: 10px; border-radius: 100px; background: var(--gp-surface); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
 .gp-progress-bar { background: var(--gp-bg-gradient); border-radius: 100px; transition: width 1s ease; }
 
-/* ── Global Utilities (Enforce Dark) ───────────────────── */
-.bg-light { background-color: var(--gp-surface) !important; color: var(--gp-text) !important; }
+/* ── Global Utilities (Enforce Light) ───────────────────── */
+.bg-light { background-color: var(--gp-gray) !important; color: var(--gp-text) !important; }
 .bg-white { background-color: var(--gp-surface) !important; color: var(--gp-text) !important; }
 .text-dark { color: var(--gp-text) !important; }
 .text-muted { color: var(--gp-text-muted) !important; }
 .border { border-color: var(--gp-border) !important; }
-.card { background: var(--gp-surface); border-color: var(--gp-border); }
+.card { background: var(--gp-surface); border-color: var(--gp-border); box-shadow: 0 4px 12px rgba(0, 139, 139, 0.05); }
 .modal-content { background: var(--gp-surface); color: var(--gp-text); border: 1px solid var(--gp-border); }
 .table { color: var(--gp-text); }
 .alert { border-radius: 12px; }
+
+/* Dashboard Specifics */
+.dash-title { color: var(--gp-navy) !important; }
+.dash-greeting { color: var(--gp-text-muted); }
+.sb-name { color: var(--gp-navy) !important; }
+.sb-sub { color: var(--gp-text-muted) !important; }
+.gp-sidebar-nav li a { color: var(--gp-text); }
+.gp-sidebar-nav li a:hover { background: var(--gp-sidebar-active); color: var(--gp-navy); }
+.gp-sidebar-nav li a.active { background: var(--gp-accent-gradient); color: white !important; }
+.nav-section { color: var(--gp-navy); opacity: 0.6; }
