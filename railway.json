@@ -4,7 +4,7 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "gunicorn gradpulse.wsgi:application --log-file -",
-    "releaseCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+    "startCommand": "python manage.py collectstatic --noinput && gunicorn gradpulse.wsgi:application --log-file -",
+    "releaseCommand": "python manage.py migrate --noinput"
   }
 }
