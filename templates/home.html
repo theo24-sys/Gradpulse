@@ -7,40 +7,44 @@
 
 <!-- Hero Section -->
 <section class="gp-hero">
-  <div class="container">
-    <div class="row">
+  <div class="container animate-fade-up">
+    <div class="row align-items-center">
       <div class="col-lg-8">
         
-        <div class="hero-badge" style="border-radius:100px; border:1px solid rgba(220,94,56,0.5); padding:6px 16px; display:inline-flex; align-items:center; gap:8px; margin-bottom:2rem; font-size:0.65rem; color:var(--gp-accent); text-transform:uppercase; letter-spacing:1px; font-weight:700;">
-          /// ACCELERATING CAREERS FOR KENYA /// EMPOWERING FUTURE LEADERS ///
+        <div class="hero-badge animate-fade-up animate-delay-1" style="border-radius:100px; border:1px solid rgba(41,90,131,0.2); background:rgba(41,90,131,0.05); padding:6px 16px; display:inline-flex; align-items:center; gap:8px; margin-bottom:2rem; font-size:0.75rem; color:var(--gp-blue); text-transform:uppercase; letter-spacing:1px; font-weight:700;">
+          Unlock Your Future <i class="fa fa-unlock-alt ms-1 text-warning"></i>
         </div>
         
-        <h1 class="hero-title">
+        <h1 class="hero-title animate-fade-up animate-delay-2">
           Your career<br>
           starts <span class="accent">before</span><br>
           you graduate.
         </h1>
         
-        <p class="hero-subtitle">
+        <p class="hero-subtitle animate-fade-up animate-delay-3">
           GradPulse connects university students with top employers. 
           Credentials, internships, professional networking, inter-university 
           collaborations, and youth development programmes — all matched 
           to your interests.
         </p>
         
-        <div class="d-flex flex-wrap gap-3">
-          <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary px-4 py-2" style="border-radius:100px;">
+        <div class="d-flex flex-wrap gap-3 animate-fade-up animate-delay-4">
+          <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary">
             I am a student <i class="fa fa-arrow-right ms-2 small"></i>
           </a>
-          <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline px-4 py-2" style="border-radius:100px;">
+          <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline" style="background:white;">
             I am an employer
           </a>
         </div>
         
       </div>
+      <div class="col-lg-4 d-none d-lg-block animate-fade-up animate-delay-3">
+        <!-- Optional illustrative graphic could go here -->
+        <div class="animate-float" style="width: 100%; max-width: 400px; height: 350px; background: url('{% static 'images/logo.jpg' %}') center/contain no-repeat; opacity: 0.8; filter: drop-shadow(0 20px 30px rgba(41,90,131,0.15));"></div>
+      </div>
     </div>
     
-    <div class="hero-stats">
+    <div class="hero-stats animate-fade-up animate-delay-4">
       <div>
         <div class="hs-num">900+</div>
         <div class="hs-label">Opportunities Listed</div>
@@ -63,38 +67,38 @@
 </section>
 
 <!-- Portal Cards -->
-<section class="py-5">
+<section class="py-5" style="background: white;">
   <div class="container">
     <div class="row g-4 align-items-stretch">
-      <div class="col-md-6">
+      <div class="col-md-6 animate-fade-up">
         <div class="portal-card pc-student">
-          <div class="portal-tag">● FOR TOP STUDENTS & EMPLOYERS</div>
+          <div class="portal-tag">For Top Students & Employers</div>
           <h2 class="portal-title">GradPulse Placement</h2>
           <p class="portal-desc">For those who want exclusive access to premium internships and direct hires. Connect directly with hiring managers.</p>
           <ul class="pc-list">
-            <li>Demographic screening & auto-matching</li>
-            <li>Skills-based vetting via credential integrations</li>
-            <li>Direct messaging with talent / hiring professionals</li>
-            <li>Status tracking on all applications</li>
+            <li><i class="fa fa-check-circle"></i> Demographic screening & auto-matching</li>
+            <li><i class="fa fa-check-circle"></i> Skills-based vetting via credential integrations</li>
+            <li><i class="fa fa-check-circle"></i> Direct messaging with talent / hiring professionals</li>
+            <li><i class="fa fa-check-circle"></i> Status tracking on all applications</li>
           </ul>
-          <a href="{% url 'register' %}?portal=employer" class="portal-btn mt-3 text-decoration-none">
+          <a href="{% url 'register' %}?portal=employer" class="portal-btn text-decoration-none">
             Enter Placement Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
       </div>
       
-      <div class="col-md-6">
+      <div class="col-md-6 animate-fade-up animate-delay-1">
         <div class="portal-card pc-employer">
-          <div class="portal-tag" style="color:#4ade80; border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.1);">● LEARNING, NETWORKING & COMMUNITY</div>
+          <div class="portal-tag">Learning, Networking & Community</div>
           <h2 class="portal-title">GradPulse Campus</h2>
           <p class="portal-desc">The ultimate student workspace. Track grades, earn credentials, and join project collaborations matched to your learning path.</p>
           <ul class="pc-list">
-            <li>Grade tracking (GPA) across all semesters</li>
-            <li>Integrated verified credentials & certificates</li>
-            <li>RSVP to events (fairs, hackathons, webinars)</li>
-            <li>Peer networking, alumni mentorship & collaborations</li>
+            <li><i class="fa fa-check-circle"></i> Grade tracking (GPA) across all semesters</li>
+            <li><i class="fa fa-check-circle"></i> Integrated verified credentials & certificates</li>
+            <li><i class="fa fa-check-circle"></i> RSVP to events (fairs, hackathons, webinars)</li>
+            <li><i class="fa fa-check-circle"></i> Peer networking, alumni mentorship & collaborations</li>
           </ul>
-          <a href="{% url 'register' %}?portal=student" class="portal-btn mt-3 text-decoration-none">
+          <a href="{% url 'register' %}?portal=student" class="portal-btn text-decoration-none">
             Enter Campus Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
@@ -105,34 +109,35 @@
 
 <!-- Recent Opportunities -->
 {% if recent_opportunities %}
-<section class="py-5 border-top" style="border-color:var(--gp-border) !important;">
+<section class="py-5 bg-light">
+  <div class="container animate-fade-up text-center mb-5">
+    <h2 class="portal-title mb-2">Latest Opportunities</h2>
+    <p class="text-muted" style="font-size: 1.1rem;">Fresh listings from our corporate partners, matched with your skills.</p>
+  </div>
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="portal-title mb-1">Latest Opportunities</h2>
-        <p class="text-muted small mb-0">Fresh listings from our corporate partners</p>
-      </div>
-      <a href="{% url 'opportunity_list' %}" class="btn gp-btn-outline px-3 py-2" style="border-radius:100px; font-size:0.8rem;">View All <i class="fa fa-arrow-right ms-1"></i></a>
-    </div>
-    <div class="row g-3">
+    <div class="row g-4">
       {% for opp in recent_opportunities %}
-      <div class="col-md-6 col-lg-3">
+      <div class="col-md-6 col-lg-3 animate-fade-up" style="animation-delay: 0.{{ forloop.counter }}s;">
         <div class="opp-card">
-          <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="d-flex justify-content-between align-items-start mb-3">
             <span class="pill pill-{{ opp.type }}">{{ opp.get_type_display }}</span>
-            <span class="pill pill-active">Active</span>
+            <span class="pill pill-active"><i class="fa fa-fire text-warning me-1"></i>Active</span>
           </div>
-          <h6 class="fw-bold mb-1 mt-3" style="color:var(--text);">{{ opp.title }}</h6>
-          <div class="text-muted small mb-1">
-            <i class="fa fa-building me-1"></i>{{ opp.company.company_name }}
+          <h6 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; color:var(--gp-blue);">{{ opp.title }}</h6>
+          <div class="text-muted small mb-2 d-flex align-items-center">
+            <i class="fa fa-building me-2 text-warning"></i>{{ opp.company.company_name }}
           </div>
-          <div class="text-muted small mb-3">
-            <i class="fa fa-map-marker-alt me-1"></i>{{ opp.location }}
+          <div class="text-muted small mb-4 d-flex align-items-center">
+            <i class="fa fa-map-marker-alt me-2" style="color:var(--gp-orange);"></i>{{ opp.location }}
           </div>
-          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-navy w-100 btn-sm" style="border-radius:100px;">View Details</a>
+          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-outline w-100 btn-sm">View Details</a>
         </div>
       </div>
       {% endfor %}
+    </div>
+    
+    <div class="text-center mt-5 mb-3 animate-fade-up animate-delay-4">
+      <a href="{% url 'opportunity_list' %}" class="btn gp-btn-navy">Explore All Opportunities <i class="fa fa-arrow-right ms-2"></i></a>
     </div>
   </div>
 </section>

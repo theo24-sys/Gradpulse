@@ -24,7 +24,7 @@
 <nav class="gp-navbar navbar navbar-expand-lg sticky-top">
   <div class="container">
     <a class="navbar-brand gp-brand" href="{% url 'home' %}">
-      <span class="brand-text">GradPulse <span class="brand-accent">Campus</span></span>
+      <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
     </a>
     <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
       <span class="navbar-toggler-icon"></span>
@@ -103,13 +103,13 @@
     <div class="row g-4 py-4">
       <div class="col-md-4">
         <div class="gp-brand mb-3">
-          <span class="brand-text text-white">GradPulse <span class="brand-accent">Campus</span></span>
+          <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" style="height: 48px; object-fit: contain;">
         </div>
-        <p class="text-white-50 small">Kenya's premier career launchpad connecting university and TVET students with top employers.</p>
-        <p class="text-white-50 small mb-0">Powered by <strong class="text-white">Ridge Technologies</strong></p>
+        <p class="text-muted small">Kenya's premier career launchpad connecting university and TVET students with top employers.</p>
+        <p class="text-muted small mb-0">Powered by <strong>Ridge Technologies</strong></p>
       </div>
       <div class="col-md-2">
-        <h6 class="text-white mb-3">Portal</h6>
+        <h6 class="text-dark mb-3">Portal</h6>
         <ul class="list-unstyled">
           <li><a href="{% url 'opportunity_list' %}" class="footer-link">Opportunities</a></li>
           <li><a href="{% url 'events_list' %}" class="footer-link">Events</a></li>
@@ -117,7 +117,7 @@
         </ul>
       </div>
       <div class="col-md-2">
-        <h6 class="text-white mb-3">Account</h6>
+        <h6 class="text-dark mb-3">Account</h6>
         <ul class="list-unstyled">
           <li><a href="{% url 'login' %}" class="footer-link">Sign In</a></li>
           <li><a href="{% url 'register' %}?portal=student" class="footer-link">Student Portal</a></li>
@@ -125,13 +125,13 @@
         </ul>
       </div>
       <div class="col-md-4 text-md-end">
-        <h6 class="text-white mb-3">Admin</h6>
-        <a href="/admin/" class="btn btn-outline-light btn-sm"><i class="fa fa-cog me-1"></i>Admin Panel</a>
+        <h6 class="text-dark mb-3">Admin</h6>
+        <a href="/admin/" class="btn gp-btn-outline btn-sm"><i class="fa fa-cog me-1"></i>Admin Panel</a>
       </div>
     </div>
     <hr class="border-secondary">
     <div class="row py-2">
-      <div class="col text-center text-white-50 small">
+      <div class="col text-center text-muted small">
         © 2026 Ridge Technologies · GradPulse · All rights reserved
       </div>
     </div>
