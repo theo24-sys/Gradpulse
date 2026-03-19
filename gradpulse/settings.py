@@ -164,10 +164,23 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
-# ─── CORS ─────────────────────────────────────────────────────────────────────
+# ─── CORS & CSRF ──────────────────────────────────────────────────────────────
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 if not DEBUG:
-    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+        'http://localhost:3000',
+        'https://gradpulse.up.railway.app',
+        'https://gradpulse.co.ke',
+    ])
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+    CORS_ALLOW_HEADERS = ['accept', 'accept-encoding', 'authorization', 'content-type', 'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://gradpulse.up.railway.app',
+    'https://gradpulse.co.ke',
+    'http://localhost:3000',
+]
 
 # ─── Password Hashers (Bcrypt) ────────────────────────────────────────────────
 PASSWORD_HASHERS = [
