@@ -5,6 +5,6 @@
   },
   "deploy": {
     "startCommand": "gunicorn gradpulse.wsgi:application --log-file -",
-    "releaseCommand": "python manage.py migrate --noinput"
+    "releaseCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
   }
 }
