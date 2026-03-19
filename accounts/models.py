@@ -65,6 +65,22 @@ class CustomUser(AbstractUser):
     def is_employer(self):
         return self.portal_type == self.PORTAL_EMPLOYER
 
+    def get_avatar_url(self):
+        if self.profile_photo:
+            try:
+                return self.profile_photo.url
+            except:
+                pass
+        return f"https://ui-avatars.com/api/?name={self.display_name}&background=1A3C59&color=fff"
+
+    def get_logo_url(self):
+        if self.company_logo:
+            try:
+                return self.company_logo.url
+            except:
+                pass
+        return None  # Or a default company logo
+
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'

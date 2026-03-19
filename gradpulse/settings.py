@@ -217,6 +217,7 @@ if env('AWS_ACCESS_KEY_ID', default=''):
     AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_ENDPOINT_URL = env('AWS_S3_ENDPOINT_URL')
     AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN', default=None)
+    AWS_QUERYSTRING_AUTH = False  # Make media links public
     
     STORAGES["default"] = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage"

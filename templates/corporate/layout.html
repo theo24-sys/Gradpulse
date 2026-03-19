@@ -28,7 +28,7 @@
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
           {% if user.company_logo %}
-            <img src="{{ user.company_logo.url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
+            <img src="{{ user.get_logo_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
           {% else %}
             <div class="gp-avatar-sm" style="background:var(--gp-navy-light);">{{ user.company_name|first|upper }}</div>
           {% endif %}
@@ -80,6 +80,9 @@
       <li><a href="{% url 'post_opportunity' %}" class="{% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}"><i class="fa fa-plus-circle"></i> Post Opportunity</a></li>
       <li><a href="{% url 'corporate_applications' %}" class="{% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}"><i class="fa fa-file-alt"></i> Applications</a></li>
       <li><a href="{% url 'talent_search' %}" class="{% if request.resolver_match.url_name == 'talent_search' %}active{% endif %}"><i class="fa fa-users"></i> Talent Search</a></li>
+      <li class="nav-section">Creator Studio</li>
+      <li><a href="{% url 'manage_simulations' %}" class="{% if 'simulations' in request.path %}active{% endif %}"><i class="fa fa-brain"></i> My Simulations</a></li>
+      <li><a href="{% url 'simulation_create' %}"><i class="fa fa-plus-circle"></i> Create Scenario</a></li>
       <li class="nav-section">Events</li>
       <li><a href="{% url 'events_list' %}"><i class="fa fa-calendar"></i> Events</a></li>
     </ul>

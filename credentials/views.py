@@ -23,6 +23,8 @@ def enroll_credential(request, pk):
     return redirect('credentials_list')
 
 
+from .forms import SimulationForm
+
 @login_required
 def simulations_list(request):
     simulations = Simulation.objects.all().order_by('-created_at')
@@ -42,3 +44,29 @@ def premium_upgrade(request):
         return redirect('simulations_list')
         
     return render(request, 'campus/premium_upgrade.html')
+
+
+@login_required
+def manage_simulations(request):
+    if not request.user.is_employer:
+        return redirect('home')
+    simulations = Simulation.objects.filter(created_by=request.user)
+    return render(request, 'corporate/manage_simulations.html', {'simulations': simulations})
+
+
+@login_required
+def simulation_create(request):
+    if not request.user.is_employer:
+        return redirect('home')
+    if request.method == 'POST':
+        form = SimulationForm(request.POST)
+        if form.is_valid():
+            simulation = form.save(commit=False)
+            simulation.created_by = request.user
+            simulation.is_premium = True  # Enforce premium status for platform income
+            simulation.save()
+            messages.success(request, 'Simulation created successfully!')
+            return redirect('manage_simulations')
+    else:
+        form = SimulationForm()
+    return render(request, 'corporate/simulation_form.html', {'form': form, 'title': 'Create Simulation'})

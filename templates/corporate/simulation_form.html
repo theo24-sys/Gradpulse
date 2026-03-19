@@ -1,0 +1,90 @@
+{% extends 'campus/layout.html' %}
+
+{% block title %}Create Simulation — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="dash-header mb-4">
+    <div class="dash-greeting">New Scenario</div>
+    <h1 class="dash-title">{{ title }}</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="gp-card">
+            <div class="gp-card-body">
+                <form method="post" class="gp-form">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Simulation Title</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Category</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Difficulty Level</label>
+                            {{ form.difficulty }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Learning Objectives & Description</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Est. Duration (Minutes)</label>
+                            {{ form.duration_minutes }}
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Scenario Content URL (Simulation Link)</label>
+                            {{ form.content_url }}
+                            <div class="form-text">Link to the interactive module, video, or scenario document.</div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <div class="form-check form-switch p-3 bg-light rounded-3">
+                                {{ form.is_premium }}
+                                <label class="form-check-label ms-2 fw-bold" for="{{ form.is_premium.id_for_label }}">Require Premium Access</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 d-flex gap-3">
+                        <button type="submit" class="btn gp-btn-primary px-5">Publish Simulation</button>
+                        <a href="{% url 'manage_simulations' %}" class="btn btn-link text-muted">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="gp-card" style="background: var(--gp-blue); color: white;">
+            <div class="gp-card-body">
+                <h5 class="fw-bold mb-3"><i class="fa fa-lightbulb me-2 text-warning"></i>Tips for Success</h5>
+                <ul class="list-unstyled small opacity-90 d-flex flex-column gap-3">
+                    <li><i class="fa fa-check-circle me-2"></i> Keep scenarios focused on real-world industry tasks.</li>
+                    <li><i class="fa fa-check-circle me-2"></i> Use clear instructions for student deliverables.</li>
+                    <li><i class="fa fa-check-circle me-2"></i> Intermediate/Advanced simulations attract top talent.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .gp-form input, .gp-form select, .gp-form textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--gp-border);
+        background: var(--gp-bg);
+        margin-top: 5px;
+    }
+    .form-check-input:checked {
+        background-color: var(--gp-orange);
+        border-color: var(--gp-orange);
+    }
+</style>
+{% endblock %}

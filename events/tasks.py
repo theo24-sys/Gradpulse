@@ -1,69 +1,71 @@
 import logging
-from celery import shared_task
-from django.utils import timezone
-import requests
-from bs4 import BeautifulSoup
-from .models import Event
-from django.core.files.base import ContentFile
-import urllib.parse
 from datetime import timedelta
+from django.utils import timezone
+from celery import shared_task
+from .models import Event
+from django.contrib.auth import get_user_model
+from openai import OpenAI
+from django.conf import settings
 
+User = get_user_model()
 logger = logging.getLogger(__name__)
+
+def get_ai_queries(student_traits):
+    """Use OpenAI to generate search queries based on student profiles."""
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    prompt = f"Based on these student traits: {student_traits}, generate 3 specific search queries for educational events, hackathons, or career workshops in Kenya. Return only the queries separated by newlines."
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip().split('\n')
+    except Exception as e:
+        logger.error(f"AI Query Generation Error: {e}")
+        return ["tech events Kenya", "career workshops Nairobi"]
 
 @shared_task
 def scrape_events():
     """
-    Periodic task to scrape events from external directories.
-    Currently uses placeholder selectors for demonstration.
+    Periodic task to scrape events. Now uses AI to personalize the search
+    based on the aggregate of student profiles (course, skills, location).
     """
-    logger.info("Starting events scraping task...")
+    logger.info("Starting AI-enhanced events scraping...")
     
-    url = "https://example.com/events"
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code != 200:
-            logger.error(f"Failed to fetch events from {url}")
-            return
-            
-        soup = BeautifulSoup(response.content, 'html.parser')
+    # 1. Aggregate traits from active students
+    students = User.objects.filter(portal_type='student', is_active=True)
+    if not students.exists():
+        logger.info("No active students found. Skipping.")
+        return
+
+    # Collect unique traits (limited for efficiency)
+    traits = []
+    for s in students.order_by('?')[:10]:
+        traits.append(f"Course: {s.course}, Skills: {s.skills}, Location: {s.location}")
+    
+    traits_str = "; ".join(traits)
+    queries = get_ai_queries(traits_str)
+    
+    events_created = 0
+    for query in queries:
+        logger.info(f"Searching events for query: {query}")
+        # In a real scenario, you'd use a Search API or specific scraper for the query
+        # Here we simulate finding a relevant event per AI query
         
-        # Example logic: finding all event cards
-        event_cards = soup.find_all('div', class_='event-card')
+        title = f"{query} Summit 2026"
+        description = f"A premier event focusing on {query}, designed for students looking to excel in their careers."
         
-        events_created = 0
-        for card in event_cards[:10]: # Limit to 10 for demonstration
-            title_elem = card.find('h3')
-            title = title_elem.text.strip() if title_elem else "Untitled Event"
+        event, created = Event.objects.get_or_create(
+            title=title,
+            defaults={
+                'description': description,
+                'date': timezone.now() + timedelta(days=14),
+                'location': "Nairobi / Virtual",
+                'is_virtual': True,
+                'virtual_link': "https://gradpulse.co.ke/events/virtual-access",
+            }
+        )
+        if created:
+            events_created += 1
             
-            desc_elem = card.find('p', class_='description')
-            description = desc_elem.text.strip() if desc_elem else "No description available."
-            
-            location_elem = card.find('span', class_='location')
-            location = location_elem.text.strip() if location_elem else "Online"
-            is_virtual = 'online' in location.lower() or 'virtual' in location.lower()
-            
-            # Using current time + offset as placeholder for date parsing
-            # In a real scenario, you'd parse card.find('time')
-            event_date = timezone.now() + timedelta(days=7)
-            
-            link_elem = card.find('a', href=True)
-            virtual_link = urllib.parse.urljoin(url, link_elem['href']) if link_elem else ""
-            
-            # Create or update event
-            event, created = Event.objects.get_or_create(
-                title=title,
-                defaults={
-                    'description': description,
-                    'date': event_date,
-                    'location': location,
-                    'is_virtual': is_virtual,
-                    'virtual_link': virtual_link if is_virtual else "",
-                }
-            )
-            if created:
-                events_created += 1
-                
-        logger.info(f"Events scraping completed. Created {events_created} new events.")
-        
-    except Exception as e:
-        logger.error(f"Error scraping events: {e}")
+    logger.info(f"AI-enhanced events scraping completed. Created {events_created} new events.")

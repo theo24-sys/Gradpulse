@@ -11,30 +11,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {% block extra_css %}{% endblock %}
-  <style>
-    .portal-switch-link {
-        background: rgba(255,255,255,0.03);
-        border-radius: 12px;
-        padding: 12px 16px !important;
-        margin-top: 5px;
-        border: 1px solid rgba(255,255,255,0.05);
-        display: block;
-        transition: background 0.2s;
-    }
-    .portal-switch-link:hover {
-        background: rgba(255,255,255,0.06);
-    }
-    .gp-sidebar-nav .nav-section {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: rgba(255,255,255,0.4);
-        margin-top: 20px;
-        margin-bottom: 8px;
-        padding-left: 15px;
-        font-weight: 600;
-    }
   </style>
+  <link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpg' %}">
 </head>
 <body>
 <!-- Top Bar -->
@@ -53,7 +31,7 @@
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
           {% if user.profile_photo %}
-            <img src="{{ user.profile_photo.url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
+            <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
           {% else %}
             <div class="gp-avatar-sm" style="background:var(--gp-green);">{{ user.display_name|first|upper }}</div>
           {% endif %}
@@ -130,21 +108,7 @@
 
       <li class="nav-section">NETWORK</li>
       <li><a href="{% url 'networking' %}" class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><i class="fa fa-globe"></i> Networking</a></li>
-      <li><a href="{% url 'collaborations' %}" class="{% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}"><i class="fa fa-handshake"></i> Collaborations</a></li>
-      <li><a href="#"><i class="fa fa-building"></i> Partner Institutions</a></li>
-      
-      <li class="nav-section mt-4 mb-2">SWITCH PORTAL</li>
-      <li>
-        <a href="#" class="portal-switch-link text-decoration-none">
-          <div class="d-flex align-items-center">
-            <i class="fa fa-graduation-cap me-3 fa-lg" style="color:#aba499;"></i>
-            <div>
-              <div class="fw-bold" style="color:var(--gp-green); font-size:14px;">UniMart Placement</div>
-              <div style="color:#aba499; font-size:12px;">KCSE Graduate portal &rarr;</div>
-            </div>
-          </div>
-        </a>
-      </li>
+      <li><a href="{% url 'collaborations' %}" class="{% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}\"><i class="fa fa-handshake"></i> Collaborations</a></li>
     </ul>
   </aside>
 

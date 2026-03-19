@@ -207,3 +207,11 @@ def update_application_status(request, pk):
             app.save()
             messages.success(request, f'Application status updated to {new_status}.')
     return redirect('corporate_applications')
+
+
+@login_required
+def student_profile_public(request, pk):
+    if not request.user.is_employer:
+        return redirect('campus_dashboard')
+    student = get_object_or_404(CustomUser, pk=pk, portal_type='student')
+    return render(request, 'corporate/student_profile_view.html', {'student': student})
