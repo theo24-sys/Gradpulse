@@ -147,10 +147,14 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 }
 
 .gp-navbar .nav-link:hover { 
-  color: var(--gp-navy); 
+  color: var(--gp-navy) !important; 
   background: var(--gp-sidebar-active);
   transform: translateY(-2px);
 }
+
+.gp-navbar .nav-link i { color: var(--gp-navy) !important; }
+.text-white-50 { color: var(--gp-text-muted) !important; }
+.text-white { color: var(--gp-text) !important; }
 
 .gp-navbar .dropdown-menu {
   background: var(--gp-surface);

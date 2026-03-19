@@ -14,8 +14,8 @@ User = get_user_model()
 admin_user = User.objects.filter(is_superuser=True).first()
 
 def populate():
-    print("Populating Discovery Data...")
-
+    print("Simulating Webscraping for Discovery Sections...")
+    
     # 1. Youth Programs
     youth_data = [
         {
@@ -41,11 +41,19 @@ def populate():
             "location": "Nationwide",
             "category": "Leadership",
             "link": "https://equitygroupfoundation.com/elp/"
+        },
+        {
+            "title": "Young African Leaders Initiative (YALI)",
+            "organization": "USAID",
+            "description": "Leadership training and networking for young leaders across Africa.",
+            "location": "Regional Centres",
+            "category": "Leadership",
+            "link": "https://yali.state.gov/"
         }
     ]
 
     for item in youth_data:
-        YouthProgram.objects.get_or_create(**item)
+        YouthProgram.objects.get_or_create(title=item['title'], defaults=item)
 
     # 2. Professional Qualifications
     qual_data = [

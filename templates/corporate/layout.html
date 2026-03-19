@@ -20,7 +20,7 @@
       <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
     </a>
     <div class="d-flex align-items-center gap-3 ms-auto">
-      <a class="nav-link text-white-50 position-relative" href="{% url 'notifications' %}">
+      <a class="nav-link text-dark position-relative" href="{% url 'notifications' %}">
         <i class="fa fa-bell"></i>
         {% if unread_notifications > 0 %}
         <span class="badge bg-danger rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_notifications }}</span>
@@ -28,8 +28,9 @@
       </a>
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
-            <img src="{{ user.get_logo_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
-          <span class="text-white d-none d-md-inline small fw-500">{{ user.company_name|truncatechars:20 }}</span>
+            <img src="{{ user.get_logo_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid var(--gp-border);">
+          <span class="text-dark d-none d-md-inline small fw-500">{{ user.company_name|truncatechars:20 }}</span>
+          <i class="fa fa-chevron-down text-dark small"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow">
           <li><a class="dropdown-item" href="{% url 'corporate_profile' %}"><i class="fa fa-building me-2 text-muted"></i>Company Profile</a></li>
@@ -80,9 +81,6 @@
       <li><a href="{% url 'events_list' %}"><i class="fa fa-calendar"></i> Events</a></li>
     </ul>
   </aside>
-  <main class="gp-content">
-    {% block corporate_content %}{% endblock %}
-  <!-- Main Content -->
   <main class="gp-content">
     {% block corporate_content %}{% endblock %}
   </main>

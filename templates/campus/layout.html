@@ -22,7 +22,7 @@
       <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
     </a>
     <div class="d-flex align-items-center gap-3 ms-auto">
-      <a class="nav-link text-white-50 position-relative" href="{% url 'notifications' %}">
+      <a class="nav-link text-dark position-relative" href="{% url 'notifications' %}">
         <i class="fa fa-bell"></i>
         {% if unread_notifications > 0 %}
         <span class="badge bg-danger rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_notifications }}</span>
@@ -30,9 +30,9 @@
       </a>
       <div class="dropdown">
         <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
-           <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid rgba(255,255,255,.3);">
-          <span class="text-white d-none d-md-inline small fw-500">{{ user.display_name }}</span>
-          <i class="fa fa-chevron-down text-white-50 small"></i>
+           <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid var(--gp-border);">
+          <span class="text-dark d-none d-md-inline small fw-500">{{ user.display_name }}</span>
+          <i class="fa fa-chevron-down text-dark small"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow">
           <li><a class="dropdown-item" href="{% url 'campus_profile' %}"><i class="fa fa-user me-2 text-muted"></i>Profile</a></li>
@@ -83,7 +83,7 @@
       <li>
         <a href="{% url 'events_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'events_list' %}active{% endif %}">
           <span><i class="fa fa-calendar-alt"></i> Events</span>
-          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">4</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">{{ upcoming_events_count }}</span>
         </a>
       </li>
       <li><a href="{% url 'youth_programs_list' %}"><i class="fa fa-seedling"></i> Youth Programs</a></li>

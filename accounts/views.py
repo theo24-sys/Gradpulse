@@ -11,6 +11,10 @@ from networking.models import Connection
 
 
 def home(request):
+    if request.user.is_authenticated:
+        if request.user.is_employer:
+            return redirect('corporate_dashboard')
+        return redirect('campus_dashboard')
     stats = {
         'students': CustomUser.objects.filter(portal_type='student', is_active=True).count(),
         'employers': CustomUser.objects.filter(portal_type='employer', is_active=True).count(),

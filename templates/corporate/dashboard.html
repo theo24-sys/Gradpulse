@@ -122,6 +122,9 @@
           <a href="{% url 'talent_search' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-users me-2"></i>Search Talent</a>
           <a href="{% url 'corporate_applications' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-file-alt me-2"></i>Manage Applications</a>
           <a href="{% url 'corporate_profile' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-building me-2"></i>Edit Company Profile</a>
+          {% if user.is_superuser %}
+          <a href="{% url 'scrape_discovery' %}" class="btn btn-warning btn-sm text-start fw-bold mt-2"><i class="fa fa-sync-alt me-2"></i>Run Live Webscraping</a>
+          {% endif %}
         </div>
       </div>
     </div>
