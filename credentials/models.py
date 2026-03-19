@@ -35,3 +35,16 @@ class Enrollment(models.Model):
 
     class Meta:
         unique_together = ('student', 'credential')
+
+
+class Simulation(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    category = models.CharField(max_length=100, help_text="e.g. Finance, Tech, Health")
+    difficulty = models.CharField(max_length=50, choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')])
+    is_premium = models.BooleanField(default=False, help_text="Check if this requires a premium subscription")
+    duration_minutes = models.PositiveIntegerField(default=30)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({'Premium' if self.is_premium else 'Free'})"

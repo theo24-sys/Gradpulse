@@ -18,6 +18,9 @@ django-jazzmin>=2.6
 django-crispy-forms>=2.1
 crispy-bootstrap5>=0.7
 Pillow>=10.2
+PyPDF2>=3.0.0
+beautifulsoup4>=4.12
+requests>=2.31
 
 # Additional Production Enhancements
 whitenoise>=6.6

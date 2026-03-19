@@ -16,6 +16,23 @@
 </div>
 <div class="row g-4">
   <div class="col-lg-5">
+    <!-- AI Transcript Autofill Card -->
+    <div class="gp-card mb-4" style="background: linear-gradient(135deg, rgba(25,135,84,0.1), rgba(25,135,84,0.02)); border: 1px solid rgba(25,135,84,0.2);">
+      <div class="gp-card-header bg-transparent border-0 pb-0 pt-3">
+        <h6 class="fw-bold mb-0 text-success"><i class="fa fa-magic me-2"></i>AI Transcript Autofill</h6>
+      </div>
+      <div class="gp-card-body">
+        <p class="small text-muted mb-3">Upload your university transcript (PDF) and our AI will automatically extract and record your grades.</p>
+        <form action="{% url 'upload_transcript' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="input-group input-group-sm">
+            <input type="file" class="form-control" name="transcript" accept="application/pdf" required>
+            <button class="btn btn-success fw-bold" type="submit">Extract</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="gp-card">
       <div class="gp-card-header"><h6 class="fw-bold mb-0">Add Grade</h6></div>
       <div class="gp-card-body">

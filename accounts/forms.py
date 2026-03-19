@@ -2,20 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import CustomUser
 
-INSTITUTION_CHOICES = [
-    ('', '— Select Institution —'),
-    ('University of Nairobi', 'University of Nairobi'),
-    ('Kenyatta University', 'Kenyatta University'),
-    ('Strathmore University', 'Strathmore University'),
-    ('JKUAT', 'JKUAT'),
-    ('Moi University', 'Moi University'),
-    ('Maseno University', 'Maseno University'),
-    ('Kenya Methodist University', 'Kenya Methodist University'),
-    ('Mount Kenya University', 'Mount Kenya University'),
-    ('Technical University of Kenya', 'Technical University of Kenya'),
-    ('Multimedia University', 'Multimedia University'),
-    ('Other', 'Other'),
-]
+from .utils import get_institution_choices
 
 SECTOR_CHOICES = [
     ('', '— Select Sector —'),
@@ -46,7 +33,7 @@ class StudentRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
     last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Email Address'}))
-    institution = forms.ChoiceField(choices=INSTITUTION_CHOICES)
+    institution = forms.ChoiceField(choices=[])
     course = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'placeholder': 'e.g. BSc Computer Science'}))
     year_of_study = forms.IntegerField(min_value=1, max_value=8, widget=forms.NumberInput(attrs={'placeholder': 'Year (1-8)'}))
     profile_photo = forms.ImageField(required=False)
@@ -55,6 +42,10 @@ class StudentRegisterForm(UserCreationForm):
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'username', 'institution',
                   'course', 'year_of_study', 'profile_photo', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['institution'].choices = get_institution_choices()
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -97,6 +88,10 @@ class StudentProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 4}),
             'skills': forms.TextInput(attrs={'placeholder': 'Python, Django, React, ...'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['institution'].widget = forms.Select(choices=get_institution_choices())
 
 
 class EmployerProfileForm(forms.ModelForm):

@@ -11,6 +11,30 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   {% block extra_css %}{% endblock %}
+  <style>
+    .portal-switch-link {
+        background: rgba(255,255,255,0.03);
+        border-radius: 12px;
+        padding: 12px 16px !important;
+        margin-top: 5px;
+        border: 1px solid rgba(255,255,255,0.05);
+        display: block;
+        transition: background 0.2s;
+    }
+    .portal-switch-link:hover {
+        background: rgba(255,255,255,0.06);
+    }
+    .gp-sidebar-nav .nav-section {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255,255,255,0.4);
+        margin-top: 20px;
+        margin-bottom: 8px;
+        padding-left: 15px;
+        font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 <!-- Top Bar -->
@@ -79,18 +103,48 @@
     </div>
     {% endif %}
     <ul class="gp-sidebar-nav">
-      <li class="nav-section">Main</li>
-      <li><a href="{% url 'campus_dashboard' %}" class="{% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}"><i class="fa fa-th-large"></i> Dashboard</a></li>
-      <li><a href="{% url 'campus_profile' %}" class="{% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}"><i class="fa fa-user"></i> My Profile</a></li>
-      <li class="nav-section">Opportunities</li>
-      <li><a href="{% url 'opportunity_list' %}" class="{% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}"><i class="fa fa-briefcase"></i> Browse Jobs</a></li>
-      <li class="nav-section">Academic</li>
-      <li><a href="{% url 'grades' %}" class="{% if request.resolver_match.url_name == 'grades' %}active{% endif %}"><i class="fa fa-chart-line"></i> My Grades</a></li>
-      <li><a href="{% url 'credentials_list' %}" class="{% if request.resolver_match.url_name == 'credentials_list' %}active{% endif %}"><i class="fa fa-certificate"></i> Credentials</a></li>
-      <li class="nav-section">Community</li>
-      <li><a href="{% url 'events_list' %}" class="{% if request.resolver_match.url_name == 'events_list' %}active{% endif %}"><i class="fa fa-calendar"></i> Events</a></li>
-      <li><a href="{% url 'networking' %}" class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><i class="fa fa-users"></i> Networking</a></li>
-      <li><a href="{% url 'collaborations' %}" class="{% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}"><i class="fa fa-people-arrows"></i> Collaborate</a></li>
+      <li class="nav-section">MY SPACE</li>
+      <li><a href="{% url 'campus_dashboard' %}" class="{% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}"><i class="fa fa-home"></i> Dashboard</a></li>
+      <li><a href="{% url 'campus_profile' %}" class="{% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}"><i class="fa fa-user"></i> Profile & CV</a></li>
+      <li><a href="{% url 'grades' %}" class="{% if request.resolver_match.url_name == 'grades' %}active{% endif %}"><i class="fa fa-chart-line"></i> Grades Tracker</a></li>
+      
+      <li class="nav-section">OPPORTUNITIES</li>
+      <li><a href="{% url 'opportunity_list' %}" class="{% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}"><i class="fa fa-briefcase"></i> Internships & Jobs</a></li>
+      <li>
+        <a href="{% url 'events_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'events_list' %}active{% endif %}">
+          <span><i class="fa fa-calendar-alt"></i> Events</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">4</span>
+        </a>
+      </li>
+      <li><a href="#"><i class="fa fa-seedling"></i> Youth Programs</a></li>
+      
+      <li class="nav-section">LEARNING</li>
+      <li><a href="{% url 'credentials_list' %}" class="{% if request.resolver_match.url_name == 'credentials_list' %}active{% endif %}"><i class="fa fa-medal"></i> Micro-Credentials</a></li>
+      <li><a href="#"><i class="fa fa-file-contract"></i> Prof. Qualifications</a></li>
+      <li>
+        <a href="{% url 'simulations_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'simulations_list' %}active{% endif %}">
+          <span><i class="fa fa-brain"></i> Simulations</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">New</span>
+        </a>
+      </li>
+
+      <li class="nav-section">NETWORK</li>
+      <li><a href="{% url 'networking' %}" class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><i class="fa fa-globe"></i> Networking</a></li>
+      <li><a href="{% url 'collaborations' %}" class="{% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}"><i class="fa fa-handshake"></i> Collaborations</a></li>
+      <li><a href="#"><i class="fa fa-building"></i> Partner Institutions</a></li>
+      
+      <li class="nav-section mt-4 mb-2">SWITCH PORTAL</li>
+      <li>
+        <a href="#" class="portal-switch-link text-decoration-none">
+          <div class="d-flex align-items-center">
+            <i class="fa fa-graduation-cap me-3 fa-lg" style="color:#aba499;"></i>
+            <div>
+              <div class="fw-bold" style="color:var(--gp-green); font-size:14px;">UniMart Placement</div>
+              <div style="color:#aba499; font-size:12px;">KCSE Graduate portal &rarr;</div>
+            </div>
+          </div>
+        </a>
+      </li>
     </ul>
   </aside>
 

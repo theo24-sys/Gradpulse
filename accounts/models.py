@@ -18,6 +18,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=20, blank=True)
     location = models.CharField(max_length=100, blank=True)
     is_verified = models.BooleanField(default=False)
+    is_premium = models.BooleanField(default=False)
 
     # Student fields
     institution = models.CharField(max_length=200, blank=True)

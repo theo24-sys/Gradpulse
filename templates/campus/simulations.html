@@ -1,0 +1,71 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block campus_content %}
+<div class="px-4 py-4">
+  <div class="mb-5 d-flex justify-content-between align-items-end">
+    <div>
+      <h2 class="fw-bold mb-2">Scenario-Based Learning</h2>
+      <p class="text-muted mb-0">Immerse yourself in real-world professional scenarios to hone your skills.</p>
+    </div>
+    {% if not user.is_premium %}
+      <a href="{% url 'premium_upgrade' %}" class="btn btn-warning fw-bold text-dark px-4 py-2" style="border-radius: 12px; font-family: 'DM Serif Display', serif;">
+        <i class="fa fa-crown me-2"></i>Go Premium
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-4">
+    {% for sim in simulations %}
+      <div class="col-md-6 col-xl-4">
+        <div class="card h-100 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; background: white;">
+          <div class="card-body p-4 position-relative">
+            {% if sim.is_premium and not user.is_premium %}
+              <!-- Blur Overlay for Freemium Users -->
+              <div class="position-absolute w-100 h-100 top-0 start-0 d-flex flex-column align-items-center justify-content-center" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); z-index: 10;">
+                <i class="fa fa-lock fa-3x text-muted mb-3"></i>
+                <div class="fw-bold text-dark mb-3">Premium Scenario</div>
+                <a href="{% url 'premium_upgrade' %}" class="btn btn-warning fw-bold btn-sm rounded-pill px-4">Unlock</a>
+              </div>
+            {% endif %}
+            
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="badge rounded-pill" style="background: rgba(var(--gp-green-rgb), 0.1); color: var(--gp-green);">{{ sim.category }}</span>
+              {% if sim.difficulty == 'Beginner' %}
+                <span class="badge bg-success rounded-pill px-3">{{ sim.difficulty }}</span>
+              {% elif sim.difficulty == 'Intermediate' %}
+                <span class="badge bg-primary rounded-pill px-3">{{ sim.difficulty }}</span>
+              {% else %}
+                <span class="badge bg-danger rounded-pill px-3">{{ sim.difficulty }}</span>
+              {% endif %}
+            </div>
+
+            <h5 class="fw-bold mb-3">{{ sim.title }}</h5>
+            <p class="text-muted small mb-4">{{ sim.description|truncatewords:20 }}</p>
+
+            <div class="d-flex align-items-center text-muted small mb-4">
+              <i class="fa fa-clock me-2"></i> {{ sim.duration_minutes }} mins
+              <i class="fa fa-circle mx-3" style="font-size: 4px;"></i>
+              {% if sim.is_premium %}
+                <i class="fa fa-crown text-warning me-2"></i> Premium
+              {% else %}
+                <i class="fa fa-gift text-success me-2"></i> Free
+              {% endif %}
+            </div>
+
+            <button class="btn w-100 fw-500 rounded-pill" style="background: var(--gp-green); color: white;">Start Simulation</button>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 py-5 text-center bg-white rounded-4 shadow-sm">
+        <div class="mb-3">
+          <i class="fa fa-brain fa-3x text-muted"></i>
+        </div>
+        <h5>No simulations available right now.</h5>
+        <p class="text-muted">Check back later for new interactive scenarios.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
