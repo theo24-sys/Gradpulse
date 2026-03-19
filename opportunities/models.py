@@ -77,4 +77,18 @@ class Application(models.Model):
 
     class Meta:
         unique_together = ('student', 'opportunity')
-        ordering = ['-applied_at']
+class YouthProgram(models.Model):
+    title = models.CharField(max_length=200)
+    organization = models.CharField(max_length=200)
+    description = models.TextField()
+    location = models.CharField(max_length=200, blank=True)
+    category = models.CharField(max_length=100, blank=True)
+    deadline = models.DateField(null=True, blank=True)
+    link = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} by {self.organization}"
+
+    class Meta:
+        ordering = ['-created_at']

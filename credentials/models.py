@@ -55,3 +55,19 @@ class Simulation(models.Model):
 
     def __str__(self):
         return f"{self.title} ({'Premium' if self.is_premium else 'Free'})"
+
+
+class ProfessionalQualification(models.Model):
+    title = models.CharField(max_length=200)
+    provider = models.CharField(max_length=200)
+    description = models.TextField()
+    category = models.CharField(max_length=100, blank=True)
+    duration = models.CharField(max_length=100, blank=True)
+    link = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} — {self.provider}"
+
+    class Meta:
+        ordering = ['-created_at']

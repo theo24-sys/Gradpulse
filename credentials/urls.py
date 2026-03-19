@@ -8,4 +8,5 @@ urlpatterns = [
     path('simulations/premium/', views.premium_upgrade, name='premium_upgrade'),
     path('simulations/manage/', views.manage_simulations, name='manage_simulations'),
     path('simulations/create/', views.simulation_create, name='simulation_create'),
+    path('qualifications/', views.qualifications_list, name='qualifications_list'),
 ]

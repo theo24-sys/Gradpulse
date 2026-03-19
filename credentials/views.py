@@ -48,15 +48,18 @@ def premium_upgrade(request):
 
 @login_required
 def manage_simulations(request):
-    if not request.user.is_employer:
+    if not (request.user.is_employer or request.user.is_superuser):
         return redirect('home')
-    simulations = Simulation.objects.filter(created_by=request.user)
+    if request.user.is_superuser:
+        simulations = Simulation.objects.all()
+    else:
+        simulations = Simulation.objects.filter(created_by=request.user)
     return render(request, 'corporate/manage_simulations.html', {'simulations': simulations})
 
 
 @login_required
 def simulation_create(request):
-    if not request.user.is_employer:
+    if not (request.user.is_employer or request.user.is_superuser):
         return redirect('home')
     if request.method == 'POST':
         form = SimulationForm(request.POST)
@@ -70,3 +73,9 @@ def simulation_create(request):
     else:
         form = SimulationForm()
     return render(request, 'corporate/simulation_form.html', {'form': form, 'title': 'Create Simulation'})
+
+
+def qualifications_list(request):
+    from .models import ProfessionalQualification
+    quals = ProfessionalQualification.objects.all().order_by('-created_at')
+    return render(request, 'campus/qualifications.html', {'qualifications': quals})

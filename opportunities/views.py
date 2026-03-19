@@ -61,8 +61,8 @@ def apply_opportunity(request, pk):
 
 @login_required
 def post_opportunity(request):
-    if not request.user.is_employer:
-        messages.error(request, 'Only employers can post opportunities.')
+    if not (request.user.is_employer or request.user.is_superuser):
+        messages.error(request, 'Only employers or administrators can post opportunities.')
         return redirect('campus_dashboard')
     if request.method == 'POST':
         form = OpportunityForm(request.POST)
@@ -79,7 +79,10 @@ def post_opportunity(request):
 
 @login_required
 def edit_opportunity(request, pk):
-    opp = get_object_or_404(Opportunity, pk=pk, company=request.user)
+    if request.user.is_superuser:
+        opp = get_object_or_404(Opportunity, pk=pk)
+    else:
+        opp = get_object_or_404(Opportunity, pk=pk, company=request.user)
     if request.method == 'POST':
         form = OpportunityForm(request.POST, instance=opp)
         if form.is_valid():
@@ -89,3 +92,9 @@ def edit_opportunity(request, pk):
     else:
         form = OpportunityForm(instance=opp)
     return render(request, 'opportunities/post.html', {'form': form, 'editing': True})
+
+
+def youth_programs_list(request):
+    from .models import YouthProgram
+    programs = YouthProgram.objects.all().order_by('-created_at')
+    return render(request, 'campus/youth_programs.html', {'programs': programs})

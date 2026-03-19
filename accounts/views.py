@@ -118,20 +118,33 @@ def campus_profile(request):
 
 @login_required
 def corporate_dashboard(request):
-    if not request.user.is_employer:
+    if not (request.user.is_employer or request.user.is_superuser):
         return redirect('campus_dashboard')
     user = request.user
-    my_listings = Opportunity.objects.filter(company=user).annotate(
-        app_count=Count('applications')
-    ).order_by('-created_at')
-    recent_applications = Application.objects.filter(
-        opportunity__company=user
-    ).select_related('student', 'opportunity').order_by('-applied_at')[:10]
+    if user.is_superuser:
+        my_listings = Opportunity.objects.all().annotate(
+            app_count=Count('applications')
+        ).order_by('-created_at')
+        recent_applications = Application.objects.all().select_related('student', 'opportunity').order_by('-applied_at')[:10]
+        total_apps = Application.objects.count()
+        shortlisted = Application.objects.filter(status='shortlisted').count()
+        hired = Application.objects.filter(status='hired').count()
+    else:
+        my_listings = Opportunity.objects.filter(company=user).annotate(
+            app_count=Count('applications')
+        ).order_by('-created_at')
+        recent_applications = Application.objects.filter(
+            opportunity__company=user
+        ).select_related('student', 'opportunity').order_by('-applied_at')[:10]
+        total_apps = Application.objects.filter(opportunity__company=user).count()
+        shortlisted = Application.objects.filter(opportunity__company=user, status='shortlisted').count()
+        hired = Application.objects.filter(opportunity__company=user, status='hired').count()
+    
     stats = {
         'active_listings': my_listings.filter(status='active').count(),
-        'total_applications': Application.objects.filter(opportunity__company=user).count(),
-        'shortlisted': Application.objects.filter(opportunity__company=user, status='shortlisted').count(),
-        'hired': Application.objects.filter(opportunity__company=user, status='hired').count(),
+        'total_applications': total_apps,
+        'shortlisted': shortlisted,
+        'hired': hired,
     }
     return render(request, 'corporate/dashboard.html', {
         'user': user,

@@ -1,0 +1,45 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block title %}Professional Qualifications — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="px-4 py-4">
+  <div class="mb-5">
+    <h2 class="fw-bold mb-2">Professional Qualifications</h2>
+    <p class="text-muted">Accredited certifications and professional courses from globally recognized providers.</p>
+  </div>
+
+  <div class="row g-4">
+    {% for qual in qualifications %}
+      <div class="col-md-6 col-xl-4">
+        <div class="gp-card h-100">
+          <div class="gp-card-body d-flex flex-column h-100">
+            <div class="mb-3 d-flex justify-content-between">
+              <span class="pill pill-shortlisted">{{ qual.category|default:"Certification" }}</span>
+              <span class="small text-muted"><i class="fa fa-hourglass me-1"></i> {{ qual.duration|default:"Self-paced" }}</span>
+            </div>
+            <h5 class="fw-bold mb-2">{{ qual.title }}</h5>
+            <div class="text-muted small mb-3">
+              <i class="fa fa-award me-1"></i> Provided by <strong>{{ qual.provider }}</strong>
+            </div>
+            <p class="text-muted small flex-grow-1">{{ qual.description|truncatewords:25 }}</p>
+            
+            <div class="mt-auto pt-3 border-top border-opacity-10">
+              <a href="{{ qual.link|default:'#' }}" target="_blank" class="btn gp-btn-primary w-100 btn-sm">Get Certified</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="mb-3 opacity-20">
+          <i class="fa fa-award fa-4x text-muted"></i>
+        </div>
+        <h5>Expanding our catalog...</h5>
+        <p class="text-muted">More professional pathways are being added right now.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,8 +1,8 @@
-{% extends 'campus/layout.html' %}
+{% extends 'corporate/layout.html' %}
 
 {% block title %}Create Simulation — GradPulse{% endblock %}
 
-{% block campus_content %}
+{% block corporate_content %}
 <div class="dash-header mb-4">
     <div class="dash-greeting">New Scenario</div>
     <h1 class="dash-title">{{ title }}</h1>
@@ -41,9 +41,9 @@
                             <div class="form-text">Link to the interactive module, video, or scenario document.</div>
                         </div>
                         <div class="col-12 mt-4">
-                            <div class="form-check form-switch p-3 bg-light rounded-3">
-                                {{ form.is_premium }}
-                                <label class="form-check-label ms-2 fw-bold" for="{{ form.is_premium.id_for_label }}">Require Premium Access</label>
+                            <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.05); border: 1px dashed var(--gp-border);">
+                                <i class="fa fa-info-circle me-2 text-orange"></i>
+                                <span class="small text-muted">This simulation will be automatically marked as <strong>Premium</strong> for platform verification.</span>
                             </div>
                         </div>
                     </div>
