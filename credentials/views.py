@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Credential, Enrollment, Simulation
+from django.contrib.auth.decorators import login_required
+from django.db import ProgrammingError
+from django.shortcuts import get_object_or_404, redirect, render
+
 from accounts.ai_utils import generate_simulation_scenario
+from .models import Credential, Enrollment, Simulation
 
 
 @login_required
@@ -28,7 +30,12 @@ from .forms import SimulationForm
 
 @login_required
 def simulations_list(request):
-    simulations = Simulation.objects.all().order_by('-created_at')
+    try:
+        simulations = Simulation.objects.all().order_by('-created_at')
+        # Force evaluation
+        list(simulations[:1])
+    except ProgrammingError:
+        simulations = []
     return render(request, 'campus/simulations.html', {'simulations': simulations})
 
 
@@ -124,5 +131,10 @@ def simulation_play(request, pk):
 
 def qualifications_list(request):
     from .models import ProfessionalQualification
-    quals = ProfessionalQualification.objects.all().order_by('-created_at')
+    try:
+        quals = ProfessionalQualification.objects.all().order_by('-created_at')
+        # Force evaluation
+        list(quals[:1])
+    except ProgrammingError:
+        quals = []
     return render(request, 'campus/qualifications.html', {'qualifications': quals})
