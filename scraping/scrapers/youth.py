@@ -36,7 +36,8 @@ class MastercardFoundationScraper(BaseScraper):
     base_url = "https://mastercardfdn.org/all-programs"
 
     def parse(self):
-        html = self.fetch_js(self.base_url)
+        # Using standard fetch as Playwright is removed
+        html = self.fetch_html(self.base_url)
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')

@@ -37,8 +37,8 @@ class MeetupScraper(BaseScraper):
     base_url = "https://www.meetup.com/find/?location=Nairobi&categoryId=546"
 
     def parse(self):
-        # Meetup is JS heavy
-        html = self.fetch_js(self.base_url)
+        # Using standard fetch as Playwright is removed
+        html = self.fetch_html(self.base_url)
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')

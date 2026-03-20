@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from django.utils import timezone
 from .models import ScrapedItem, ScrapeLog
-from playwright.sync_api import sync_playwright
 import json
 import re
 
@@ -43,18 +42,8 @@ class BaseScraper:
             return None
 
     def fetch_js(self, url):
-        """JS-rendered fetch using Playwright."""
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                page = browser.new_page(user_agent=self.ua.random)
-                page.goto(url, wait_until="networkidle", timeout=60000)
-                content = page.content()
-                browser.close()
-                return content
-        except Exception as e:
-            logger.error(f"Playwright error fetching {url}: {e}")
-            return None
+        """Fallback to fetch_html since Playwright is removed."""
+        return self.fetch_html(url)
 
     def get_course_tags(self, title, description):
         """Keyword matching for courses."""
