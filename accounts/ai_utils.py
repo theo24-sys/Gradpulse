@@ -69,8 +69,14 @@ def parse_text_transcript_with_gemini(text):
         data = json.loads(content)
         return data
     except Exception as e:
-        logger.error(f"Gemini text parsing error: {e}")
-        return []
+        error_str = str(e)
+        if "429" in error_str or "quota" in error_str.lower():
+            logger.error(f"Gemini API Quota Exceeded (Likely Token Depleted): {e}")
+        elif "403" in error_str or "permission" in error_str.lower():
+            logger.error(f"Gemini API Permission Denied (Check API Key): {e}")
+        else:
+            logger.error(f"Gemini text parsing error: {e}")
+        return {"error": f"AI Parsing failed: {error_str}"}
 
 def parse_transcript_with_gemini(pdf_file):
     """
@@ -145,5 +151,9 @@ def generate_search_queries(traits, category="events"):
         queries = response.text.strip().split('\n')
         return [q.strip() for q in queries if q.strip()]
     except Exception as e:
-        logger.error(f"Gemini query generation error: {e}")
+        error_str = str(e)
+        if "429" in error_str or "quota" in error_str.lower():
+            logger.error(f"Gemini API Quota Exceeded (Scraping Failed): {e}")
+        else:
+            logger.error(f"Gemini query generation error: {e}")
         return []

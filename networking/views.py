@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
-from .models import Connection, Collaboration, CollaborationMember
+from .models import Connection, Collaboration, CollaborationMember, Message
 from accounts.models import CustomUser
 
 
@@ -43,3 +43,49 @@ def accept_connection(request, pk):
 def collaborations_view(request):
     collabs = Collaboration.objects.all().order_by('-created_at')
     return render(request, 'campus/collaborations.html', {'collabs': collabs})
+
+
+@login_required
+def inbox_view(request):
+    # Get all users the current user has messaged or received messages from
+    sent_msgs = Message.objects.filter(sender=request.user).values_list('receiver', flat=True)
+    received_msgs = Message.objects.filter(receiver=request.user).values_list('sender', flat=True)
+    user_ids = set(list(sent_msgs) + list(received_msgs))
+    
+    conversations = []
+    for uid in user_ids:
+        other_user = CustomUser.objects.get(pk=uid)
+        last_msg = Message.objects.filter(
+            Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+        ).order_by('-timestamp').first()
+        conversations.append({
+            'user': other_user,
+            'last_message': last_msg,
+        })
+    
+    # Sort by last message timestamp
+    conversations.sort(key=lambda x: x['last_message'].timestamp if x['last_message'] else 0, reverse=True)
+    
+    return render(request, 'networking/inbox.html', {'conversations': conversations})
+
+
+@login_required
+def chat_detail_view(request, pk):
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    messages = Message.objects.filter(
+        Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+    ).order_by('timestamp')
+    
+    # Mark as read
+    Message.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+    
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(sender=request.user, receiver=other_user, content=content)
+            return redirect('chat_detail', pk=pk)
+            
+    return render(request, 'networking/chat.html', {
+        'other_user': other_user,
+        'chat_messages': messages,
+    })

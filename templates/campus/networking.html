@@ -46,8 +46,9 @@
           <div class="text-muted" style="font-size:.75rem;">{{ student.institution|truncatechars:28 }}</div>
           <div class="text-muted" style="font-size:.75rem;">{{ student.course|truncatechars:28 }}</div>
           {% if student.open_to_work %}<span class="pill pill-hired mt-1" style="font-size:.7rem;"><i class="fa fa-circle me-1"></i>Open to Work</span>{% endif %}
-          <div class="mt-2">
+          <div class="mt-2 d-flex gap-1">
             <a href="{% url 'send_connection' student.pk %}" class="btn gp-btn-navy btn-sm px-2">Connect</a>
+            <a href="{% url 'chat_detail' student.pk %}" class="btn gp-btn-outline btn-sm px-2"><i class="fa fa-envelope"></i></a>
           </div>
         </div>
       </div>

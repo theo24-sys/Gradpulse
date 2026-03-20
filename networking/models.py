@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Connection(models.Model):
@@ -46,3 +49,19 @@ class CollaborationMember(models.Model):
 
     class Meta:
         unique_together = ('collaboration', 'user')
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                               related_name='sent_messages')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                 related_name='received_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.sender} → {self.receiver} ({self.timestamp.strftime('%Y-%m-%d %H:%M')})"
+
+    class Meta:
+        ordering = ['timestamp']

@@ -13,12 +13,12 @@
   --gp-green: #2ecc71;
   --gp-gray: #f4f6f9;
   
-  /* Layout Colors - Light Theme */
-  --gp-bg: #f8f9fa; /* Light Grey Background */
-  --gp-bg-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  --gp-surface: #ffffff;
-  --gp-surface-light: #ffffff;
-  --gp-glass: rgba(255, 255, 255, 0.9);
+  /* Layout Colors - 30% Orange Theme */
+  --gp-bg: #fff5eb; /* Light Orange Tint */
+  --gp-bg-gradient: linear-gradient(135deg, #fff5eb 0%, #ffead4 100%);
+  --gp-surface: #fffdfa; /* Soft Off-White Orange Tint */
+  --gp-surface-light: #fffdfa;
+  --gp-glass: rgba(255, 253, 250, 0.9);
   
   /* Text */
   --gp-text: #2c3e50;
@@ -53,8 +53,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--gp-bg);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(0, 206, 209, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(0, 139, 139, 0.03) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(217, 126, 27, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(217, 126, 27, 0.03) 0px, transparent 50%);
   color: var(--gp-text);
   line-height: 1.6;
   overflow-x: hidden;
