@@ -77,6 +77,7 @@
       <li><a href="{% url 'campus_dashboard' %}" class="{% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}"><i class="fa fa-home"></i> Dashboard</a></li>
       <li><a href="{% url 'campus_profile' %}" class="{% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}"><i class="fa fa-user"></i> Profile & CV</a></li>
       <li><a href="{% url 'grades' %}" class="{% if request.resolver_match.url_name == 'grades' %}active{% endif %}"><i class="fa fa-chart-line"></i> Grades Tracker</a></li>
+      <li><a href="{% url 'transcript_upload' %}" class="{% if request.resolver_match.url_name == 'transcript_upload' %}active{% endif %}"><i class="fa fa-magic"></i> AI Transcript Analysis</a></li>
       
       <li class="nav-section">OPPORTUNITIES</li>
       <li><a href="{% url 'opportunity_list' %}" class="{% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}"><i class="fa fa-briefcase"></i> Internships & Jobs</a></li>

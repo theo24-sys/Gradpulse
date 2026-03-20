@@ -8,6 +8,8 @@ from .forms import StudentRegisterForm, EmployerRegisterForm, StudentProfileForm
 from opportunities.models import Opportunity, Application
 from events.models import Event
 from networking.models import Connection
+from grades.models import Grade
+from .ai_utils import parse_transcript_with_gemini
 
 
 def home(request):
@@ -116,6 +118,56 @@ def campus_profile(request):
     else:
         form = StudentProfileForm(instance=request.user)
     return render(request, 'campus/profile.html', {'form': form})
+
+
+@login_required
+def transcript_upload(request):
+    if not request.user.is_student:
+        return redirect('home')
+        
+    if request.method == 'POST' and request.FILES.get('transcript'):
+        pdf_file = request.FILES['transcript']
+        
+        # 1. Call Gemini to parse
+        messages.info(request, "AI is analyzing your transcript, please wait...")
+        data = parse_transcript_with_gemini(pdf_file)
+        
+        if isinstance(data, dict) and "error" in data:
+            messages.error(request, f"AI Parsing failed: {data['error']}")
+            return redirect('campus_dashboard')
+            
+        # 2. Save grades
+        count = 0
+        for item in data:
+            try:
+                # Basic cleaning of data from AI
+                unit_name = item.get('course_name') or item.get('unit_name')
+                grade_val = item.get('grade')
+                semester = item.get('semester', '')
+                year_str = str(item.get('year', ''))
+                year = int(year_str) if year_str.isdigit() else None
+                
+                if unit_name and grade_val:
+                    Grade.objects.create(
+                        student=request.user,
+                        unit_name=unit_name,
+                        grade=grade_val,
+                        semester=semester,
+                        year=year
+                    )
+                    count += 1
+            except Exception as e:
+                print(f"Error saving grade: {e}")
+                continue
+                
+        if count > 0:
+            messages.success(request, f"Successfully extracted {count} grades using AI!")
+        else:
+            messages.warning(request, "AI couldn't find any grades in that PDF.")
+            
+        return redirect('campus_dashboard')
+        
+    return render(request, 'campus/transcript_upload.html')
 
 
 # ─── Employer / Corporate Views ───────────────────────────────────────────────

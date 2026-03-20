@@ -53,7 +53,7 @@
               {% endif %}
             </div>
 
-            <button class="btn w-100 fw-500 rounded-pill" style="background: var(--gp-green); color: white;">Start Simulation</button>
+            <a href="{% url 'simulation_play' sim.pk %}" class="btn w-100 fw-500 rounded-pill" style="background: var(--gp-green); color: white;">Start Simulation</a>
           </div>
         </div>
       </div>

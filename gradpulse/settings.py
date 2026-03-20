@@ -15,6 +15,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-gradpulse-change-in-production-xyz-123-abc')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
 
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin

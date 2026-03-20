@@ -10,9 +10,14 @@
             <div class="dash-greeting">Creator Studio</div>
             <h1 class="dash-title">My Simulations</h1>
         </div>
-        <a href="{% url 'simulation_create' %}" class="btn gp-btn-primary">
-            <i class="fa fa-plus me-2"></i>Create New Scenario
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{% url 'simulation_generate_ai' %}" class="btn gp-btn-outline">
+                <i class="fas fa-sparkles me-2 text-info"></i>Generate with AI
+            </a>
+            <a href="{% url 'simulation_create' %}" class="btn gp-btn-primary">
+                <i class="fa fa-plus me-2"></i>Create New Scenario
+            </a>
+        </div>
     </div>
 </div>
 

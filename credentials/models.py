@@ -49,8 +49,8 @@ class Simulation(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
                                     related_name='created_simulations', null=True, blank=True,
                                     limit_choices_to={'portal_type': 'employer'})
-    content_url = models.URLField(blank=True, help_text="Link to external scenario content or interactive video")
-    
+    is_ai_generated = models.BooleanField(default=False)
+    json_content = models.JSONField(null=True, blank=True, help_text="Stores AI-generated scenario JSON")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

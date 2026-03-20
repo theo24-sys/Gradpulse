@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Credential, Enrollment, Simulation
+from accounts.ai_utils import generate_simulation_scenario
 
 
 @login_required
@@ -73,6 +74,56 @@ def simulation_create(request):
     else:
         form = SimulationForm()
     return render(request, 'corporate/simulation_form.html', {'form': form, 'title': 'Create Simulation'})
+
+
+@login_required
+def simulation_generate_ai(request):
+    if not (request.user.is_employer or request.user.is_superuser):
+        return redirect('home')
+        
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        if topic:
+            messages.info(request, f"Gemini is designing a simulation for '{topic}'...")
+            scenario = generate_simulation_scenario(topic)
+            
+            if scenario:
+                simulation = Simulation.objects.create(
+                    title=scenario.get('title', f"AI: {topic}"),
+                    description=scenario.get('situation', ''),
+                    category="AI Generated",
+                    difficulty="Intermediate",
+                    is_premium=True,
+                    is_ai_generated=True,
+                    json_content=scenario,
+                    created_by=request.user
+                )
+                messages.success(request, f"AI Simulation '{simulation.title}' generated successfully!")
+                return redirect('manage_simulations')
+            else:
+                messages.error(request, "AI failed to generate a scenario. Please try a different topic.")
+                
+    return render(request, 'corporate/simulation_ai_form.html')
+
+
+@login_required
+def simulation_play(request, pk):
+    simulation = get_object_or_404(Simulation, pk=pk)
+    
+    # Premium check
+    if simulation.is_premium and not request.user.is_premium:
+        messages.warning(request, "This is a Premium simulation. Please upgrade to access.")
+        return redirect('premium_upgrade')
+        
+    if simulation.is_ai_generated:
+        return render(request, 'campus/simulation_play.html', {'simulation': simulation})
+    
+    # Fallback for old URL-based simulations
+    if simulation.content_url:
+        return redirect(simulation.content_url)
+        
+    messages.error(request, "This simulation has no interactive content.")
+    return redirect('simulations_list')
 
 
 def qualifications_list(request):
