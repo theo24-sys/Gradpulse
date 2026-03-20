@@ -118,10 +118,6 @@ def simulation_play(request, pk):
     if simulation.is_ai_generated:
         return render(request, 'campus/simulation_play.html', {'simulation': simulation})
     
-    # Fallback for old URL-based simulations
-    if simulation.content_url:
-        return redirect(simulation.content_url)
-        
     messages.error(request, "This simulation has no interactive content.")
     return redirect('simulations_list')
 

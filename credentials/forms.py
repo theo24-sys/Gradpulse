@@ -4,8 +4,7 @@ from .models import Simulation
 class SimulationForm(forms.ModelForm):
     class Meta:
         model = Simulation
-        fields = ['title', 'description', 'category', 'difficulty', 'duration_minutes', 'content_url']
+        fields = ['title', 'description', 'category', 'difficulty', 'duration_minutes']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'content_url': forms.URLInput(attrs={'placeholder': 'https://example.com/scenario-data'}),
         }

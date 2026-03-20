@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'events',
     'networking',
     'notifications',
+    'scraping',
 ]
 
 MIDDLEWARE = [
@@ -192,6 +193,39 @@ CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'default'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'scrape-opportunities-daily': {
+        'task': 'scraping.tasks.run_opportunity_scrapers',
+        'schedule': crontab(hour=6, minute=0), # 6am Africa/Nairobi (server should be in EAT or env TZ set)
+    },
+    'scrape-events-twice-daily': {
+        'task': 'scraping.tasks.run_event_scrapers',
+        'schedule': crontab(hour='6,18', minute=0), # 6am and 6pm
+    },
+    'scrape-credentials-weekly': {
+        'task': 'scraping.tasks.run_credential_scrapers',
+        'schedule': crontab(hour=2, minute=0, day_of_week='monday'),
+    },
+    'scrape-qualifications-weekly': {
+        'task': 'scraping.tasks.run_qualification_scrapers',
+        'schedule': crontab(hour=3, minute=0, day_of_week='monday'),
+    },
+    'scrape-youth-programs-weekly': {
+        'task': 'scraping.tasks.run_youth_program_scrapers',
+        'schedule': crontab(hour=4, minute=0, day_of_week='monday'),
+    },
+    'scrape-simulations-weekly': {
+        'task': 'scraping.tasks.run_simulation_scrapers',
+        'schedule': crontab(hour=5, minute=0, day_of_week='monday'),
+    },
+    'scrape-all-full-weekly': {
+        'task': 'scraping.tasks.run_all_scrapers',
+        'schedule': crontab(hour=1, minute=0, day_of_week='sunday'),
+    },
+}
 
 # ─── Email (Resend via Anymail) ───────────────────────────────────────────────
 if env('RESEND_API_KEY', default=''):
