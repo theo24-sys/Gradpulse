@@ -15,5 +15,7 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('networking/', include('networking.urls')),
     path('notifications/', include('notifications.urls')),
+    # Support /scraping without trailing slash (some links omit it)
+    path('scraping', include('scraping.urls')),
     path('scraping/', include('scraping.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
