@@ -5,11 +5,7 @@
 
 {% block campus_content %}
 <div class="d-flex align-items-center gap-3 mb-4">
-  {% if user.profile_photo %}
-    <img src="{{ user.profile_photo.url }}" class="rounded-circle" width="72" height="72" style="object-fit:cover;border:3px solid var(--gp-green);">
-  {% else %}
-    <div class="gp-avatar-lg">{{ user.display_name|first|upper }}</div>
-  {% endif %}
+    <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="72" height="72" style="object-fit:cover;border:3px solid var(--gp-green);">
   <div>
     <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">{{ user.display_name }}</h2>
     <div class="text-muted small">{{ user.institution }} · {{ user.course }}</div>
