@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'networking',
     'notifications',
     'scraping',
-    'captcha',
+    'django_recaptcha',
 ]
 
 MIDDLEWARE = [
