@@ -1,5 +1,6 @@
 try:
-    import google.generativeai as genai
+    # New package
+    from google import genai
 except ImportError:
     genai = None
 
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Configure Gemini
 try:
-    if hasattr(settings, 'GOOGLE_API_KEY') and settings.GOOGLE_API_KEY:
+    if genai is not None and hasattr(settings, 'GOOGLE_API_KEY') and settings.GOOGLE_API_KEY:
         genai.configure(api_key=settings.GOOGLE_API_KEY)
     else:
         logger.warning("GOOGLE_API_KEY not found in settings.")
@@ -36,6 +37,10 @@ def parse_text_transcript_with_gemini(text):
     Uses Gemini 1.5 Flash to parse raw transcript text and return a list of grades.
     """
     if not text.strip():
+        return []
+
+    if genai is None:
+        logger.warning("Gemini client not available (google.genai not installed).")
         return []
 
     model = genai.GenerativeModel('gemini-1.5-flash')
@@ -80,6 +85,10 @@ def generate_simulation_scenario(topic):
     """
     Generates a learning simulation scenario based on a specific topic.
     """
+    if genai is None:
+        logger.warning("Gemini client not available (google.genai not installed).")
+        return None
+
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
@@ -119,6 +128,10 @@ def generate_search_queries(traits, category="events"):
     Generates specific search queries based on student traits and a category.
     Used for scraping industry events, internships, or certifications.
     """
+    if genai is None:
+        logger.warning("Gemini client not available (google.genai not installed).")
+        return []
+
     model = genai.GenerativeModel('gemini-1.5-flash')
     
     prompt = f"""
