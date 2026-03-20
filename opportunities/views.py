@@ -97,6 +97,7 @@ def edit_opportunity(request, pk):
 def youth_programs_list(request):
     from .models import YouthProgram
     programs = YouthProgram.objects.all().order_by('-created_at')
+    return render(request, 'campus/youth_programs.html', {'programs': programs})
 @login_required
 def scrape_discovery(request):
     if not request.user.is_superuser:

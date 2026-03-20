@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .utils import get_items_for_student
+from django.db import ProgrammingError
 
 @login_required
 def external_opportunities(request):
@@ -8,11 +9,14 @@ def external_opportunities(request):
     # Attempt to get student profile
     profile = getattr(request.user, 'student_profile', None)
     
-    opportunities = get_items_for_student(
-        student_profile=profile,
-        source_type='opportunities',
-        limit=20
-    )
+    try:
+        opportunities = get_items_for_student(
+            student_profile=profile,
+            source_type='opportunities',
+            limit=20
+        )
+    except ProgrammingError:
+        opportunities = []
     
     return render(request, 'campus/external_opportunities.html', {
         'items': opportunities,
@@ -23,7 +27,10 @@ def external_opportunities(request):
 @login_required
 def external_events(request):
     profile = getattr(request.user, 'student_profile', None)
-    events = get_items_for_student(profile, source_type='events', limit=20)
+    try:
+        events = get_items_for_student(profile, source_type='events', limit=20)
+    except ProgrammingError:
+        events = []
     return render(request, 'campus/external_opportunities.html', {
         'items': events,
         'title': 'Industry Events',
@@ -33,7 +40,10 @@ def external_events(request):
 @login_required
 def external_learning(request):
     profile = getattr(request.user, 'student_profile', None)
-    items = get_items_for_student(profile, source_type='credentials', limit=20)
+    try:
+        items = get_items_for_student(profile, source_type='credentials', limit=20)
+    except ProgrammingError:
+        items = []
     return render(request, 'campus/external_opportunities.html', {
         'items': items,
         'title': 'Micro-Credentials & Courses',
