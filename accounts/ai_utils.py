@@ -31,13 +31,12 @@ def extract_text_from_pdf(pdf_file):
         logger.error(f"PDF extraction error: {e}")
         return None
 
-def parse_transcript_with_gemini(pdf_file):
+def parse_text_transcript_with_gemini(text):
     """
-    Uses Gemini 1.5 Flash to parse a student transcript and return a list of grades.
+    Uses Gemini 1.5 Flash to parse raw transcript text and return a list of grades.
     """
-    text = extract_text_from_pdf(pdf_file)
-    if not text:
-        return {"error": "Could not extract text from PDF"}
+    if not text.strip():
+        return []
 
     model = genai.GenerativeModel('gemini-1.5-flash')
     
@@ -45,28 +44,37 @@ def parse_transcript_with_gemini(pdf_file):
     Act as a transcript parser for a Kenyan University system. 
     Below is the raw text extracted from a student transcript. 
     Extract all course units and their respective grades into a structured JSON list.
+    Course units should have unit_name, grade, credit_hours (as int), semester, and year (as int).
     
     Format required:
     [
-        {{"course_code": "CSC 101", "course_name": "Introduction to Programming", "grade": "A", "semester": "Semester 1", "year": "2023"}},
+        {{"unit_name": "Introduction to Programming", "grade": "A", "credit_hours": 3, "semester": "Semester 1", "year": 2023}},
         ...
     ]
     
     Transcription Text:
     {text}
     
-    Return ONLY JSON. Do not include markdown formatting or explanations.
+    Return ONLY JSON.
     """
 
     try:
         response = model.generate_content(prompt)
-        # Clean response (remove ```json wrappers if present)
         content = response.text.replace('```json', '').replace('```', '').strip()
         data = json.loads(content)
         return data
     except Exception as e:
-        logger.error(f"Gemini parsing error: {e}")
-        return {"error": str(e)}
+        logger.error(f"Gemini text parsing error: {e}")
+        return []
+
+def parse_transcript_with_gemini(pdf_file):
+    """
+    Uses Gemini 1.5 Flash to parse a student transcript and return a list of grades.
+    """
+    text = extract_text_from_pdf(pdf_file)
+    if not text:
+        return {"error": "Could not extract text from PDF"}
+    return parse_text_transcript_with_gemini(text)
 
 def generate_simulation_scenario(topic):
     """
@@ -105,3 +113,24 @@ def generate_simulation_scenario(topic):
     except Exception as e:
         logger.error(f"Gemini simulation generation error: {e}")
         return None
+
+def generate_search_queries(traits, category="events"):
+    """
+    Generates specific search queries based on student traits and a category.
+    Used for scraping industry events, internships, or certifications.
+    """
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    prompt = f"""
+    Based on these student traits: {traits}, generate 3 specific search queries 
+    for {category} in Kenya. Queries should be targeted and professionally relevant.
+    Return ONLY the queries separated by newlines. No numbers, no bullets.
+    """
+    
+    try:
+        response = model.generate_content(prompt)
+        queries = response.text.strip().split('\n')
+        return [q.strip() for q in queries if q.strip()]
+    except Exception as e:
+        logger.error(f"Gemini query generation error: {e}")
+        return []

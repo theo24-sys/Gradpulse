@@ -1,26 +1,15 @@
 import logging
 from celery import shared_task
 from .models import Credential
-from django.contrib.auth import get_user_model
-from openai import OpenAI
+from accounts.ai_utils import generate_search_queries
 from django.conf import settings
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
 def get_cred_ai_queries(student_traits):
-    """Use OpenAI to generate search queries for credentials based on student profiles."""
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
-    prompt = f"Based on student traits: {student_traits}, suggest 3 professional certifications or micro-credentials that would be highly valuable. Return names only, separated by newlines."
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content.strip().split('\n')
-    except Exception as e:
-        logger.error(f"AI Credential Query Error: {e}")
-        return ["Google Data Analytics", "Cisco Networking Essentials"]
+    """Use Gemini to generate search queries for credentials based on student profiles."""
+    return generate_search_queries(student_traits, category="professional certifications or micro-credentials")
 
 @shared_task
 def scrape_credentials():

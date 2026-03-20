@@ -3,26 +3,15 @@ from datetime import timedelta
 from django.utils import timezone
 from celery import shared_task
 from .models import Event
-from django.contrib.auth import get_user_model
-from openai import OpenAI
+from accounts.ai_utils import generate_search_queries
 from django.conf import settings
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
 def get_ai_queries(student_traits):
-    """Use OpenAI to generate search queries based on student profiles."""
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
-    prompt = f"Based on these student traits: {student_traits}, generate 3 specific search queries for educational events, hackathons, or career workshops in Kenya. Return only the queries separated by newlines."
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return response.choices[0].message.content.strip().split('\n')
-    except Exception as e:
-        logger.error(f"AI Query Generation Error: {e}")
-        return ["tech events Kenya", "career workshops Nairobi"]
+    """Use Gemini to generate search queries based on student profiles."""
+    return generate_search_queries(student_traits, category="educational events, hackathons, or career workshops")
 
 @shared_task
 def scrape_events():
