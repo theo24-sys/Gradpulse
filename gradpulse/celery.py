@@ -12,21 +12,10 @@ app = Celery('gradpulse')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-from celery.schedules import crontab
-
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
-app.conf.beat_schedule = {
-    'scrape-events-every-midnight': {
-        'task': 'events.tasks.scrape_events',
-        'schedule': crontab(minute=0, hour=0), # Midnight every day
-    },
-    'scrape-credentials-every-sunday': {
-        'task': 'credentials.tasks.scrape_credentials',
-        'schedule': crontab(minute=0, hour=0, day_of_week='sun'),
-    },
-}
+# Beat schedule comes from CELERY_BEAT_SCHEDULE in settings.py (opportunities, events, credentials, etc.)
 
 @app.task(bind=True, ignore_result=True)
 def debug_task(self):

@@ -1,5 +1,6 @@
 import logging
 from celery import shared_task
+from django.contrib.auth import get_user_model
 from .models import Credential
 from accounts.ai_utils import generate_search_queries
 from django.conf import settings

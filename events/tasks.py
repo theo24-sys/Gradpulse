@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from celery import shared_task
 from .models import Event
 from accounts.ai_utils import generate_search_queries

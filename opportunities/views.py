@@ -105,10 +105,10 @@ def scrape_discovery(request):
         return redirect('home')
     
     try:
-        from populate_discovery import populate
-        populate()
-        messages.success(request, "Live Webscraping Successful! Discovery sections updated.")
+        from scraping.tasks import run_all_scrapers
+        run_all_scrapers.delay()
+        messages.success(request, "Live web scraping started in the background. Results will appear as scrapers complete—approve items in Admin to publish.")
     except Exception as e:
-        messages.error(request, f"Scraping failed: {str(e)}")
+        messages.error(request, f"Could not start scraping (ensure Redis and Celery worker are running): {str(e)}")
         
     return redirect('corporate_dashboard')
