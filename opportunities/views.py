@@ -105,10 +105,12 @@ def scrape_discovery(request):
         return redirect('home')
     
     try:
-        from scraping.tasks import run_all_scrapers
-        run_all_scrapers.delay()
-        messages.success(request, "Live web scraping started in the background. Results will appear as scrapers complete—approve items in Admin to publish.")
+        # Run synchronously to ensure scraping actually produces results even if
+        # Celery worker/Redis are misconfigured in the environment.
+        from django.core.management import call_command
+        call_command('scrape', '--source', 'opportunities')
+        messages.success(request, "Live web scraping completed for Opportunities. Check the Scraped Items in Admin.")
     except Exception as e:
-        messages.error(request, f"Could not start scraping (ensure Redis and Celery worker are running): {str(e)}")
+        messages.error(request, f"Scraping failed: {str(e)}")
         
     return redirect('corporate_dashboard')
