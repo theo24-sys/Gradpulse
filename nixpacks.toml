@@ -4,13 +4,8 @@ nixPkgs = ["python3", "postgresql_16.dev", "gcc"]
 [phases.install]
 cmds = ["python -m venv --copies /opt/venv && /opt/venv/bin/pip install -r requirements.txt"]
 
-# Build phase runs during Docker build. 
-# We only do static collection here.
 [phases.build]
 cmds = ["/opt/venv/bin/python manage.py collectstatic --noinput"]
 
-# Note: We do NOT use [phases.release] here because Nixpacks tries to RUN it during build.
-# Instead, we rely on railway.json's "releaseCommand".
-
 [deploy]
-startCmd = "/opt/venv/bin/gunicorn gradpulse.wsgi:application --log-file -"
+startCmd = "/opt/venv/bin/python manage.py migrate --noinput && /opt/venv/bin/gunicorn gradpulse.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120"

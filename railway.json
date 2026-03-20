@@ -5,6 +5,6 @@
     "configFile": "nixpacks.toml"
   },
   "deploy": {
-    "startCommand": "/opt/venv/bin/gunicorn gradpulse.wsgi:application --log-file -"
+    "startCommand": "/bin/sh -c \"for i in 1 2 3; do /opt/venv/bin/python manage.py migrate --noinput && break; sleep 5; done && exec /opt/venv/bin/gunicorn gradpulse.wsgi:application --log-file -\""
   }
 }
