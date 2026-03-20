@@ -134,7 +134,7 @@ def transcript_upload(request):
         
         if isinstance(data, dict) and "error" in data:
             messages.error(request, f"AI Parsing failed: {data['error']}")
-            return redirect('campus_dashboard')
+            return redirect('grades')
             
         # 2. Save grades
         count = 0
