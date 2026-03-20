@@ -1,3 +1,5 @@
+import os
+from urllib.parse import quote
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -72,7 +74,9 @@ class CustomUser(AbstractUser):
                     return self.profile_photo.url
             except Exception:
                 pass
-        return f"https://ui-avatars.com/api/?name={self.display_name}&background=008b8b&color=fff"
+        
+        name_param = quote(self.display_name)
+        return f"https://ui-avatars.com/api/?name={name_param}&background=008b8b&color=fff&size=128"
 
     def get_logo_url(self):
         if self.company_logo:
@@ -81,7 +85,9 @@ class CustomUser(AbstractUser):
                     return self.company_logo.url
             except Exception:
                 pass
-        return f"https://ui-avatars.com/api/?name={self.company_name or self.username}&background=00ced1&color=fff"
+        
+        name_param = quote(self.company_name or self.username)
+        return f"https://ui-avatars.com/api/?name={name_param}&background=00ced1&color=fff&size=128"
 
     class Meta:
         verbose_name = 'User'

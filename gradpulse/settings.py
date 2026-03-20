@@ -225,9 +225,11 @@ if env('AWS_ACCESS_KEY_ID', default=''):
     }
     
     if AWS_S3_CUSTOM_DOMAIN:
-        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+        # Strip https:// or http:// if user accidentally added it to the env var
+        clean_domain = AWS_S3_CUSTOM_DOMAIN.replace('https://', '').replace('http://', '').rstrip('/')
+        MEDIA_URL = f'https://{clean_domain}/'
     else:
-        MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/'
+        MEDIA_URL = f'{AWS_S3_ENDPOINT_URL.rstrip("/")}/{AWS_STORAGE_BUCKET_NAME}/'
 
 # ─── Jazzmin Admin Settings ───────────────────────────────────────────────────
 JAZZMIN_SETTINGS = {
