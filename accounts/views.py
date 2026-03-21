@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -59,6 +60,12 @@ def login_view(request):
         return redirect('home')
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
+        
+        # DEBUG BYPASS: Allow login without reCAPTCHA if ?bypass=true is in URL (and DEBUG is on)
+        if settings.DEBUG and request.GET.get('bypass') == 'true':
+            if 'captcha' in form.fields:
+                form.fields['captcha'].required = False
+        
         if form.is_valid():
             user = form.get_user()
             login(request, user)

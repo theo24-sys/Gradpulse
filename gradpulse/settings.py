@@ -379,6 +379,8 @@ JAZZMIN_UI_TWEAKS = {
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default=os.environ.get('RECAPTCHA_PUBLIC_KEY', '')).strip()
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default=os.environ.get('RECAPTCHA_PRIVATE_KEY', '')).strip()
 RECAPTCHA_DOMAIN = 'www.google.com'
+# Increase timeout for Railway's outgoing requests
+RECAPTCHA_VERIFY_REQUEST_TIMEOUT = 20
 # Some v4 configurations prefer these names
 RECAPTCHA_SITE_KEY = RECAPTCHA_PUBLIC_KEY
 RECAPTCHA_SECRET_KEY = RECAPTCHA_PRIVATE_KEY
