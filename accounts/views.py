@@ -70,7 +70,13 @@ def login_view(request):
                 return redirect('corporate_dashboard')
             return redirect('campus_dashboard')
         else:
-            messages.error(request, 'Invalid username or password.')
+            # Better error reporting: show specific form errors (like CAPTCHA failure)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        messages.error(request, error)
+                    else:
+                        messages.error(request, f"{field.capitalize()}: {error}")
     else:
         form = LoginForm(request)
     return render(request, 'auth/login.html', {'form': form})
