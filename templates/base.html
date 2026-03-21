@@ -167,7 +167,7 @@
     let localVideo = null;
     let callModal = null;
     let currentSignal = null;
-    let lastSeenMessageId = localStorage.getItem('lastSeenCallId') || 0;
+    let lastSeenMessageId = parseInt(localStorage.getItem('lastSeenCallId')) || 0;
 
     if (typeof AgoraRTC !== 'undefined') {
         globalAgoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -176,7 +176,11 @@
         globalAgoraClient.on("user-joined", (user) => {
             console.log("Peer joined:", user.uid);
             const statusEl = document.getElementById('gCallStatus');
-            if (statusEl) statusEl.innerText = "Connected";
+            if (statusEl) {
+                statusEl.innerText = "Connected";
+                statusEl.classList.remove('pulse');
+                statusEl.classList.add('text-success');
+            }
         });
 
         globalAgoraClient.on("user-left", (user) => {
@@ -187,11 +191,9 @@
         });
 
         globalAgoraClient.on("user-published", async (user, mediaType) => {
+            console.log("Remote user published:", mediaType);
             await globalAgoraClient.subscribe(user, mediaType);
             if (mediaType === "audio") user.audioTrack.play();
-            if (mediaType === "video") {
-                // Future: play video in a container
-            }
         });
     }
 
@@ -201,9 +203,9 @@
             const res = await fetch("{% url 'api_check_signals' %}");
             const data = await res.json();
             if (data.has_signal && data.message_id > lastSeenMessageId) {
+                console.log("New signal detected:", data.message_id);
                 lastSeenMessageId = data.message_id;
                 localStorage.setItem('lastSeenCallId', lastSeenMessageId);
-                currentSignal = data;
                 showIncomingCall(data);
             }
         } catch (e) { console.error("Signal check error", e); }
@@ -211,11 +213,18 @@
     }
 
     function showIncomingCall(data) {
+        currentSignal = data;
         const modalEl = document.getElementById('globalCallModal');
         const modalContent = new bootstrap.Modal(modalEl);
         document.getElementById('gCallName').innerText = data.sender_name;
         document.getElementById('gCallAvatar').src = data.sender_avatar;
-        document.getElementById('gCallStatus').innerText = "Incoming " + (data.content.includes('video') ? 'Video' : 'Audio') + " Call...";
+        
+        let type = "Audio";
+        if (data.content && data.content.includes('video')) type = "Video";
+        document.getElementById('gCallStatus').innerText = "Incoming " + type + " Call...";
+        document.getElementById('gCallStatus').classList.add('pulse');
+        document.getElementById('gCallStatus').classList.remove('text-success');
+
         document.getElementById('gAcceptBtn').style.display = 'inline-block';
         
         callModal = modalContent;
