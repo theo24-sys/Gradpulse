@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import CustomUser
 from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
 
 from .utils import get_institution_choices
 
@@ -39,7 +40,7 @@ class StudentRegisterForm(UserCreationForm):
     course = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'placeholder': 'e.g. BSc Computer Science'}))
     year_of_study = forms.IntegerField(min_value=1, max_value=8, widget=forms.NumberInput(attrs={'placeholder': 'Year (1-8)'}))
     profile_photo = forms.ImageField(required=False)
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
     class Meta:
         model = CustomUser
@@ -67,7 +68,7 @@ class EmployerRegisterForm(UserCreationForm):
     kra_pin = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'placeholder': 'KRA PIN (optional)'}))
     website = forms.URLField(required=False, widget=forms.URLInput(attrs={'placeholder': 'https://yourcompany.com'}))
     company_logo = forms.ImageField(required=False)
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
     class Meta:
         model = CustomUser
@@ -110,7 +111,7 @@ class EmployerProfileForm(forms.ModelForm):
 
 
 class LoginForm(AuthenticationForm):
-    captcha = ReCaptchaField()
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'placeholder': 'Username or Email'})
