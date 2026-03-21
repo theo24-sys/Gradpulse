@@ -9,7 +9,7 @@ class PSCKenyaScraper(BaseScraper):
     source_name = "Public Service Commission Kenya"
     source_type = "opportunities"
     sector = "government"
-    base_url = "https://psckjobs.go.ke"
+    base_url = "https://psckjobs.go.ke/OpenVacancies.aspx"
 
     def parse(self):
         # PSC often requires JS rendering or has anti-bot that Apify handles better

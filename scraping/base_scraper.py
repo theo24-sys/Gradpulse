@@ -104,9 +104,6 @@ class BaseScraper:
             logger.error(f"HTTPX error fetching {url}: {e}")
             return None
 
-    def fetch_js(self, url):
-        """Fallback to fetch_html since Playwright is removed."""
-        return self.fetch_html(url)
 
     def get_course_tags(self, title, description):
         """Keyword matching for courses."""

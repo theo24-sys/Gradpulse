@@ -8,7 +8,7 @@ class EventbriteScraper(BaseScraper):
     source_name = "Eventbrite Kenya"
     source_type = "events"
     sector = "private"
-    base_url = "https://www.eventbrite.com/d/kenya/events"
+    base_url = "https://www.eventbrite.com/d/kenya--nairobi/all-events/"
 
     def parse(self):
         # Eventbrite is highly reactive and requires JS
@@ -38,7 +38,7 @@ class MeetupScraper(BaseScraper):
     source_name = "Meetup Nairobi Tech"
     source_type = "events"
     sector = "private"
-    base_url = "https://www.meetup.com/find/?location=Nairobi&categoryId=546"
+    base_url = "https://www.meetup.com/find/?location=ke--Nairobi&source=EVENTS"
 
     def parse(self):
         # Meetup uses JS for list rendering
