@@ -17,15 +17,23 @@ async def main():
         django.setup()
 
         # Dynamic import of the scraper
-        from scraping.scrapers.government import PSCKenyaScraper
+        from scraping.scrapers.government import PSCKenyaScraper, AjiraDigitalScraper, NYSScraper
         from scraping.scrapers.events import EventbriteScraper, MeetupScraper
         from scraping.scrapers.private import BrighterMondayScraper
+        from scraping.scrapers.scholarships import ScholarshipPositionsScraper, ScholarshipSetScraper
+        from scraping.scrapers.ngos import UNKenyaScraper, ReliefWebScraper
         
         scrapers = {
             'PSCKenyaScraper': PSCKenyaScraper,
+            'AjiraDigitalScraper': AjiraDigitalScraper,
+            'NYSScraper': NYSScraper,
             'EventbriteScraper': EventbriteScraper,
             'MeetupScraper': MeetupScraper,
             'BrighterMondayScraper': BrighterMondayScraper,
+            'ScholarshipPositionsScraper': ScholarshipPositionsScraper,
+            'ScholarshipSetScraper': ScholarshipSetScraper,
+            'UNKenyaScraper': UNKenyaScraper,
+            'ReliefWebScraper': ReliefWebScraper,
         }
         
         if scraper_name not in scrapers:

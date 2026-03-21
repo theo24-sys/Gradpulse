@@ -10,6 +10,7 @@ class ScrapedItem(models.Model):
         ('credentials', 'Micro-Credentials'),
         ('qualifications', 'Professional Qualifications'),
         ('simulations', 'Simulation Scenarios'),
+        ('scholarships', 'Scholarships'),
     ]
     
     SECTOR_CHOICES = [

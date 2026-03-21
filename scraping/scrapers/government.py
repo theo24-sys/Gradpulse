@@ -95,3 +95,77 @@ class KPLCScraper(BaseScraper):
                     'company': "Kenya Power",
                 })
         return items
+
+class AjiraDigitalScraper(BaseScraper):
+    source_name = "Ajira Digital"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://ajiradigital.go.ke/find-work"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # Ajira Digital often lists platforms and opportunities
+        cards = soup.select('.card') or soup.find_all('div', class_='col-md-4')
+        
+        for card in cards:
+            title_node = card.select_one('h4') or card.find('h5')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            link = card.find('a').get('href') if card.find('a') else self.base_url
+            
+            items.append({
+                'title': title,
+                'url': urljoin(self.base_url, link),
+                'company': "Ajira Digital",
+                'description': "Digital work opportunity for youth.",
+                'location': "Online/Kenya",
+                'job_type': "Digital Work"
+            })
+            
+        return items
+
+class NYSScraper(BaseScraper):
+    source_name = "NYS Kenya"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://nys.go.ke/"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # NYS news/announcements often contain cohorts/recruitment info
+        news_items = soup.select('.news-item') or soup.select('.post')
+        
+        for news in news_items:
+            title_node = news.select_one('h3 a') or news.find('a')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            if "recruitment" in title.lower() or "cohort" in title.lower() or "opportunity" in title.lower():
+                link = urljoin(self.base_url, title_node.get('href'))
+                items.append({
+                    'title': title,
+                    'url': link,
+                    'company': "NYS Kenya",
+                    'description': "National Youth Service cohort or recruitment announcement.",
+                    'location': "Kenya",
+                    'job_type': "Youth Program"
+                })
+                
+        return items
