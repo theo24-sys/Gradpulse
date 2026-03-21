@@ -306,7 +306,7 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
-        background: url("{% static 'images/chat-bg.png' %}"); /* Optional pattern if exists */
+        background: #fdfaf5; /* Clean light background instead of missing pattern */
     }
 
     .message-row {
@@ -584,7 +584,8 @@
 
 <!-- Agora & Emoji Scripts -->
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.min.js"></script>
+<!-- Use UMD version of Emoji Button to avoid "Unexpected token export" error -->
+<script src="https://unpkg.com/@joeattardi/emoji-button@4.6.4/dist/index.js"></script>
 <script>
     // Auto-scroll messages & Autofocus
     const msgBox = document.getElementById('messagesBox');
@@ -596,8 +597,8 @@
         setTimeout(() => { msgInput.focus(); }, 300);
     }
 
-    // Emoji Picker initialization
-    if (msgInput) {
+    // Emoji Picker initialization (v4.6.4)
+    if (msgInput && typeof EmojiButton !== 'undefined') {
         const trigger = document.querySelector('#emojiBtn');
         if (trigger) {
             const picker = new EmojiButton({ position: 'top-start' });
