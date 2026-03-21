@@ -36,8 +36,8 @@
       <ul class="navbar-nav align-items-center">
         {% if user.is_authenticated %}
           <li class="nav-item me-2">
-            <a class="nav-link position-relative" href="{% url 'inbox' %}" title="Messages">
-              <i class="fa fa-envelope"></i>
+            <a class="nav-link position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">
+              <img src="{% static 'images/chat_icon.png' %}" alt="Messages" style="height: 24px; width: 24px; object-fit: contain;">
               {% if unread_messages_count > 0 %}
               <span class="badge bg-primary rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size:9px;">{{ unread_messages_count }}</span>
               {% endif %}
@@ -139,6 +139,7 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.11"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

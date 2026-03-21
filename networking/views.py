@@ -73,28 +73,36 @@ def collaborations_view(request):
     return render(request, 'campus/collaborations.html', {'collabs': collabs})
 
 
-@login_required
-def inbox_view(request):
+def get_conversations(user):
     # Get all users the current user has messaged or received messages from
-    sent_msgs = Message.objects.filter(sender=request.user).values_list('receiver', flat=True)
-    received_msgs = Message.objects.filter(receiver=request.user).values_list('sender', flat=True)
+    sent_msgs = Message.objects.filter(sender=user).values_list('receiver', flat=True)
+    received_msgs = Message.objects.filter(receiver=user).values_list('sender', flat=True)
     user_ids = set(list(sent_msgs) + list(received_msgs))
     
     conversations = []
     for uid in user_ids:
         other_user = CustomUser.objects.get(pk=uid)
         last_msg = Message.objects.filter(
-            Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+            Q(sender=user, receiver=other_user) | Q(sender=other_user, receiver=user)
         ).order_by('-timestamp').first()
+        
+        unread_count = Message.objects.filter(sender=other_user, receiver=user, is_read=False).count()
+        
         conversations.append({
             'user': other_user,
             'last_message': last_msg,
+            'unread_count': unread_count,
         })
     
     # Sort by last message timestamp
     conversations.sort(key=lambda x: x['last_message'].timestamp if x['last_message'] else 0, reverse=True)
-    
-    return render(request, 'networking/inbox.html', {'conversations': conversations})
+    return conversations
+
+
+@login_required
+def inbox_view(request):
+    conversations = get_conversations(request.user)
+    return render(request, 'networking/chat_center.html', {'conversations': conversations})
 
 
 @login_required
@@ -117,7 +125,9 @@ def chat_detail_view(request, pk):
             Message.objects.create(sender=request.user, receiver=other_user, content=content)
             return redirect('chat_detail', pk=pk)
             
-    return render(request, 'networking/chat.html', {
+    conversations = get_conversations(request.user)
+    return render(request, 'networking/chat_center.html', {
+        'conversations': conversations,
         'other_user': other_user,
         'chat_messages': messages,
     })
