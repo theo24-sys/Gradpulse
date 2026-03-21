@@ -22,10 +22,8 @@ PyPDF2>=3.0.0
 beautifulsoup4>=4.12
 requests>=2.31
 django-recaptcha>=4.0.0
-apify-client==1.8.1
-apify>=1.8.0
-pydantic<2.10.0
-browserforge==1.1.1
+apify>=2.0.0
+crawlee>=0.8.0
 
 # Additional Production Enhancements
 whitenoise>=6.6
