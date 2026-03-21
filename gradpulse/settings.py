@@ -138,10 +138,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-ACCOUNT_LOGIN_METHODS = {'email', 'username'}
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'username'}
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-# New allauth 4.0+ signup fields
+# New allauth 4.0+ signup fields (implicitly handles requirements)
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'first_name', 'last_name']
 
 # ─── REST Framework & Swagger ─────────────────────────────────────────────────
