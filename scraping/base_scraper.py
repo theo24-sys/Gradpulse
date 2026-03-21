@@ -3,6 +3,7 @@ import time
 import random
 import hashlib
 import logging
+import os
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from django.utils import timezone
@@ -10,6 +11,11 @@ from .models import ScrapedItem, ScrapeLog
 from urllib.parse import urljoin
 import json
 import re
+
+try:
+    from apify_client import ApifyClient
+except ImportError:
+    ApifyClient = None
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +28,29 @@ class BaseScraper:
     def __init__(self):
         self.ua = UserAgent()
         self.log_entry = None
+        self.apify_token = os.environ.get('APIFY_TOKEN')
+        self.apify_client = ApifyClient(self.apify_token) if self.apify_token and ApifyClient else None
+
+    def fetch_apify(self, url, actor="apify/web-scraper"):
+        """Fetch URL content using Apify if available."""
+        if not self.apify_client:
+            logger.warning("Apify client not initialized. Falling back to HTTPX.")
+            return self.fetch_html(url)
+            
+        try:
+            # Simple example: using Apify's web-scraper actor
+            # (Note: Specific configuration depends on the actor chosen)
+            run_input = { "startUrls": [{ "url": url }] }
+            run = self.apify_client.actor(actor).call(run_input=run_input)
+            
+            # This is a generic fetch; most actors return results in the dataset
+            dataset_items = self.apify_client.dataset(run["defaultDatasetId"]).list_items().items
+            if dataset_items:
+                return dataset_items[0].get('text') or dataset_items[0].get('html')
+        except Exception as e:
+            logger.error(f"Apify error: {e}")
+            return self.fetch_html(url)
+        return None
 
     def get_headers(self):
         return {

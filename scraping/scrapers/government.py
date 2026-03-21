@@ -12,7 +12,8 @@ class PSCKenyaScraper(BaseScraper):
     base_url = "https://psckjobs.go.ke"
 
     def parse(self):
-        html = self.fetch_html(self.base_url)
+        # PSC often requires JS rendering or has anti-bot that Apify handles better
+        html = self.fetch_apify(self.base_url)
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')

@@ -11,7 +11,8 @@ class EventbriteScraper(BaseScraper):
     base_url = "https://www.eventbrite.com/d/kenya/events"
 
     def parse(self):
-        html = self.fetch_html(self.base_url)
+        # Eventbrite is highly reactive and requires JS
+        html = self.fetch_apify(self.base_url)
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')
@@ -37,8 +38,8 @@ class MeetupScraper(BaseScraper):
     base_url = "https://www.meetup.com/find/?location=Nairobi&categoryId=546"
 
     def parse(self):
-        # Using standard fetch as Playwright is removed
-        html = self.fetch_html(self.base_url)
+        # Meetup uses JS for list rendering
+        html = self.fetch_apify(self.base_url)
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')
