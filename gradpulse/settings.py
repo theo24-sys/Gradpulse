@@ -138,9 +138,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+# New allauth 4.0+ signup fields
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'first_name', 'last_name']
 
 # ─── REST Framework & Swagger ─────────────────────────────────────────────────
 REST_FRAMEWORK = {
@@ -377,6 +379,7 @@ JAZZMIN_UI_TWEAKS = {
 # reCAPTCHA Configuration
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default=os.environ.get('RECAPTCHA_PUBLIC_KEY', '')).strip()
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default=os.environ.get('RECAPTCHA_PRIVATE_KEY', '')).strip()
+RECAPTCHA_DOMAIN = 'www.google.com'
 # Some v4 configurations prefer these names
 RECAPTCHA_SITE_KEY = RECAPTCHA_PUBLIC_KEY
 RECAPTCHA_SECRET_KEY = RECAPTCHA_PRIVATE_KEY
