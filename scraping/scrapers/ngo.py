@@ -1,5 +1,6 @@
 from ..base_scraper import BaseScraper
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,10 +24,16 @@ class NGOJobsKenyaScraper(BaseScraper):
             h2 = art.find('h2')
             if h2 and h2.find('a'):
                 a = h2.find('a')
+                title = a.get_text(strip=True)
+                url = urljoin(self.base_url, a['href'])
+                
+                desc_node = art.find('p')
+                description = desc_node.get_text(strip=True) if desc_node else ""
+                
                 items.append({
-                    'title': a.text.strip(),
-                    'url': a['href'],
-                    'description': art.find('p').text.strip() if art.find('p') else "",
+                    'title': title,
+                    'url': url,
+                    'description': description,
                     'company': "Various NGOs",
                 })
         return items
@@ -44,15 +51,20 @@ class ReliefWebScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        jobs = soup.find_all('article', class_='rw-river-article')
+        jobs = soup.select('article.rw-river-article')
         for job in jobs:
-            title_node = job.find('h3', class_='rw-river-article__title')
-            if title_node and title_node.find('a'):
-                a = title_node.find('a')
+            title_node = job.select_one('h3.rw-river-article__title a')
+            if title_node:
+                title = title_node.get_text(strip=True)
+                url = urljoin(self.base_url, title_node['href'])
+                
+                source_node = job.select_one('li.rw-river-article__source')
+                company = source_node.get_text(strip=True) if source_node else "NGO"
+                
                 items.append({
-                    'title': a.text.strip(),
-                    'url': "https://reliefweb.int" + a['href'] if a['href'].startswith('/') else a['href'],
-                    'company': job.find('li', class_='rw-river-article__source').text.strip() if job.find('li', class_='rw-river-article__source') else "NGO",
+                    'title': title,
+                    'url': url,
+                    'company': company,
                     'description': f"ReliefWeb job posting for Kenya",
                 })
         return items

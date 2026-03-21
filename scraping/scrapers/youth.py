@@ -1,5 +1,6 @@
 from ..base_scraper import BaseScraper
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,14 +18,21 @@ class AjiraDigitalScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        program_cards = soup.select('.training-card') # Example selector
+        program_cards = soup.select('.training-card') or soup.select('.card')
         for card in program_cards:
-            title_node = card.find('h3')
+            title_node = card.select_one('h3') or card.select_one('h4')
             if title_node:
+                title = title_node.get_text(strip=True)
+                link_node = card.select_one('a')
+                url = urljoin(self.base_url, link_node['href']) if link_node else self.base_url
+                
+                desc_node = card.select_one('p')
+                description = desc_node.get_text(strip=True) if desc_node else f"Training Program: {title}"
+                
                 items.append({
-                    'title': title_node.text.strip(),
-                    'url': self.base_url,
-                    'description': card.find('p').text.strip() if card.find('p') else "Ajira Digital Training Program",
+                    'title': title,
+                    'url': url,
+                    'description': description,
                     'company': "Ajira Digital",
                 })
         return items
@@ -36,7 +44,6 @@ class MastercardFoundationScraper(BaseScraper):
     base_url = "https://mastercardfdn.org/all-programs"
 
     def parse(self):
-        # Using standard fetch as Playwright is removed
         html = self.fetch_html(self.base_url)
         if not html: return []
         
@@ -45,12 +52,13 @@ class MastercardFoundationScraper(BaseScraper):
         
         links = soup.select('a[href*="/all-programs/"]')
         for link in links:
-            title = link.text.strip()
+            title = link.get_text(strip=True)
             if title:
                 items.append({
                     'title': title,
-                    'url': link['href'],
+                    'url': urljoin(self.base_url, link['href']),
                     'company': "Mastercard Foundation",
+                    'description': f"Youth empowerment program by Mastercard Foundation: {title}"
                 })
         return items
 
@@ -69,11 +77,12 @@ class YouthFundScraper(BaseScraper):
         
         sections = soup.find_all('h3')
         for sec in sections:
-            title = sec.text.strip()
+            title = sec.get_text(strip=True)
             if title:
                 items.append({
                     'title': title,
                     'url': self.base_url,
                     'company': "Youth Enterprise Development Fund",
+                    'description': f"Government youth funding program: {title}"
                 })
         return items

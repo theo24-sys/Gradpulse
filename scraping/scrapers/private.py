@@ -1,5 +1,6 @@
 from ..base_scraper import BaseScraper
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,24 +21,25 @@ class BrighterMondayScraper(BaseScraper):
         # Direct search for listing links
         links = soup.select('a[href*="/listings/"]')
         for a in links:
-            title = a.text.strip()
+            title = a.get_text(strip=True)
             if not title: continue
+            
+            url = urljoin(self.base_url, a['href'])
             
             # Find parent container to look for company
             parent = a.find_parent('div')
             company = "Private Company"
             if parent:
-                company_node = parent.find_next_sibling('p', class_='text-sm') or parent.find('p', class_='text-sm')
+                company_node = parent.select_one('p.text-sm') or parent.find('p', class_='text-sm')
                 if not company_node:
-                    # Look globally near the link
                     company_node = a.find_next('p', class_='text-sm')
                 
                 if company_node:
-                    company = company_node.text.strip()
+                    company = company_node.get_text(strip=True)
             
             items.append({
                 'title': title,
-                'url': a['href'] if a['href'].startswith('http') else "https://www.brightermonday.co.ke" + a['href'],
+                'url': url,
                 'company': company,
                 'description': f"Internship listing from BrighterMonday",
             })
@@ -56,15 +58,21 @@ class MyJobMagScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        job_list = soup.select('li.job-list-item, div.job-info')
+        job_list = soup.select('li.job-list-item, div.job-info, .job-info-card')
         for job in job_list:
             h2 = job.find(['h2', 'h3'])
             if h2 and h2.find('a'):
                 a = h2.find('a')
+                title = a.get_text(strip=True)
+                url = urljoin(self.base_url, a['href'])
+                
+                company_node = job.select_one('li.job-list-company') or job.find('li', class_='job-list-company')
+                company = company_node.get_text(strip=True) if company_node else "Private Company"
+                
                 items.append({
-                    'title': a.text.strip(),
-                    'url': "https://www.myjobmag.co.ke" + a['href'] if a['href'].startswith('/') else a['href'],
-                    'company': job.find('li', class_='job-list-company').text.strip() if job.find('li', class_='job-list-company') else "Private Company",
+                    'title': title,
+                    'url': url,
+                    'company': company,
                 })
         return items
 
@@ -75,7 +83,6 @@ class FuzuScraper(BaseScraper):
     base_url = "https://www.fuzu.com/kenya/jobs"
 
     def parse(self):
-        # Using standard fetch as Playwright is removed
         html = self.fetch_html(self.base_url)
         if not html: return []
         
@@ -86,10 +93,14 @@ class FuzuScraper(BaseScraper):
         for card in cards:
             title_node = card.find(['h6', 'h5', 'h4', 'h3'])
             if title_node:
+                title = title_node.get_text(strip=True)
+                url = urljoin(self.base_url, card.get('href', ''))
+                
                 items.append({
-                    'title': title_node.text.strip(),
-                    'url': "https://www.fuzu.com" + card['href'] if card['href'].startswith('/') else card['href'],
+                    'title': title,
+                    'url': url,
                     'company': "Fuzu Partner",
+                    'description': f"Job opportunity on Fuzu: {title}"
                 })
         return items
 
@@ -107,12 +118,14 @@ class SafaricomScraper(BaseScraper):
         items = []
         
         # Safaricom specific
-        links = soup.select('a[href*="taleo"]')
+        links = soup.select('a[href*="taleo"], a[href*="career"]')
         for link in links:
-            if "career" in link.text.lower() or "job" in link.text.lower():
+            title = link.get_text(strip=True)
+            if "career" in title.lower() or "job" in title.lower() or "vacancy" in title.lower():
                 items.append({
-                    'title': link.text.strip(),
-                    'url': link['href'],
+                    'title': title,
+                    'url': urljoin(self.base_url, link['href']),
                     'company': "Safaricom PLC",
+                    'description': f"Career opportunity at Safaricom: {title}"
                 })
         return items

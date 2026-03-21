@@ -1,5 +1,6 @@
 from ..base_scraper import BaseScraper
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,7 +9,7 @@ class PSCKenyaScraper(BaseScraper):
     source_name = "Public Service Commission Kenya"
     source_type = "opportunities"
     sector = "government"
-    base_url = "https://www.publicservice.go.ke/index.php/vacancies"
+    base_url = "https://psckjobs.go.ke"
 
     def parse(self):
         html = self.fetch_html(self.base_url)
@@ -17,25 +18,24 @@ class PSCKenyaScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # Example parsing logic for PSC (Note: specific selectors depend on current site HTML)
-        # Using a generic table/row approach as most gov sites use tables
-        rows = soup.find_all('tr')
+        # Use more targeted selector for the table
+        table = soup.select_one('table') or soup.find('table')
+        rows = table.select('tr') if table else soup.find_all('tr')
+
         for row in rows[1:]: # Skip header
             cols = row.find_all('td')
             if len(cols) >= 3:
                 title_link = cols[1].find('a')
                 if title_link:
-                    title = title_link.text.strip()
-                    url = title_link['href']
-                    if not url.startswith('http'):
-                        url = "https://www.publicservice.go.ke" + url
+                    title = title_link.get_text(strip=True)
+                    url = urljoin(self.base_url, title_link['href'])
                     
                     items.append({
                         'title': title,
                         'url': url,
-                        'description': f"Public Service Commission Vacancy: {title}",
+                        'description': cols[2].get_text(strip=True) if len(cols) > 2 else f"Public Service Commission Vacancy: {title}",
                         'company': "Public Service Commission",
-                        'raw_data': {'column_data': [c.text.strip() for c in cols]}
+                        'raw_data': {'column_data': [c.get_text(strip=True) for c in cols]}
                     })
         return items
 
@@ -56,11 +56,11 @@ class KRAScraper(BaseScraper):
         anchors = soup.find_all('a', href=True)
         for a in anchors:
             if "career" in a['href'].lower() or "vacancy" in a['href'].lower():
-                title = a.text.strip()
+                title = a.get_text(strip=True)
                 if title and len(title) > 10:
                     items.append({
                         'title': title,
-                        'url': a['href'],
+                        'url': urljoin(self.base_url, a['href']),
                         'description': f"KRA Career Opportunity: {title}",
                         'company': "Kenya Revenue Authority",
                     })
@@ -82,11 +82,11 @@ class KPLCScraper(BaseScraper):
         # KPLC specific parsing
         links = soup.select('a[href*="career"]')
         for link in links:
-            title = link.text.strip()
+            title = link.get_text(strip=True)
             if title:
                 items.append({
                     'title': title,
-                    'url': link['href'],
+                    'url': urljoin(self.base_url, link['href']),
                     'description': f"Kenya Power Vacancy: {title}",
                     'company': "Kenya Power",
                 })
