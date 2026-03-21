@@ -1,57 +1,168 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inbox — GradPulse{% endblock %}
+{% block title %}Messages — GradPulse{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Remove footer from this page */
+    footer { display: none !important; }
+
+    .inbox-wrapper {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--gp-border);
+        min-height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .inbox-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gp-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .conversation-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    .conversation-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 1rem 1.5rem;
+        transition: all 0.2s;
+        text-decoration: none;
+        color: var(--gp-text);
+        border-left: 3px solid transparent;
+    }
+    
+    .conversation-item:hover {
+        background: var(--gp-bg);
+    }
+    
+    .conversation-item.active {
+        background: var(--gp-orange-light);
+        border-left-color: var(--gp-orange);
+    }
+    
+    .avatar-container {
+        position: relative;
+    }
+    
+    .online-badge {
+        width: 12px;
+        height: 12px;
+        background: #2ecc71;
+        border: 2px solid white;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        display: none;
+    }
+    
+    .online .online-badge {
+        display: block;
+    }
+    
+    .msg-preview {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .msg-preview h6 {
+        margin: 0;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .msg-preview p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--gp-text-light);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .unread-indicator {
+        width: 8px;
+        height: 8px;
+        background: var(--gp-orange);
+        border-radius: 50%;
+    }
+    
+    .empty-inbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        color: var(--gp-text-light);
+        padding: 4rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="gp-content">
-    <div class="dash-header animate-fade-up">
-        <div class="dash-greeting">COMMUNICATIONS</div>
-        <h1 class="dash-title">Your Messages</h1>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="gp-card animate-fade-up animate-delay-1">
-                <div class="gp-card-header">
-                    <h5 class="mb-0"><i class="fa fa-envelope me-2 text-muted"></i>Recent Conversations</h5>
-                </div>
-                <div class="gp-card-body p-0">
-                    {% if conversations %}
-                    <div class="list-group list-group-flush">
+<div class="gp-content p-0 m-0">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="inbox-wrapper animate-fade-up">
+                    <div class="inbox-header">
+                        <h4 class="mb-0" style="font-weight:900;">Messages</h4>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light btn-sm rounded-circle"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-light btn-sm rounded-circle"><i class="fa fa-cog"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="conversation-list">
                         {% for conv in conversations %}
-                        <a href="{% url 'chat_detail' conv.user.pk %}" class="list-group-item list-group-item-action p-4 border-0 border-bottom">
-                            <div class="d-flex align-items-center gap-3">
+                        <a href="{% url 'chat_detail' conv.user.pk %}" class="conversation-item {% if conv.user.is_online %}online{% endif %}">
+                            <div class="avatar-container">
                                 <img src="{% if conv.user.is_employer %}{{ conv.user.get_logo_url }}{% else %}{{ conv.user.get_avatar_url }}{% endif %}" class="rounded-circle" width="56" height="56" style="object-fit:cover;">
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 text-dark" style="font-weight:700;">{{ conv.user.display_name }}</h6>
-                                        <small class="text-muted">{{ conv.last_message.timestamp|timesince }} ago</small>
-                                    </div>
-                                    <p class="text-muted small mb-0 text-truncate" style="max-width: 500px;">
-                                        {% if conv.last_message.sender == request.user %}
-                                        <span class="text-primary">You:</span>
-                                        {% endif %}
-                                        {{ conv.last_message.content }}
-                                    </p>
-                                </div>
-                                {% if conv.last_message.sender != request.user and not conv.last_message.is_read %}
-                                <span class="badge bg-danger rounded-pill">New</span>
-                                {% endif %}
+                                <div class="online-badge"></div>
                             </div>
+                            <div class="msg-preview">
+                                <h6>
+                                    {{ conv.user.display_name }}
+                                    <span class="text-muted small" style="font-weight:400; font-size: 11px;">
+                                        {% if conv.last_message %}{{ conv.last_message.timestamp|timesince }} ago{% endif %}
+                                    </span>
+                                </h6>
+                                <p {% if conv.last_message and not conv.last_message.is_read and conv.last_message.receiver == request.user %}style="color:var(--gp-text); font-weight:700;"{% endif %}>
+                                    {% if conv.last_message %}
+                                        {% if conv.last_message.sender == request.user %}You: {% endif %}
+                                        {{ conv.last_message.content }}
+                                    {% else %}
+                                        No messages yet
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if conv.last_message and not conv.last_message.is_read and conv.last_message.receiver == request.user %}
+                            <div class="unread-indicator"></div>
+                            {% endif %}
                         </a>
+                        {% empty %}
+                        <div class="empty-inbox">
+                            <i class="fa fa-paper-plane fa-4x mb-3 opacity-10"></i>
+                            <h3>Your Inbox is Empty</h3>
+                            <p>Connect with students and employers to start messaging.</p>
+                            <a href="{% url 'networking' %}" class="btn gp-btn-primary mt-3">Find People</a>
+                        </div>
                         {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <div class="mb-4">
-                            <i class="fa fa-comments fa-4x text-light"></i>
-                        </div>
-                        <h5 class="text-muted">No messages yet</h5>
-                        <p class="text-muted small">Connect with students or employers to start a conversation.</p>
-                        <a href="{% url 'networking' %}" class="btn gp-btn-navy btn-sm mt-3">Explore Networking</a>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

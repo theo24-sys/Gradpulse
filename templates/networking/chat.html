@@ -5,89 +5,316 @@
 
 {% block extra_css %}
 <style>
-    .chat-container {
-        height: 500px;
-        overflow-y: auto;
-        padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: var(--radius);
-        margin-bottom: 1.5rem;
-    }
-    .message-bubble {
-        max-width: 75%;
-        padding: 1rem 1.25rem;
-        border-radius: 18px;
-        margin-bottom: 1rem;
-        position: relative;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        box-shadow: var(--shadow-sm);
-    }
-    .msg-sent {
-        background: var(--gp-orange);
-        color: white;
-        margin-left: auto;
-        border-bottom-right-radius: 4px;
-    }
-    .msg-received {
-        background: white;
-        color: var(--gp-text);
-        margin-right: auto;
-        border-bottom-left-radius: 4px;
+    /* Remove footer from this page */
+    footer { display: none !important; }
+    
+    .chat-wrapper {
+        height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        background: var(--gp-bg);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
         border: 1px solid var(--gp-border);
     }
-    .msg-time {
+    
+    .chat-header {
+        padding: 1rem 1.5rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--gp-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background-image: radial-gradient(var(--gp-orange-light) 0.5px, transparent 0.5px);
+        background-size: 20px 20px;
+    }
+    
+    .msg-group {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        position: relative;
+    }
+    
+    .msg-group.sent {
+        align-self: flex-end;
+        align-items: flex-end;
+    }
+    
+    .msg-group.received {
+        align-self: flex-start;
+        align-items: flex-start;
+    }
+    
+    .bubble {
+        padding: 12px 16px;
+        border-radius: 22px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        position: relative;
+        transition: transform 0.2s;
+        cursor: pointer;
+    }
+    
+    .bubble:hover {
+        transform: scale(1.01);
+    }
+    
+    .sent .bubble {
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    
+    .received .bubble {
+        background: white;
+        color: var(--gp-text);
+        border: 1px solid var(--gp-border);
+        border-bottom-left-radius: 4px;
+    }
+    
+    .msg-meta {
         font-size: 0.7rem;
-        margin-top: 4px;
-        opacity: 0.8;
+        color: var(--gp-text-light);
+        margin: 4px 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .read-tick {
+        color: #3897f0; /* Instagram blue */
+        font-weight: bold;
+    }
+    
+    .unread-tick {
+        color: var(--gp-text-light);
+    }
+    
+    .chat-input-area {
+        padding: 1rem 1.5rem;
+        background: white;
+        border-top: 1px solid var(--gp-border);
+    }
+    
+    .input-container {
+        display: flex;
+        align-items: center;
+        background: var(--gp-bg);
+        border: 1px solid var(--gp-border);
+        border-radius: 30px;
+        padding: 4px 12px;
+    }
+    
+    .input-container input {
+        border: none;
+        background: transparent;
+        padding: 10px;
+        flex: 1;
+        outline: none;
+    }
+    
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gp-text);
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+    }
+    
+    .action-btn:hover {
+        background: rgba(0,0,0,0.05);
+        color: var(--gp-orange);
+    }
+    
+    .online-indicator {
+        width: 10px;
+        height: 10px;
+        background: #2ecc71;
+        border-radius: 50%;
+        display: inline-block;
+        border: 2px solid white;
+    }
+    
+    .delete-overlay {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        display: none;
+    }
+    
+    .msg-group:hover .delete-overlay {
+        display: block;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="gp-content">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="gp-card animate-fade-up">
-                <div class="gp-card-header">
-                    <div class="d-flex align-items-center gap-3">
-                        <a href="{% url 'inbox' %}" class="btn btn-light btn-sm rounded-circle"><i class="fa fa-arrow-left"></i></a>
-                        <img src="{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}" class="rounded-circle" width="40" height="40" style="object-fit:cover;">
-                        <div>
-                            <h6 class="mb-0" style="font-weight:800;">{{ other_user.display_name }}</h6>
-                            <small class="text-success" style="font-weight:600; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Online</small>
+<div class="gp-content p-0 m-0">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="chat-wrapper">
+                    <!-- Header -->
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="{% url 'inbox' %}" class="action-btn"><i class="fa fa-chevron-left"></i></a>
+                            <div class="position-relative">
+                                <img src="{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}" class="rounded-circle" width="44" height="44" style="object-fit:cover;">
+                                {% if other_user.is_online %}
+                                <span class="online-indicator position-absolute" style="bottom:2px; right:2px;"></span>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-0" style="font-weight:800; font-size: 1rem;">{{ other_user.display_name }}</h6>
+                                <small class="text-muted">
+                                    {% if other_user.is_online %}
+                                        Active now
+                                    {% elif other_user.last_seen %}
+                                        Active {{ other_user.last_seen|timesince }} ago
+                                    {% else %}
+                                        Offline
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="action-btn" onclick="startCall('audio')"><i class="fa fa-phone"></i></button>
+                            <button class="action-btn" onclick="startCall('video')"><i class="fa fa-video"></i></button>
+                            <button class="action-btn"><i class="fa fa-info-circle"></i></button>
                         </div>
                     </div>
-                </div>
-                <div class="gp-card-body">
-                    <div class="chat-container" id="chatContainer">
+
+                    <!-- Messages -->
+                    <div class="chat-messages" id="chatMessages">
                         {% for msg in chat_messages %}
-                        <div class="message-bubble {% if msg.sender == request.user %}msg-sent{% else %}msg-received{% endif %}">
-                            <div class="msg-content">{{ msg.content }}</div>
-                            <div class="msg-time">{{ msg.timestamp|date:"g:i A" }}</div>
-                        </div>
+                            {% if msg.sender == request.user and not msg.deleted_by_sender %}
+                                <div class="msg-group sent">
+                                    <div class="bubble">
+                                        {{ msg.content }}
+                                        <div class="delete-overlay">
+                                            <a href="{% url 'delete_message' msg.pk %}" class="btn btn-danger btn-sm rounded-circle shadow-sm" title="Delete"><i class="fa fa-trash" style="font-size:10px;"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="msg-meta">
+                                        {{ msg.timestamp|date:"g:i A" }}
+                                        {% if msg.is_read %}
+                                            <span class="read-tick" title="Read">✓✓</span>
+                                        {% else %}
+                                            <span class="unread-tick" title="Sent">✓</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% elif msg.receiver == request.user and not msg.deleted_by_receiver %}
+                                <div class="msg-group received">
+                                    <div class="bubble">
+                                        {{ msg.content }}
+                                        <div class="delete-overlay">
+                                            <a href="{% url 'delete_message' msg.pk %}" class="btn btn-danger btn-sm rounded-circle shadow-sm" title="Delete"><i class="fa fa-trash" style="font-size:10px;"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="msg-meta">
+                                        {{ msg.timestamp|date:"g:i A" }}
+                                    </div>
+                                </div>
+                            {% endif %}
                         {% empty %}
-                        <div class="text-center py-5 text-muted">
-                            <i class="fa fa-comment-dots fa-3x mb-3 opacity-25"></i>
-                            <p>No messages yet. Send a greeting!</p>
-                        </div>
+                            <div class="text-center py-5">
+                                <i class="fa fa-heart fa-3x mb-3 text-danger opacity-25"></i>
+                                <h5 class="text-muted">No messages yet</h5>
+                                <p class="text-muted small">Send a message to start the conversation.</p>
+                            </div>
                         {% endfor %}
                     </div>
 
-                    <form method="POST" class="d-flex gap-2">
-                        {% csrf_token %}
-                        <input type="text" name="content" class="form-control" placeholder="Type your message..." required autocomplete="off">
-                        <button type="submit" class="btn gp-btn-primary px-4"><i class="fa fa-paper-plane"></i></button>
-                    </form>
+                    <!-- Input Area -->
+                    <div class="chat-input-area">
+                        <form method="POST" id="chatForm">
+                            {% csrf_token %}
+                            <div class="input-container">
+                                <button type="button" class="action-btn" id="emojiBtn"><i class="fa fa-smile"></i></button>
+                                <input type="text" name="content" id="msgInput" placeholder="Message..." required autocomplete="off">
+                                <button type="button" class="action-btn"><i class="fa fa-image"></i></button>
+                                <button type="submit" class="action-btn text-primary" style="font-weight:bold;">Send</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- WebRTC Call Modal Mockup -->
+<div class="modal fade" id="callModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0" style="border-radius: 20px;">
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <img id="callAvatar" src="" class="rounded-circle border border-4 border-primary" width="120" height="120" style="object-fit:cover;">
+                </div>
+                <h4 id="callName" class="mb-1"></h4>
+                <p id="callStatus" class="text-primary mb-5 pulse">Calling...</p>
+                
+                <div class="d-flex justify-content-center gap-4">
+                    <button class="btn btn-danger rounded-circle p-3" data-bs-dismiss="modal" style="width:64px; height:64px;">
+                        <i class="fa fa-phone-slash fa-2x"></i>
+                    </button>
+                    <button class="btn btn-success rounded-circle p-3" style="width:64px; height:64px;">
+                        <i class="fa fa-microphone fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.min.js"></script>
 <script>
-    // Scroll to bottom of chat
-    const chatContainer = document.getElementById('chatContainer');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    // Scroll to bottom
+    const messagesDiv = document.getElementById('chatMessages');
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Emoji Picker
+    const input = document.querySelector('#msgInput');
+    const picker = new EmojiButton({
+        position: 'top-start'
+    });
+    const trigger = document.querySelector('#emojiBtn');
+
+    picker.on('emoji', selection => {
+        input.value += selection;
+    });
+
+    trigger.addEventListener('click', () => picker.togglePicker(trigger));
+
+    // Call Mockup
+    function startCall(type) {
+        const modal = new bootstrap.Modal(document.getElementById('callModal'));
+        document.getElementById('callName').innerText = "{{ other_user.display_name }}";
+        document.getElementById('callStatus').innerText = "Ringing (Internet Call)...";
+        document.getElementById('callAvatar').src = "{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}";
+        modal.show();
+        
+        // In a real implementation, we would initialize WebRTC peer connection here
+        console.log("Starting WebRTC " + type + " call...");
+    }
 </script>
 {% endblock %}

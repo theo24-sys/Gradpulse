@@ -43,6 +43,7 @@ class CustomUser(AbstractUser):
     website = models.URLField(blank=True)
     company_about = models.TextField(blank=True)
     actively_hiring = models.BooleanField(default=True)
+    last_seen = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -66,6 +67,14 @@ class CustomUser(AbstractUser):
     @property
     def is_employer(self):
         return self.portal_type == self.PORTAL_EMPLOYER
+
+    @property
+    def is_online(self):
+        if self.last_seen:
+            from django.utils import timezone
+            from datetime import timedelta
+            return self.last_seen > timezone.now() - timedelta(minutes=5)
+        return False
 
     def get_avatar_url(self):
         if self.profile_photo:

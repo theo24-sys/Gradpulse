@@ -59,6 +59,8 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    deleted_by_sender = models.BooleanField(default=False)
+    deleted_by_receiver = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.sender} → {self.receiver} ({self.timestamp.strftime('%Y-%m-%d %H:%M')})"

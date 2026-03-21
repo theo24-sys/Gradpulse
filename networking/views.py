@@ -71,6 +71,10 @@ def inbox_view(request):
 
 @login_required
 def chat_detail_view(request, pk):
+    from django.utils import timezone
+    request.user.last_seen = timezone.now()
+    request.user.save(update_fields=['last_seen'])
+    
     other_user = get_object_or_404(CustomUser, pk=pk)
     messages = Message.objects.filter(
         Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
@@ -89,3 +93,17 @@ def chat_detail_view(request, pk):
         'other_user': other_user,
         'chat_messages': messages,
     })
+
+
+@login_required
+def delete_message_view(request, msg_pk):
+    message = get_object_or_404(Message, pk=msg_pk)
+    if message.sender == request.user:
+        message.deleted_by_sender = True
+        message.save()
+    elif message.receiver == request.user:
+        message.deleted_by_receiver = True
+        message.save()
+    
+    # If both deleted, actually delete if desired, or just keep flagged
+    return redirect('chat_detail', pk=message.receiver.pk if message.sender == request.user else message.sender.pk)
