@@ -20,6 +20,12 @@
       <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
     </a>
     <div class="d-flex align-items-center gap-3 ms-auto">
+      <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">
+        <img src="{% static 'images/chat_icon.png' %}" alt="Messages" style="height: 22px; width: 22px; object-fit: contain;">
+        {% if unread_messages_count > 0 %}
+        <span class="badge bg-primary rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_messages_count }}</span>
+        {% endif %}
+      </a>
       <a class="nav-link text-dark position-relative" href="{% url 'notifications' %}">
         <i class="fa fa-bell"></i>
         {% if unread_notifications > 0 %}
@@ -95,6 +101,13 @@
   <a href="{% url 'post_opportunity' %}" class="nav-item {% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}">
     <i class="fa fa-plus-circle"></i>
     <span>Post</span>
+  </a>
+  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking' in request.path %}active{% endif %}">
+    <i class="fa fa-envelope"></i>
+    <span>Messages</span>
+    {% if unread_messages_count > 0 %}
+    <span class="badge bg-primary rounded-pill">{{ unread_messages_count }}</span>
+    {% endif %}
   </a>
   <a href="{% url 'corporate_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}">
     <i class="fa fa-file-alt"></i>

@@ -274,12 +274,12 @@ if env('AWS_ACCESS_KEY_ID', default=''):
 JAZZMIN_SETTINGS = {
     "site_title": "GradPulse Admin",
     "site_header": "GradPulse",
-    "site_brand": "🎓 GradPulse",
-    "site_logo": None,
-    "login_logo": None,
+    "site_brand": "GradPulse",
+    "site_logo": "images/logo.jpg",
+    "login_logo": "images/logo.jpg",
     "site_logo_classes": "img-circle",
-    "site_icon": None,
-    "welcome_sign": "Welcome to GradPulse Admin Panel",
+    "site_icon": "images/chat_icon.png",
+    "welcome_sign": "Welcome to GradPulse Control Center",
     "copyright": "Ridge Technologies © 2026",
     "search_model": ["accounts.CustomUser", "opportunities.Opportunity"],
     "user_avatar": "profile_photo",
@@ -289,6 +289,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Home", "url": "/", "new_window": True},
         {"name": "Campus Portal", "url": "/campus/dashboard/", "new_window": True},
         {"name": "Corporate Portal", "url": "/corporate/dashboard/", "new_window": True},
+        {"name": "Messages", "url": "/networking/inbox/", "new_window": True, "icon": "fas fa-envelope"},
         {"model": "accounts.CustomUser"},
     ],
 
@@ -348,10 +349,10 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-success",
-    "accent": "accent-teal",
+    "brand_colour": "navbar-dark",
+    "accent": "accent-primary",
     "navbar": "navbar-dark",
-    "no_navbar_border": True,
+    "no_navbar_border": False,
     "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
@@ -363,16 +364,16 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "slate",
-    "default_theme_mode": "auto",
+    "theme": "lumen",
+    "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
-        "info": "btn-outline-info",
+        "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success",
-    },
+        "success": "btn-success"
+    }
 }
 
 # reCAPTCHA Configuration

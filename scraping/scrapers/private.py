@@ -17,18 +17,30 @@ class BrighterMondayScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        listings = soup.select('.p-4.flex.flex-col')
-        for listing in listings:
-            a = listing.find('a', href=True)
-            if a:
-                title = a.text.strip()
-                company_node = listing.find('p', class_='text-sm')
-                items.append({
-                    'title': title,
-                    'url': a['href'] if a['href'].startswith('http') else "https://www.brightermonday.co.ke" + a['href'],
-                    'company': company_node.text.strip() if company_node else "Private Company",
-                    'description': f"Internship listing from BrighterMonday",
-                })
+        # Direct search for listing links
+        links = soup.select('a[href*="/listings/"]')
+        for a in links:
+            title = a.text.strip()
+            if not title: continue
+            
+            # Find parent container to look for company
+            parent = a.find_parent('div')
+            company = "Private Company"
+            if parent:
+                company_node = parent.find_next_sibling('p', class_='text-sm') or parent.find('p', class_='text-sm')
+                if not company_node:
+                    # Look globally near the link
+                    company_node = a.find_next('p', class_='text-sm')
+                
+                if company_node:
+                    company = company_node.text.strip()
+            
+            items.append({
+                'title': title,
+                'url': a['href'] if a['href'].startswith('http') else "https://www.brightermonday.co.ke" + a['href'],
+                'company': company,
+                'description': f"Internship listing from BrighterMonday",
+            })
         return items
 
 class MyJobMagScraper(BaseScraper):
@@ -44,9 +56,9 @@ class MyJobMagScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        job_list = soup.find_all('li', class_='job-list-item')
+        job_list = soup.select('li.job-list-item, div.job-info')
         for job in job_list:
-            h2 = job.find('h2')
+            h2 = job.find(['h2', 'h3'])
             if h2 and h2.find('a'):
                 a = h2.find('a')
                 items.append({
@@ -70,9 +82,9 @@ class FuzuScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        cards = soup.select('a[href*="/kenya/job/"]')
+        cards = soup.select('a[href*="/kenya/job/"], .job-card')
         for card in cards:
-            title_node = card.find('h6')
+            title_node = card.find(['h6', 'h5', 'h4', 'h3'])
             if title_node:
                 items.append({
                     'title': title_node.text.strip(),
