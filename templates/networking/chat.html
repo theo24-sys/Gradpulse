@@ -286,6 +286,7 @@
     </div>
 </div>
 
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.min.js"></script>
 <script>
     // Scroll to bottom
@@ -305,16 +306,81 @@
 
     trigger.addEventListener('click', () => picker.togglePicker(trigger));
 
-    // Call Mockup
-    function startCall(type) {
+    // Agora Setup
+    let agoraClient = null;
+    let localAudioTrack = null;
+    let localVideoTrack = null;
+
+    async function startCall(type) {
         const modal = new bootstrap.Modal(document.getElementById('callModal'));
+        const statusElement = document.getElementById('callStatus');
+        const channelName = `chat_${Math.min({{ request.user.pk }}, {{ other_user.pk }})}_${Math.max({{ request.user.pk }}, {{ other_user.pk }})}`;
+
         document.getElementById('callName').innerText = "{{ other_user.display_name }}";
-        document.getElementById('callStatus').innerText = "Ringing (Internet Call)...";
+        statusElement.innerText = "Initializing " + type + " call...";
         document.getElementById('callAvatar').src = "{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}";
         modal.show();
         
-        // In a real implementation, we would initialize WebRTC peer connection here
-        console.log("Starting WebRTC " + type + " call...");
+        try {
+            // 1. Fetch Token
+            const response = await fetch(`{% url 'get_agora_token' %}?channel=${channelName}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                statusElement.innerText = "Error: " + data.error;
+                return;
+            }
+
+            // 2. Initialize Agora
+            agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+            const uid = await agoraClient.join(data.appId, channelName, data.token, null);
+            
+            statusElement.innerText = "Connecting...";
+
+            // 3. Create and Publish Tracks
+            if (type === 'audio') {
+                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                await agoraClient.publish([localAudioTrack]);
+            } else if (type === 'video') {
+                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+                await agoraClient.publish([localAudioTrack, localVideoTrack]);
+                // Optional: show local video preview
+            }
+
+            statusElement.innerText = "In Call";
+            console.log("Joined channel successfully as uid", uid);
+
+            // Handle remote users joining (for the other side)
+            agoraClient.on("user-published", async (user, mediaType) => {
+                await agoraClient.subscribe(user, mediaType);
+                if (mediaType === "video") {
+                    // Handle video
+                }
+                if (mediaType === "audio") {
+                    user.audioTrack.play();
+                }
+            });
+
+        } catch (err) {
+            console.error(err);
+            statusElement.innerText = "Call Failed: " + err.message;
+        }
     }
+
+    // Cleanup on hangup
+    document.getElementById('callModal').addEventListener('hidden.bs.modal', async () => {
+        if (localAudioTrack) {
+            localAudioTrack.stop();
+            localAudioTrack.close();
+        }
+        if (localVideoTrack) {
+            localVideoTrack.stop();
+            localVideoTrack.close();
+        }
+        if (agoraClient) {
+            await agoraClient.leave();
+        }
+    });
 </script>
 {% endblock %}

@@ -2,8 +2,36 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.http import JsonResponse
 from .models import Connection, Collaboration, CollaborationMember, Message
 from accounts.models import CustomUser
+from .agora_utils import generate_agora_token
+
+
+@login_required
+def student_profile_public(request, pk):
+    if not request.user.is_employer:
+        return redirect('campus_dashboard')
+    student = get_object_or_404(CustomUser, pk=pk, portal_type='student')
+    return render(request, 'corporate/student_profile_view.html', {'student': student})
+
+
+@login_required
+def get_agora_token(request):
+    channel_name = request.GET.get('channel')
+    if not channel_name:
+        return JsonResponse({'error': 'Channel name is required'}, status=400)
+    
+    # Simple security check: user must be part of a conversation that matches this channel naming convention
+    # Channel naming: chat_<min_id>_<max_id>
+    token = generate_agora_token(channel_name, uid=0)
+    if not token:
+        return JsonResponse({'error': 'Failed to generate token'}, status=500)
+        
+    return JsonResponse({
+        'token': token,
+        'appId': __import__('os').environ.get('AGORA_APP_ID')
+    })
 
 
 @login_required

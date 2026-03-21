@@ -9,4 +9,5 @@ urlpatterns = [
     path('inbox/', views.inbox_view, name='inbox'),
     path('chat/<int:pk>/', views.chat_detail_view, name='chat_detail'),
     path('delete-message/<int:msg_pk>/', views.delete_message_view, name='delete_message'),
+    path('agora-token/', views.get_agora_token, name='get_agora_token'),
 ]
