@@ -1,6 +1,6 @@
 try:
-    # New package
     from google import genai
+    from google.genai import types
 except ImportError:
     genai = None
 
@@ -11,14 +11,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Configure Gemini
+# Configure Gemini Client
+client = None
 try:
     if genai is not None and hasattr(settings, 'GOOGLE_API_KEY') and settings.GOOGLE_API_KEY:
-        genai.configure(api_key=settings.GOOGLE_API_KEY)
+        client = genai.Client(api_key=settings.GOOGLE_API_KEY)
     else:
         logger.warning("GOOGLE_API_KEY not found in settings.")
 except Exception as e:
-    logger.error(f"Failed to configure Gemini: {e}")
+    logger.error(f"Failed to configure Gemini Client: {e}")
 
 def extract_text_from_pdf(pdf_file):
     """Extracts raw text from a PDF file."""
@@ -26,7 +27,7 @@ def extract_text_from_pdf(pdf_file):
         reader = PyPDF2.PdfReader(pdf_file)
         text = ""
         for page in reader.pages:
-            text += page.extract_text()
+            text += page.extract_text() or ""
         return text
     except Exception as e:
         logger.error(f"PDF extraction error: {e}")
@@ -39,14 +40,12 @@ def parse_text_transcript_with_gemini(text):
     if not text.strip():
         return []
 
-    if genai is None:
-        logger.warning("Gemini client not available (google.genai not installed).")
+    if client is None:
+        logger.warning("Gemini client not available.")
         return []
 
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
     prompt = f"""
-    Act as a transcript parser for a Kenyan University system. 
+    Act as a transcript parser for a Kenyan University or TVET system. 
     Below is the raw text extracted from a student transcript. 
     Extract all course units and their respective grades into a structured JSON list.
     Course units should have unit_name, grade, credit_hours (as int), semester, and year (as int).
@@ -64,18 +63,13 @@ def parse_text_transcript_with_gemini(text):
     """
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
         content = response.text.replace('```json', '').replace('```', '').strip()
         data = json.loads(content)
         return data
     except Exception as e:
         error_str = str(e)
-        if "429" in error_str or "quota" in error_str.lower():
-            logger.error(f"Gemini API Quota Exceeded (Likely Token Depleted): {e}")
-        elif "403" in error_str or "permission" in error_str.lower():
-            logger.error(f"Gemini API Permission Denied (Check API Key): {e}")
-        else:
-            logger.error(f"Gemini text parsing error: {e}")
+        logger.error(f"Gemini text parsing error: {e}")
         return {"error": f"AI Parsing failed: {error_str}"}
 
 def parse_transcript_with_gemini(pdf_file):
@@ -91,14 +85,12 @@ def generate_simulation_scenario(topic):
     """
     Generates a learning simulation scenario based on a specific topic.
     """
-    if genai is None:
-        logger.warning("Gemini client not available (google.genai not installed).")
+    if client is None:
+        logger.warning("Gemini client not available.")
         return None
 
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
     prompt = f"""
-    Create a professional learning simulation scenario for a university student.
+    Create a professional learning simulation scenario for a university or TVET student.
     Topic: {topic}
     
     Requirement:
@@ -122,7 +114,7 @@ def generate_simulation_scenario(topic):
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
         content = response.text.replace('```json', '').replace('```', '').strip()
         return json.loads(content)
     except Exception as e:
@@ -134,26 +126,21 @@ def generate_search_queries(traits, category="events"):
     Generates specific search queries based on student traits and a category.
     Used for scraping industry events, internships, or certifications.
     """
-    if genai is None:
-        logger.warning("Gemini client not available (google.genai not installed).")
+    if client is None:
+        logger.warning("Gemini client not available.")
         return []
 
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
     prompt = f"""
     Based on these student traits: {traits}, generate 3 specific search queries 
-    for {category} in Kenya. Queries should be targeted and professionally relevant.
+    for {category} in Kenya (including TVET-specific opportunities if applicable). 
+    Queries should be targeted and professionally relevant.
     Return ONLY the queries separated by newlines. No numbers, no bullets.
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
         queries = response.text.strip().split('\n')
         return [q.strip() for q in queries if q.strip()]
     except Exception as e:
-        error_str = str(e)
-        if "429" in error_str or "quota" in error_str.lower():
-            logger.error(f"Gemini API Quota Exceeded (Scraping Failed): {e}")
-        else:
-            logger.error(f"Gemini query generation error: {e}")
+        logger.error(f"Gemini query generation error: {e}")
         return []

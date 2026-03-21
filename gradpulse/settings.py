@@ -17,16 +17,6 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
 
-# IMMEDIATE DIAGNOSTIC (at the very top)
-import sys
-import os
-print(f"--- SETTINGS INITIALIZING (DEBUG={DEBUG}, ENV_DEBUG={str(os.environ.get('DEBUG'))}) ---", file=sys.stderr)
-diagnostic_keys = ['GOOGLE_API_KEY', 'RECAPTCHA_PUBLIC_KEY', 'RECAPTCHA_PRIVATE_KEY', 'AGORA_APP_ID', 'AGORA_APP_CERTIFICATE']
-for k in diagnostic_keys:
-    val = os.environ.get(k, 'MISSING')
-    prefix = val[:5] if len(val) > 5 else val
-    print(f"--- DIAGNOSTIC: {k}={prefix}... ---", file=sys.stderr)
-
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin
     'jazzmin',
@@ -390,16 +380,3 @@ RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
 RECAPTCHA_SITE_KEY = RECAPTCHA_PUBLIC_KEY
 RECAPTCHA_SECRET_KEY = RECAPTCHA_PRIVATE_KEY
 SILENT_RECAPTCHA_V3 = False
-
-# Production Environment Validation
-if not DEBUG:
-    REQUIRED_ENV_VARS = [
-        ('GOOGLE_API_KEY', GOOGLE_API_KEY),
-        ('RECAPTCHA_PUBLIC_KEY', RECAPTCHA_PUBLIC_KEY),
-        ('RECAPTCHA_PRIVATE_KEY', RECAPTCHA_PRIVATE_KEY),
-        ('AGORA_APP_ID', env('AGORA_APP_ID', default='')),
-        ('AGORA_APP_CERTIFICATE', env('AGORA_APP_CERTIFICATE', default='')),
-    ]
-    for var_name, var_value in REQUIRED_ENV_VARS:
-        if not var_value:
-            print(f"CRITICAL ERROR: {var_name} is missing or empty in production environment!")
