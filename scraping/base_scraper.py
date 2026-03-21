@@ -31,25 +31,53 @@ class BaseScraper:
         self.apify_token = os.environ.get('APIFY_TOKEN')
         self.apify_client = ApifyClient(self.apify_token) if self.apify_token and ApifyClient else None
 
-    def fetch_apify(self, url, actor="apify/web-scraper"):
-        """Fetch URL content using Apify if available."""
+    def fetch_js(self, url):
+        """Fetch content using a real browser. Preferred to run on Apify."""
+        if os.environ.get('APIFY_IS_AT_HOME'):
+            try:
+                # When running inside an Apify actor, we can use Playwright
+                # (assuming it's installed in the actor environment)
+                from playwright.sync_api import sync_playwright
+                with sync_playwright() as p:
+                    browser = p.chromium.launch(headless=True)
+                    page = browser.new_page()
+                    page.goto(url, wait_until="networkidle", timeout=60000)
+                    content = page.content()
+                    browser.close()
+                    return content
+            except Exception as e:
+                logger.error(f"Playwright error on Apify: {e}")
+
+        # Fallback to standard fetch if not on Apify or failed
+        return self.fetch_html(url)
+
+    def fetch_apify(self, url=None, actor=None):
+        """
+        Railway-side: Call Apify actor to get data.
+        Apify-side: Perform JS fetch locally.
+        """
+        # 1. If we are ALREADY on Apify, don't call Apify again! (Avoid recursion)
+        if os.environ.get('APIFY_IS_AT_HOME'):
+            return self.fetch_js(url) if url else None
+
+        # 2. On Railway: Call the actor
         if not self.apify_client:
             logger.warning("Apify client not initialized. Falling back to HTTPX.")
-            return self.fetch_html(url)
-            
+            return self.fetch_html(url) if url else None
+
         try:
-            # Simple example: using Apify's web-scraper actor
-            # (Note: Specific configuration depends on the actor chosen)
-            run_input = { "startUrls": [{ "url": url }] }
-            run = self.apify_client.actor(actor).call(run_input=run_input)
-            
-            # This is a generic fetch; most actors return results in the dataset
+            target_actor = actor or os.environ.get('APIFY_ACTOR', 'kingly_nomination/gradpulse')
+            print(f"Railway: Delegating {self.__class__.__name__} to Apify actor {target_actor}...")
+
+            run_input = { "scraper": self.__class__.__name__, "url": url }
+            run = self.apify_client.actor(target_actor).call(run_input=run_input)
+
+            # Retrieve results from the dataset
             dataset_items = self.apify_client.dataset(run["defaultDatasetId"]).list_items().items
-            if dataset_items:
-                return dataset_items[0].get('text') or dataset_items[0].get('html')
+            return dataset_items # This is a list of results
         except Exception as e:
-            logger.error(f"Apify error: {e}")
-            return self.fetch_html(url)
+            logger.error(f"Apify delegation error: {e}")
+            return self.fetch_html(url) if url else None
         return None
 
     def get_headers(self):

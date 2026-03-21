@@ -1,0 +1,9 @@
+{
+    "name": "gradpulse-scraping",
+    "version": "1.0.0",
+    "buildTag": "latest",
+    "env": {
+        "PYTHONPATH": "."
+    },
+    "dockerfile": "Dockerfile.apify"
+}

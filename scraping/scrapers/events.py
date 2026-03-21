@@ -12,7 +12,10 @@ class EventbriteScraper(BaseScraper):
 
     def parse(self):
         # Eventbrite is highly reactive and requires JS
-        html = self.fetch_apify(self.base_url)
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')
@@ -39,7 +42,10 @@ class MeetupScraper(BaseScraper):
 
     def parse(self):
         # Meetup uses JS for list rendering
-        html = self.fetch_apify(self.base_url)
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')

@@ -13,7 +13,10 @@ class PSCKenyaScraper(BaseScraper):
 
     def parse(self):
         # PSC often requires JS rendering or has anti-bot that Apify handles better
-        html = self.fetch_apify(self.base_url)
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
         if not html: return []
         
         soup = BeautifulSoup(html, 'lxml')
