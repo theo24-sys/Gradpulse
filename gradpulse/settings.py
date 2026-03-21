@@ -17,10 +17,11 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
 
-# Diagnostic Logging for Production env vars
-if not DEBUG:
-    found_vars = [k for k in os.environ.keys() if any(prefix in k for prefix in ['GOOGLE', 'RECAPTCHA', 'AGORA'])]
-    print(f"DIAGNOSTIC: Found env vars match: {found_vars}")
+# IMMEDIATE DIAGNOSTIC (at the very top)
+import sys
+print(f"--- SETTINGS INITIALIZING (DEBUG={DEBUG}) ---", file=sys.stderr)
+found_vars = [k for k in os.environ.keys() if any(prefix in k for prefix in ['GOOGLE', 'RECAPTCHA', 'AGORA'])]
+print(f"--- DIAGNOSTIC ENV MATCH: {found_vars} ---", file=sys.stderr)
 
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin
