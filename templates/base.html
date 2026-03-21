@@ -26,13 +26,8 @@
     <a class="navbar-brand gp-brand" href="{% url 'home' %}">
       <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
     </a>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navMain">
-      <ul class="navbar-nav me-auto">
-      </ul>
-      <ul class="navbar-nav ms-auto align-items-center flex-row gap-3 pe-2 py-2 py-lg-0 justify-content-end">
+    <div class="d-flex align-items-center ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center flex-row gap-3 pe-2 justify-content-end">
         {% if user.is_authenticated %}
           <li class="nav-item me-2">
             <a class="nav-link position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">

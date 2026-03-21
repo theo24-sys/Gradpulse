@@ -49,12 +49,13 @@
             top: 80px;
             left: 0;
             right: 0;
-            bottom: 85px; /* Bottom nav height */
+            bottom: 80px; /* Match bottom nav height */
             width: 100%;
             z-index: 1000;
             border-radius: 0 !important;
             background: white !important;
             display: none;
+            flex-direction: column;
         }
 
         /* When a chat is active on mobile */
@@ -489,7 +490,7 @@
                     </div>
                     <div>
                         <h5>{{ other_user.display_name }}</h5>
-                        <p class="status-text">
+                        <p class="status-text" style="white-space: nowrap;">
                             {% if other_user.is_online %}
                                 <span class="text-success">Active now</span>
                             {% elif other_user.last_seen %}
@@ -503,12 +504,12 @@
                 <div class="header-actions">
                     <div class="icon-btn" onclick="startCall('audio')"><i class="fa fa-phone"></i></div>
                     <div class="icon-btn" onclick="startCall('video')"><i class="fa fa-video"></i></div>
-                    <div class="icon-btn"><i class="fa fa-info-circle"></i></div>
+                    <div class="icon-btn" onclick="document.body.classList.remove('chat-active');"><i class="fa fa-times d-lg-none"></i><i class="fa fa-info-circle d-none d-lg-inline"></i></div>
                 </div>
             </div>
 
             <!-- Messages Area -->
-            <div class="messages-container" id="messagesBox">
+            <div class="messages-container" id="messagesBox" style="flex: 1; overflow-y: auto;">
                 {% for msg in chat_messages %}
                     {% if msg.sender == request.user and not msg.deleted_by_sender %}
                     <div class="message-row sent">
@@ -561,27 +562,105 @@
     </div>
 </div>
 
+<!-- WebRTC Call Modal -->
+<div class="modal fade" id="callModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0" style="border-radius: 20px;">
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <img id="callAvatar" src="" class="rounded-circle border border-4 border-primary" width="120" height="120" style="object-fit:cover;">
+                </div>
+                <h4 id="callName" class="mb-1"></h4>
+                <p id="callStatus" class="text-primary mb-5 pulse">Calling...</p>
+                <div class="d-flex justify-content-center gap-4">
+                    <button class="btn btn-danger rounded-circle p-3" data-bs-dismiss="modal" style="width:64px; height:64px;">
+                        <i class="fa fa-phone-slash fa-2x"></i>
+                    </button>
+                    <button class="btn btn-success rounded-circle p-3" style="width:64px; height:64px;">
+                        <i class="fa fa-microphone fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Agora & Emoji Scripts -->
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.min.js"></script>
 <script>
-    // Auto-scroll messages
+    // Auto-scroll messages & Autofocus
     const msgBox = document.getElementById('messagesBox');
+    const msgInput = document.getElementById('msgInput');
+    
     if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
+    if (msgInput) {
+        // Delay slightly to ensure keyboard pops up on mobile
+        setTimeout(() => { msgInput.focus(); }, 300);
+    }
 
     // Emoji Picker initialization
-    const input = document.querySelector('#msgInput');
-    const trigger = document.querySelector('#emojiBtn');
-    if (trigger && input) {
-        const picker = new EmojiButton({ position: 'top-start' });
-        picker.on('emoji', selection => { input.value += selection; });
-        trigger.addEventListener('click', () => picker.togglePicker(trigger));
+    if (msgInput) {
+        const trigger = document.querySelector('#emojiBtn');
+        if (trigger) {
+            const picker = new EmojiButton({ position: 'top-start' });
+            picker.on('emoji', selection => { msgInput.value += selection; });
+            trigger.addEventListener('click', () => picker.togglePicker(trigger));
+        }
     }
     
-    // WebRTC Logic preserved from previous version...
-    function startCall(type) {
-        // Implement modal show and token logic here as before
-        console.log("Starting " + type + " call...");
+    // WebRTC Logic
+    let agoraClient = null;
+    let localAudioTrack = null;
+    let localVideoTrack = null;
+
+    async function startCall(type) {
+        const modal = new bootstrap.Modal(document.getElementById('callModal'));
+        const statusElement = document.getElementById('callStatus');
+        
+        // Use hidden inputs or data attributes for IDs to avoid template tags in script
+        const currentUserId = parseInt("{{ request.user.pk }}");
+        const otherUserId = parseInt("{{ other_user.pk|default:0 }}");
+        const channelName = `chat_${Math.min(currentUserId, otherUserId)}_${Math.max(currentUserId, otherUserId)}`;
+
+        document.getElementById('callName').innerText = "{{ other_user.display_name }}";
+        statusElement.innerText = "Initializing " + type + " call...";
+        document.getElementById('callAvatar').src = "{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}";
+        modal.show();
+        
+        try {
+            const response = await fetch(`{% url 'get_agora_token' %}?channel=${channelName}`);
+            const data = await response.json();
+            if (data.error) {
+                statusElement.innerText = "Error: " + data.error;
+                return;
+            }
+            agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+            const uid = await agoraClient.join(data.appId, channelName, data.token, null);
+            statusElement.innerText = "Connecting...";
+            if (type === 'audio') {
+                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                await agoraClient.publish([localAudioTrack]);
+            } else if (type === 'video') {
+                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+                await agoraClient.publish([localAudioTrack, localVideoTrack]);
+            }
+            statusElement.innerText = "In Call";
+            agoraClient.on("user-published", async (user, mediaType) => {
+                await agoraClient.subscribe(user, mediaType);
+                if (mediaType === "audio") user.audioTrack.play();
+            });
+        } catch (err) {
+            console.error(err);
+            statusElement.innerText = "Call Failed: " + err.message;
+        }
     }
+
+    document.getElementById('callModal')?.addEventListener('hidden.bs.modal', async () => {
+        if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
+        if (localVideoTrack) { localVideoTrack.stop(); localVideoTrack.close(); }
+        if (agoraClient) await agoraClient.leave();
+    });
 </script>
 {% endblock %}
