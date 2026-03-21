@@ -35,11 +35,16 @@ def home(request):
 def register_view(request):
     portal = request.GET.get('portal', 'student')
     if request.method == 'POST':
-        portal = request.POST.get('portal_type', 'student')
         if portal == 'employer':
             form = EmployerRegisterForm(request.POST, request.FILES)
         else:
             form = StudentRegisterForm(request.POST, request.FILES)
+        
+        # DEBUG BYPASS: Allow registration without reCAPTCHA if ?bypass=true is in URL (and DEBUG is on)
+        if settings.DEBUG and request.GET.get('bypass') == 'true':
+            if 'captcha' in form.fields:
+                form.fields['captcha'].required = False
+        
         if form.is_valid():
             user = form.save()
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')

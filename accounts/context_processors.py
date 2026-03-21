@@ -13,7 +13,7 @@ def live_counts(request):
         return {
             'upcoming_events_count': Event.objects.filter(date__gt=timezone.now()).count(),
             'unread_messages_count': Message.objects.filter(receiver=request.user, is_read=False, deleted_by_receiver=False).count(),
-            'unread_notifications': Notification.objects.filter(recipient=request.user, is_read=False).count(),
+            'unread_notifications': Notification.objects.filter(user=request.user, is_read=False).count(),
         }
     return {
         'upcoming_events_count': 0,
