@@ -39,3 +39,4 @@ beautifulsoup4>=4.12
 dateparser>=1.2
 lxml>=5.2
 fake-useragent>=1.5
+agora-token-builder>=1.0.0

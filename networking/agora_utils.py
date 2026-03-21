@@ -1,11 +1,16 @@
 import time
 import os
-from agora_token_builder import RtcTokenBuilder
+try:
+    from agora_token_builder import RtcTokenBuilder
+except ImportError:
+    RtcTokenBuilder = None
 
 def generate_agora_token(channel_name, uid=0):
     """
     Generates an Agora RTC token for a given channel name.
     """
+    if RtcTokenBuilder is None:
+        return None
     app_id = os.environ.get('AGORA_APP_ID')
     app_certificate = os.environ.get('AGORA_APP_CERTIFICATE')
     
