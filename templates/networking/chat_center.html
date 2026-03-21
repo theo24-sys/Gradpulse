@@ -570,10 +570,16 @@
                 <h4 id="callName" class="mb-1"></h4>
                 <p id="callStatus" class="text-primary mb-5 pulse">Calling...</p>
                 <div class="d-flex justify-content-center gap-4">
+                    <!-- Decline / Hang Up -->
                     <button class="btn btn-danger rounded-circle p-3" data-bs-dismiss="modal" style="width:64px; height:64px;">
                         <i class="fa fa-phone-slash fa-2x"></i>
                     </button>
-                    <button class="btn btn-success rounded-circle p-3" style="width:64px; height:64px;">
+                    <!-- Accept (Only for incoming) -->
+                    <button id="acceptBtn" class="btn btn-success rounded-circle p-3" onclick="acceptCall()" style="width:64px; height:64px; display:none;">
+                        <i class="fa fa-phone fa-2x"></i>
+                    </button>
+                    <!-- Mute Icon (Visual only for now) -->
+                    <button id="muteBtn" class="btn btn-secondary rounded-circle p-3" style="width:64px; height:64px;">
                         <i class="fa fa-microphone fa-2x"></i>
                     </button>
                 </div>
@@ -607,6 +613,78 @@
         }
     }
     
+    // --- POLLING & REAL-TIME UPDATES ---
+    let lastMsgId = {% if chat_messages %}{{ chat_messages.last.id }}{% else %}0{% endif %};
+    const otherUserId = "{{ other_user.pk|default:0 }}";
+    
+    async function pollMessages() {
+        if (!otherUserId || otherUserId === "0") return;
+        
+        try {
+            const res = await fetch(`{% url 'api_get_messages' 0 %}`.replace('0', otherUserId) + `?last_id=${lastMsgId}`);
+            const data = await res.json();
+            
+            if (data.messages && data.messages.length > 0) {
+                data.messages.forEach(msg => {
+                    // Check for signaling
+                    if (!msg.is_me && msg.content.startsWith('[CALL_INVITE]')) {
+                        handleIncomingCall(msg);
+                    } else if (!msg.content.startsWith('[CALL_INVITE]')) {
+                        appendMessageUI(msg);
+                    }
+                    lastMsgId = Math.max(lastMsgId, msg.id);
+                });
+                if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
+            }
+        } catch (e) { console.error("Poll error:", e); }
+    }
+
+    function appendMessageUI(msg) {
+        const row = document.createElement('div');
+        row.className = `message-row ${msg.is_me ? 'sent' : 'received'}`;
+        row.innerHTML = `
+            <div class="bubble">
+                ${msg.content}
+                <span class="bubble-time">${msg.timestamp}</span>
+            </div>
+        `;
+        msgBox.appendChild(row);
+    }
+
+    // Start polling every 3 seconds
+    setInterval(pollMessages, 3000);
+
+    // --- CALL SIGNALING ---
+    let incomingCallModal = null;
+    let currentCallType = null;
+
+    function handleIncomingCall(msg) {
+        const type = msg.content.split(':')[1] || 'audio';
+        currentCallType = type;
+        
+        const modalEl = document.getElementById('callModal');
+        const statusEl = document.getElementById('callStatus');
+        const acceptBtn = document.getElementById('acceptBtn');
+        
+        document.getElementById('callName').innerText = "{{ other_user.display_name }}";
+        document.getElementById('callAvatar').src = "{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}";
+        statusEl.innerText = `Incoming ${type} call...`;
+        
+        if (acceptBtn) acceptBtn.style.display = 'block';
+        
+        incomingCallModal = new bootstrap.Modal(modalEl);
+        incomingCallModal.show();
+    }
+
+    async function acceptCall() {
+        if (incomingCallModal) {
+            const statusEl = document.getElementById('callStatus');
+            statusEl.innerText = "Connecting...";
+            document.getElementById('acceptBtn').style.display = 'none';
+            await performJoinCall(currentCallType);
+        }
+    }
+
     // WebRTC Logic
     var agoraClient = null;
     if (typeof AgoraRTC !== 'undefined') {
@@ -617,55 +695,72 @@
 
     async function startCall(type) {
         if (!agoraClient) {
-            alert("Agora SDK not loaded properly. Please check your internet connection.");
+            alert("Agora SDK not loaded properly.");
             return;
         }
-        const modal = new bootstrap.Modal(document.getElementById('callModal'));
-        const statusElement = document.getElementById('callStatus');
         
-        const currentUserId = "{{ request.user.pk }}";
-        const otherUserId = "{{ other_user.pk|default:0 }}";
-        const channelName = "chat_" + Math.min(currentUserId, otherUserId) + "_" + Math.max(currentUserId, otherUserId);
+        // 1. Send Signaling Message via API
+        try {
+            const formData = new FormData();
+            formData.append('content', `[CALL_INVITE]:${type}`);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            await fetch(`{% url 'api_send_signal' 0 %}`.replace('0', otherUserId), {
+                method: 'POST',
+                body: formData
+            });
+        } catch (e) { console.error("Signal failed:", e); }
+
+        // 2. Open Modal & Join
+        const modalEl = document.getElementById('callModal');
+        const statusEl = document.getElementById('callStatus');
+        if (document.getElementById('acceptBtn')) document.getElementById('acceptBtn').style.display = 'none';
 
         document.getElementById('callName').innerText = "{{ other_user.display_name }}";
-        statusElement.innerText = "Initializing " + type + " call...";
         document.getElementById('callAvatar').src = "{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}";
+        statusEl.innerText = `Calling ${type}...`;
+        
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
         
+        await performJoinCall(type);
+    }
+
+    async function performJoinCall(type) {
+        const statusElement = document.getElementById('callStatus');
+        const currentUserId = "{{ request.user.pk }}";
+        const channelName = "chat_" + Math.min(currentUserId, otherUserId) + "_" + Math.max(currentUserId, otherUserId);
+
         try {
             const response = await fetch(`{% url 'get_agora_token' %}?channel=${channelName}`);
             const data = await response.json();
-            if (data.error) {
-                statusElement.innerText = "Error: " + data.error;
-                return;
-            }
             
-            // Join the channel
-            const uid = await agoraClient.join(data.appId, channelName, data.token, null);
-            statusElement.innerText = "Connecting...";
-            if (type === 'audio') {
-                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                await agoraClient.publish([localAudioTrack]);
-            } else if (type === 'video') {
-                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                localVideoTrack = await AgoraRTC.createCameraVideoTrack();
-                await agoraClient.publish([localAudioTrack, localVideoTrack]);
-            }
+            await agoraClient.join(data.appId, channelName, data.token, null);
             statusElement.innerText = "In Call";
+            
+            if (type === 'audio' || type === 'video') {
+                localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                if (type === 'video') {
+                    localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+                    await agoraClient.publish([localAudioTrack, localVideoTrack]);
+                } else {
+                    await agoraClient.publish([localAudioTrack]);
+                }
+            }
+
             agoraClient.on("user-published", async (user, mediaType) => {
                 await agoraClient.subscribe(user, mediaType);
                 if (mediaType === "audio") user.audioTrack.play();
             });
         } catch (err) {
-            console.error(err);
-            statusElement.innerText = "Call Failed: " + err.message;
+            statusElement.innerText = "Failed: " + err.message;
         }
     }
 
     document.getElementById('callModal')?.addEventListener('hidden.bs.modal', async () => {
-        if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); }
-        if (localVideoTrack) { localVideoTrack.stop(); localVideoTrack.close(); }
+        if (localAudioTrack) { localAudioTrack.stop(); localAudioTrack.close(); localAudioTrack = null; }
+        if (localVideoTrack) { localVideoTrack.stop(); localVideoTrack.close(); localVideoTrack = null; }
         if (agoraClient) await agoraClient.leave();
+        incomingCallModal = null;
     });
 </script>
 {% endblock %}

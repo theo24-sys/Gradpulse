@@ -168,3 +168,42 @@ def delete_message_view(request, msg_pk):
     
     # If both deleted, actually delete if desired, or just keep flagged
     return redirect('chat_detail', pk=message.receiver.pk if message.sender == request.user else message.sender.pk)
+
+
+@login_required
+def api_get_messages(request, pk):
+    """API endpoint for long-polling/updates of chat messages."""
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    last_id = request.GET.get('last_id', 0)
+    
+    new_messages = Message.objects.filter(
+        Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+    ).filter(id__gt=last_id).order_by('timestamp')
+    
+    # Mark as read if we are the receiver
+    Message.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+    
+    data = []
+    for m in new_messages:
+        data.append({
+            'id': m.id,
+            'content': m.content,
+            'is_me': m.sender == request.user,
+            'timestamp': m.timestamp.strftime('%g:%i %A'),
+            'sender_id': m.sender_id,
+        })
+        
+    return JsonResponse({'messages': data})
+
+
+@login_required
+def api_send_signal(request, pk):
+    """API endpoint to send a hidden signaling message (e.g. [CALL_INVITE])."""
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    content = request.POST.get('content')
+    
+    if content and content.startswith('[CALL_INVITE]'):
+        msg = Message.objects.create(sender=request.user, receiver=other_user, content=content)
+        return JsonResponse({'status': 'ok', 'message_id': msg.id})
+        
+    return JsonResponse({'status': 'error'}, status=400)

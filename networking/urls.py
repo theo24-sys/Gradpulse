@@ -10,4 +10,6 @@ urlpatterns = [
     path('chat/<int:pk>/', views.chat_detail_view, name='chat_detail'),
     path('delete-message/<int:msg_pk>/', views.delete_message_view, name='delete_message'),
     path('agora-token/', views.get_agora_token, name='get_agora_token'),
+    path('api/messages/<int:pk>/', views.api_get_messages, name='api_get_messages'),
+    path('api/send-signal/<int:pk>/', views.api_send_signal, name='api_send_signal'),
 ]
