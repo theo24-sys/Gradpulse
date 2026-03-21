@@ -31,9 +31,8 @@
     </button>
     <div class="collapse navbar-collapse" id="navMain">
       <ul class="navbar-nav me-auto">
-        <!-- Links removed from public navbar; accessible via Dashboard instead -->
       </ul>
-      <ul class="navbar-nav align-items-center">
+      <ul class="navbar-nav ms-auto align-items-center flex-row gap-3 pe-2 py-2 py-lg-0 justify-content-end">
         {% if user.is_authenticated %}
           <li class="nav-item me-2">
             <a class="nav-link position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">

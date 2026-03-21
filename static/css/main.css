@@ -647,6 +647,25 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 .table { color: var(--gp-text); }
 .alert { border-radius: 12px; }
 
+/* Fix centering in navbar-collapse on mobile */
+@media (max-width: 991.98px) {
+  .navbar-collapse .navbar-nav {
+    align-items: flex-end !important;
+    text-align: right;
+    padding: 1rem 0;
+  }
+  .navbar-collapse .nav-item {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+  .navbar-collapse .dropdown-menu {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding-left: 1.5rem;
+  }
+}
+
 /* Dashboard Specifics */
 .dash-title { color: var(--gp-navy) !important; }
 .dash-greeting { color: var(--gp-text-muted); }
@@ -661,17 +680,24 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 .gp-mobile-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: 85px;
+  height: 80px;
   background: var(--gp-glass);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-top: 1px solid var(--gp-border);
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex !important;
+  overflow-x: auto;
   align-items: center;
-  padding-bottom: env(safe-area-inset-bottom, 15px);
+  padding: 0 10px;
+  padding-bottom: env(safe-area-inset-bottom, 10px);
   z-index: 2000;
   box-shadow: 0 -10px 40px rgba(0, 139, 139, 0.1);
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  gap: 5px;
+}
+
+.gp-mobile-nav::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .gp-mobile-nav .nav-item {
@@ -686,6 +712,8 @@ h1, h2, h3, h4, h5, h6, .brand-text {
   gap: 4px;
   transition: all 0.3s ease;
   position: relative;
+  min-width: 75px;
+  flex-shrink: 0;
 }
 
 .gp-mobile-nav .nav-item i, .gp-mobile-nav .nav-item img {

@@ -96,24 +96,32 @@
     <i class="fa fa-th-large"></i>
     <span>Dashboard</span>
   </a>
+  <a href="{% url 'corporate_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_profile' %}active{% endif %}">
+    <i class="fa fa-building"></i>
+    <span>Profile</span>
+  </a>
   <a href="{% url 'post_opportunity' %}" class="nav-item {% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}">
     <i class="fa fa-plus-circle"></i>
     <span>Post</span>
   </a>
-  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking' in request.path %}active{% endif %}">
+  <a href="{% url 'corporate_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}">
+    <i class="fa fa-file-alt"></i>
+    <span>Apps</span>
+  </a>
+  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking/chat' in request.path or request.resolver_match.url_name == 'inbox' %}active{% endif %}">
     <i class="fa fa-envelope"></i>
     <span>Messages</span>
     {% if unread_messages_count > 0 %}
     <span class="badge bg-primary rounded-pill">{{ unread_messages_count }}</span>
     {% endif %}
   </a>
-  <a href="{% url 'corporate_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}">
-    <i class="fa fa-file-alt"></i>
-    <span>Apps</span>
+  <a href="{% url 'manage_simulations' %}" class="nav-item {% if 'simulations' in request.path %}active{% endif %}">
+    <i class="fa fa-brain"></i>
+    <span>Scenarios</span>
   </a>
-  <a href="{% url 'corporate_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_profile' %}active{% endif %}">
-    <i class="fa fa-building"></i>
-    <span>Profile</span>
+  <a href="{% url 'talent_search' %}" class="nav-item {% if request.resolver_match.url_name == 'talent_search' %}active{% endif %}">
+    <i class="fa fa-users"></i>
+    <span>Talent</span>
   </a>
 </div>
 

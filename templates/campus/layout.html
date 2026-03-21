@@ -127,11 +127,23 @@
     <i class="fa fa-home"></i>
     <span>Home</span>
   </a>
+  <a href="{% url 'campus_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}">
+    <i class="fa fa-user"></i>
+    <span>Profile</span>
+  </a>
+  <a href="{% url 'grades' %}" class="nav-item {% if request.resolver_match.url_name == 'grades' %}active{% endif %}">
+    <i class="fa fa-chart-line"></i>
+    <span>Grades</span>
+  </a>
   <a href="{% url 'opportunity_list' %}" class="nav-item {% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}">
     <i class="fa fa-briefcase"></i>
     <span>Jobs</span>
   </a>
-  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking' in request.path %}active{% endif %}">
+  <a href="{% url 'events_list' %}" class="nav-item {% if request.resolver_match.url_name == 'events_list' %}active{% endif %}">
+    <i class="fa fa-calendar-alt"></i>
+    <span>Events</span>
+  </a>
+  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking/chat' in request.path or request.resolver_match.url_name == 'inbox' %}active{% endif %}">
     <i class="fa fa-envelope"></i>
     <span>Messages</span>
     {% if unread_messages_count > 0 %}
@@ -142,9 +154,13 @@
     <i class="fa fa-brain"></i>
     <span>Learn</span>
   </a>
-  <a href="{% url 'campus_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}">
-    <i class="fa fa-user"></i>
-    <span>Profile</span>
+  <a href="{% url 'networking' %}" class="nav-item {% if request.resolver_match.url_name == 'networking' %}active{% endif %}">
+    <i class="fa fa-globe"></i>
+    <span>Network</span>
+  </a>
+  <a href="{% url 'collaborations' %}" class="nav-item {% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}">
+    <i class="fa fa-handshake"></i>
+    <span>Collabs</span>
   </a>
 </div>
 

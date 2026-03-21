@@ -29,7 +29,69 @@
         gap: 20px;
     }
 
-    /* Sidebar - All Chats */
+    /* Responsive Mobile Messaging (IG Style) */
+    @media (max-width: 991.98px) {
+        .chat-center-container {
+            padding: 0;
+            height: calc(100vh - 120px); /* More space for bottom nav */
+            gap: 0;
+            border-radius: 0;
+        }
+        
+        .chat-sidebar {
+            width: 100% !important;
+            border-radius: 0 !important;
+            height: 100%;
+        }
+
+        .chat-main {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            bottom: 85px; /* Bottom nav height */
+            width: 100%;
+            z-index: 1000;
+            border-radius: 0 !important;
+            background: white !important;
+            display: none;
+        }
+
+        /* When a chat is active on mobile */
+        body.chat-active {
+            overflow: hidden;
+        }
+        
+        body.chat-active .chat-main {
+            display: flex;
+        }
+        
+        body.chat-active .chat-sidebar {
+            display: none;
+        }
+        
+        .sidebar-header {
+            padding: 15px;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .chat-header {
+            padding: 10px 15px;
+            border-radius: 0;
+        }
+        
+        .messages-container {
+            padding: 15px;
+        }
+        
+        .chat-input-bar {
+            padding: 15px;
+        }
+    }
+
     .chat-sidebar {
         width: 380px;
         background: var(--chat-sidebar-bg);
@@ -411,9 +473,14 @@
     <!-- Main Chat Window -->
     <div class="chat-main" id="chatArea">
         {% if other_user %}
+            <script>document.body.classList.add('chat-active');</script>
             <!-- Chat Header -->
             <div class="chat-header">
                 <div class="active-user-info">
+                    <!-- Back button for mobile -->
+                    <a href="{% url 'inbox' %}" class="icon-btn d-lg-none me-2" style="width:34px; height:34px;">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
                     <div class="position-relative">
                         <img src="{% if other_user.is_employer %}{{ other_user.get_logo_url }}{% else %}{{ other_user.get_avatar_url }}{% endif %}" class="avatar-img" style="width:50px; height:50px;">
                         {% if other_user.is_online %}
