@@ -185,15 +185,59 @@ def api_get_messages(request, pk):
     
     data = []
     for m in new_messages:
+        # Hide raw [CALL_INVITE] from the main list if desired, 
+        # or format it professionally.
+        content = m.content
+        is_signal = False
+        if content.startswith('[CALL_INVITE]'):
+            is_signal = True
+            type_str = content.split(':')[1] if ':' in content else 'voice'
+            content = f"Incoming {type_str} call..."
+            
         data.append({
             'id': m.id,
-            'content': m.content,
+            'content': content,
             'is_me': m.sender == request.user,
             'timestamp': m.timestamp.strftime('%g:%i %A'),
             'sender_id': m.sender_id,
+            'is_signal': is_signal,
+            'raw_content': m.content if is_signal else None
         })
         
     return JsonResponse({'messages': data})
+
+
+@login_required
+def api_check_signals(request):
+    """Global endpoint to check for any incoming call signals across all chats."""
+    # Look for very recent [CALL_INVITE] messages sent to the current user 
+    # that are not older than 1 minute and haven't been 'handled'.
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    one_minute_ago = timezone.now() - timedelta(minutes=1)
+    
+    # We only care about latest 1 signaling message to avoid modal spam
+    signal = Message.objects.filter(
+        receiver=request.user,
+        content__startswith='[CALL_INVITE]',
+        timestamp__gt=one_minute_ago,
+        is_read=False
+    ).order_by('-timestamp').first()
+    
+    if signal:
+        # Don't mark as read yet so the chat poller also sees it, 
+        # but the global poller can track it.
+        return JsonResponse({
+            'has_signal': True,
+            'sender_id': signal.sender.id,
+            'sender_name': signal.sender.display_name,
+            'sender_avatar': signal.sender.get_avatar_url() if not signal.sender.is_employer else signal.sender.get_logo_url(),
+            'content': signal.content,
+            'message_id': signal.id
+        })
+        
+    return JsonResponse({'has_signal': False})
 
 
 @login_required

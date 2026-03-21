@@ -132,8 +132,117 @@
   </div>
 </footer>
 
+<!-- Global Call Modal -->
+<div class="modal fade" id="globalCallModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0" style="border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <div class="modal-body text-center py-5">
+                <div class="mb-4 position-relative d-inline-block">
+                    <img id="gCallAvatar" src="" class="rounded-circle border border-4 border-primary" width="120" height="120" style="object-fit:cover;">
+                    <div class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle" style="width:24px; height:24px; border-width:3px !important;"></div>
+                </div>
+                <h4 id="gCallName" class="mb-1 fw-bold"></h4>
+                <p id="gCallStatus" class="text-primary mb-5 pulse">Incoming Call...</p>
+                <div class="d-flex justify-content-center gap-4">
+                    <button class="btn btn-danger rounded-circle p-3" onclick="declineCall()" style="width:64px; height:64px;">
+                        <i class="fa fa-phone-slash fa-2x"></i>
+                    </button>
+                    <button id="gAcceptBtn" class="btn btn-success rounded-circle p-3" onclick="acceptGlobalCall()" style="width:64px; height:64px;">
+                        <i class="fa fa-phone fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+
+<script>
+    // Global Signaling Logic
+    let globalAgoraClient = null;
+    let localAudio = null;
+    let localVideo = null;
+    let callModal = null;
+    let currentSignal = null;
+
+    if (typeof AgoraRTC !== 'undefined') {
+        globalAgoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+    }
+
+    async function checkSignals() {
+        {% if user.is_authenticated %}
+        try {
+            const res = await fetch("{% url 'api_check_signals' %}");
+            const data = await res.json();
+            if (data.has_signal && (!currentSignal || currentSignal.message_id !== data.message_id)) {
+                currentSignal = data;
+                showIncomingCall(data);
+            }
+        } catch (e) { console.error("Signal check error", e); }
+        {% endif %}
+    }
+
+    function showIncomingCall(data) {
+        const modalEl = document.getElementById('globalCallModal');
+        document.getElementById('gCallName').innerText = data.sender_name;
+        document.getElementById('gCallAvatar').src = data.sender_avatar;
+        document.getElementById('gCallStatus').innerText = "Incoming " + (data.content.includes('video') ? 'Video' : 'Audio') + " Call...";
+        
+        callModal = new bootstrap.Modal(modalEl);
+        callModal.show();
+        
+        // Play ringtone or alert here if desired
+    }
+
+    async function acceptGlobalCall() {
+        if (!currentSignal) return;
+        const type = currentSignal.content.includes('video') ? 'video' : 'audio';
+        const channelName = "chat_" + Math.min({{ user.pk|default:0 }}, currentSignal.sender_id) + "_" + Math.max({{ user.pk|default:0 }}, currentSignal.sender_id);
+        
+        document.getElementById('gCallStatus').innerText = "Connecting...";
+        document.getElementById('gAcceptBtn').style.display = 'none';
+
+        try {
+            const res = await fetch(`/networking/agora-token/?channel=${channelName}`);
+            const data = await res.json();
+            await globalAgoraClient.join(data.appId, channelName, data.token, null);
+            
+            document.getElementById('gCallStatus').innerText = "In Call";
+            localAudio = await AgoraRTC.createMicrophoneAudioTrack();
+            if (type === 'video') {
+                localVideo = await AgoraRTC.createCameraVideoTrack();
+                await globalAgoraClient.publish([localAudio, localVideo]);
+            } else {
+                await globalAgoraClient.publish([localAudio]);
+            }
+            
+            globalAgoraClient.on("user-published", async (user, mediaType) => {
+                await globalAgoraClient.subscribe(user, mediaType);
+                if (mediaType === "audio") user.audioTrack.play();
+            });
+        } catch (e) {
+            document.getElementById('gCallStatus').innerText = "Connection Failed";
+            console.error(e);
+        }
+    }
+
+    async function declineCall() {
+        if (localAudio) { localAudio.stop(); localAudio.close(); localAudio = null; }
+        if (localVideo) { localVideo.stop(); localVideo.close(); localVideo = null; }
+        if (globalAgoraClient) await globalAgoraClient.leave();
+        if (callModal) callModal.hide();
+        currentSignal = null;
+        document.getElementById('gAcceptBtn').style.display = 'inline-block';
+    }
+
+    {% if user.is_authenticated %}
+    setInterval(checkSignals, 5000); // Check every 5 seconds globally
+    {% endif %}
+</script>
+
 {% block extra_js %}{% endblock %}
 </body>
 </html>
