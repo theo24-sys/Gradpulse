@@ -8,11 +8,7 @@ async def main():
     async with Actor:
         # Get input
         actor_input = await Actor.get_input() or {}
-        scraper_name = actor_input.get('scraper')
-        
-        if not scraper_name:
-            await Actor.fail('No scraper name provided in input!')
-            return
+        scraper_name = actor_input.get('scraper', 'PSCKenyaScraper')
 
         print(f"Starting scraper: {scraper_name}")
 
