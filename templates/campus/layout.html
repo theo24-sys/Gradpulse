@@ -101,6 +101,7 @@
           <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">New</span>
         </a>
       </li>
+      <li><a href="{% url 'library_list' %}" class="{% if request.resolver_match.url_name == 'library_list' %}active{% endif %}"><i class="fa fa-book-reader"></i> Library & Resources</a></li>
 
       <li class="nav-section">NETWORK</li>
       <li><a href="{% url 'networking' %}" class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><i class="fa fa-globe"></i> Networking</a></li>

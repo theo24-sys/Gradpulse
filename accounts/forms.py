@@ -35,6 +35,7 @@ class StudentRegisterForm(UserCreationForm):
     last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Email Address'}))
     institution = forms.ChoiceField(choices=[])
+    admission_number = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'placeholder': 'Admission Number'}))
     course = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'placeholder': 'e.g. BSc Computer Science'}))
     year_of_study = forms.IntegerField(min_value=1, max_value=8, widget=forms.NumberInput(attrs={'placeholder': 'Year (1-8)'}))
     profile_photo = forms.ImageField(required=False)
@@ -42,7 +43,7 @@ class StudentRegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'username', 'institution',
+        fields = ['first_name', 'last_name', 'email', 'username', 'institution', 'admission_number',
                   'course', 'year_of_study', 'profile_photo', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
@@ -84,7 +85,7 @@ class EmployerRegisterForm(UserCreationForm):
 class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'bio', 'phone', 'location', 'institution',
+        fields = ['first_name', 'last_name', 'bio', 'phone', 'location', 'institution', 'admission_number',
                   'course', 'year_of_study', 'graduation_year', 'skills',
                   'linkedin_url', 'github_url', 'portfolio_url', 'profile_photo', 'open_to_work']
         widgets = {

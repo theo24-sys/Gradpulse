@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
     is_premium = models.BooleanField(default=False)
 
     # Student fields
+    admission_number = models.CharField(max_length=50, blank=True, null=True, unique=True)
     institution = models.CharField(max_length=200, blank=True)
     course = models.CharField(max_length=200, blank=True)
     year_of_study = models.PositiveIntegerField(null=True, blank=True)

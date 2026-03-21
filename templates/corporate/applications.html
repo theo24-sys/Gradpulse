@@ -26,7 +26,7 @@
 <div class="gp-card">
   <div class="table-responsive">
     <table class="table gp-table mb-0">
-      <thead><tr><th>Student</th><th>Opportunity</th><th>Applied</th><th>Status</th><th>Action</th></tr></thead>
+      <thead><tr><th>Student</th><th>Opportunity</th><th>Applied</th><th>Status</th><th>Action</th><th>Contact</th></tr></thead>
       <tbody>
         {% for app in applications %}
         <tr>
@@ -53,6 +53,12 @@
               </select>
               <button type="submit" class="btn gp-btn-primary btn-sm px-2">Update</button>
             </form>
+          </td>
+          <td>
+            <div class="d-flex gap-1">
+              <a href="{% url 'student_profile_public' app.student.pk %}" class="btn btn-sm btn-outline-navy" title="View Profile"><i class="fa fa-user"></i></a>
+              <a href="{% url 'chat_detail' app.student.pk %}" class="btn btn-sm btn-outline-primary" title="Message"><i class="fa fa-comment"></i></a>
+            </div>
           </td>
         </tr>
         {% endfor %}
