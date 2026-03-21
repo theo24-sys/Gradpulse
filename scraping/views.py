@@ -6,16 +6,14 @@ from django.db import ProgrammingError
 @login_required
 def external_opportunities(request):
     """View to display scraped internships and jobs matched to student profile."""
-    # Attempt to get student profile
-    profile = getattr(request.user, 'student_profile', None)
-    
     try:
         opportunities = get_items_for_student(
-            student_profile=profile,
+            student=request.user,
             source_type='opportunities',
             limit=20
         )
-    except ProgrammingError:
+    except Exception as e:
+        print(f"Scraping view error: {e}")
         opportunities = []
     
     return render(request, 'campus/external_opportunities.html', {
@@ -26,10 +24,9 @@ def external_opportunities(request):
 
 @login_required
 def external_events(request):
-    profile = getattr(request.user, 'student_profile', None)
     try:
-        events = get_items_for_student(profile, source_type='events', limit=20)
-    except ProgrammingError:
+        events = get_items_for_student(student=request.user, source_type='events', limit=20)
+    except Exception:
         events = []
     return render(request, 'campus/external_opportunities.html', {
         'items': events,
@@ -39,10 +36,9 @@ def external_events(request):
 
 @login_required
 def external_learning(request):
-    profile = getattr(request.user, 'student_profile', None)
     try:
-        items = get_items_for_student(profile, source_type='credentials', limit=20)
-    except ProgrammingError:
+        items = get_items_for_student(student=request.user, source_type='credentials', limit=20)
+    except Exception:
         items = []
     return render(request, 'campus/external_opportunities.html', {
         'items': items,

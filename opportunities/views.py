@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Opportunity, Application
 from .forms import OpportunityForm, ApplicationForm
+from notifications.models import Notification
 
 
 def opportunity_list(request):
@@ -109,6 +109,14 @@ def scrape_discovery(request):
         # Celery worker/Redis are misconfigured in the environment.
         from django.core.management import call_command
         call_command('scrape', '--source', 'opportunities')
+        
+        # Notify the admin
+        Notification.objects.create(
+            user=request.user,
+            message="Live web scraping for Opportunities has completed successfully.",
+            link="/admin/scraping/scrapeditem/"
+        )
+        
         messages.success(request, "Live web scraping completed for Opportunities. Check the Scraped Items in Admin.")
     except Exception as e:
         messages.error(request, f"Scraping failed: {str(e)}")

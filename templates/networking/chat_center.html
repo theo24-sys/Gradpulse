@@ -59,12 +59,9 @@
         }
 
         /* When a chat is active on mobile */
-        body.chat-active {
-            overflow: hidden;
-        }
-        
         body.chat-active .chat-main {
-            display: flex;
+            display: flex !important;
+            flex-direction: column !important;
         }
         
         body.chat-active .chat-sidebar {
@@ -509,7 +506,7 @@
             </div>
 
             <!-- Messages Area -->
-            <div class="messages-container" id="messagesBox" style="flex: 1; overflow-y: auto;">
+            <div class="messages-container" id="messagesBox" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch;">
                 {% for msg in chat_messages %}
                     {% if msg.sender == request.user and not msg.deleted_by_sender %}
                     <div class="message-row sent">
@@ -610,18 +607,24 @@
     }
     
     // WebRTC Logic
-    let agoraClient = null;
-    let localAudioTrack = null;
-    let localVideoTrack = null;
+    var agoraClient = null;
+    if (typeof AgoraRTC !== 'undefined') {
+        agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+    }
+    var localAudioTrack = null;
+    var localVideoTrack = null;
 
     async function startCall(type) {
+        if (!agoraClient) {
+            alert("Agora SDK not loaded properly. Please check your internet connection.");
+            return;
+        }
         const modal = new bootstrap.Modal(document.getElementById('callModal'));
         const statusElement = document.getElementById('callStatus');
         
-        // Use hidden inputs or data attributes for IDs to avoid template tags in script
-        const currentUserId = parseInt("{{ request.user.pk }}");
-        const otherUserId = parseInt("{{ other_user.pk|default:0 }}");
-        const channelName = `chat_${Math.min(currentUserId, otherUserId)}_${Math.max(currentUserId, otherUserId)}`;
+        const currentUserId = "{{ request.user.pk }}";
+        const otherUserId = "{{ other_user.pk|default:0 }}";
+        const channelName = "chat_" + Math.min(currentUserId, otherUserId) + "_" + Math.max(currentUserId, otherUserId);
 
         document.getElementById('callName').innerText = "{{ other_user.display_name }}";
         statusElement.innerText = "Initializing " + type + " call...";
@@ -635,7 +638,8 @@
                 statusElement.innerText = "Error: " + data.error;
                 return;
             }
-            agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+            
+            // Join the channel
             const uid = await agoraClient.join(data.appId, channelName, data.token, null);
             statusElement.innerText = "Connecting...";
             if (type === 'audio') {

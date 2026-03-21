@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from .models import Connection, Collaboration, CollaborationMember, Message
 from accounts.models import CustomUser
 from .agora_utils import generate_agora_token
-
+from notifications.models import Notification
 
 @login_required
 def student_profile_public(request, pk):
@@ -54,6 +54,14 @@ def networking_view(request):
 def send_connection(request, pk):
     to_user = get_object_or_404(CustomUser, pk=pk)
     Connection.objects.get_or_create(from_user=request.user, to_user=to_user)
+    
+    # Create notification
+    Notification.objects.create(
+        user=to_user,
+        message=f"{request.user.display_name} sent you a connection request.",
+        link="/networking/"
+    )
+    
     messages.success(request, f'Connection request sent to {to_user.display_name}.')
     return redirect('networking')
 
@@ -63,6 +71,14 @@ def accept_connection(request, pk):
     conn = get_object_or_404(Connection, pk=pk, to_user=request.user)
     conn.status = 'accepted'
     conn.save()
+    
+    # Create notification for the requester
+    Notification.objects.create(
+        user=conn.from_user,
+        message=f"{request.user.display_name} accepted your connection request!",
+        link="/networking/"
+    )
+    
     messages.success(request, f'Connected with {conn.from_user.display_name}!')
     return redirect('networking')
 
@@ -122,7 +138,14 @@ def chat_detail_view(request, pk):
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
-            Message.objects.create(sender=request.user, receiver=other_user, content=content)
+            msg = Message.objects.create(sender=request.user, receiver=other_user, content=content)
+            
+            # Create notification for new message
+            Notification.objects.create(
+                user=other_user,
+                message=f"New message from {request.user.display_name}: \"{content[:30]}...\"",
+                link=f"/networking/chat/{request.user.pk}/"
+            )
             return redirect('chat_detail', pk=pk)
             
     conversations = get_conversations(request.user)
