@@ -677,19 +677,27 @@ h1, h2, h3, h4, h5, h6, .brand-text {
 .nav-section { color: var(--gp-navy); opacity: 0.6; }
 
 /* ── Mobile Bottom Navigation (Premium Glassmorphism) ──────────────── */
-.gp-mobile-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 80px;
-  background: var(--gp-glass);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid var(--gp-border);
-  display: flex !important;
-  align-items: center;
-  z-index: 2000;
-  box-shadow: 0 -10px 40px rgba(0, 139, 139, 0.1);
-  padding-bottom: env(safe-area-inset-bottom, 10px);
+@media (max-width: 991.98px) {
+  .gp-mobile-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: var(--gp-glass);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-top: 1px solid var(--gp-border);
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+    box-shadow: 0 -10px 40px rgba(0, 139, 139, 0.1);
+    padding-bottom: env(safe-area-inset-bottom, 10px);
+  }
+}
+
+@media (min-width: 992px) {
+  .gp-mobile-nav {
+    display: none !important;
+  }
 }
 
 .gp-mobile-nav-scroll {
