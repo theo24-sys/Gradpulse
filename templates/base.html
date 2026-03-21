@@ -167,9 +167,32 @@
     let localVideo = null;
     let callModal = null;
     let currentSignal = null;
+    let lastSeenMessageId = localStorage.getItem('lastSeenCallId') || 0;
 
     if (typeof AgoraRTC !== 'undefined') {
         globalAgoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+        
+        // Listen for remote users
+        globalAgoraClient.on("user-joined", (user) => {
+            console.log("Peer joined:", user.uid);
+            const statusEl = document.getElementById('gCallStatus');
+            if (statusEl) statusEl.innerText = "Connected";
+        });
+
+        globalAgoraClient.on("user-left", (user) => {
+            console.log("Peer left:", user.uid);
+            const statusEl = document.getElementById('gCallStatus');
+            if (statusEl) statusEl.innerText = "Peer Disconnected";
+            setTimeout(declineCall, 2000);
+        });
+
+        globalAgoraClient.on("user-published", async (user, mediaType) => {
+            await globalAgoraClient.subscribe(user, mediaType);
+            if (mediaType === "audio") user.audioTrack.play();
+            if (mediaType === "video") {
+                // Future: play video in a container
+            }
+        });
     }
 
     async function checkSignals() {
@@ -177,7 +200,9 @@
         try {
             const res = await fetch("{% url 'api_check_signals' %}");
             const data = await res.json();
-            if (data.has_signal && (!currentSignal || currentSignal.message_id !== data.message_id)) {
+            if (data.has_signal && data.message_id > lastSeenMessageId) {
+                lastSeenMessageId = data.message_id;
+                localStorage.setItem('lastSeenCallId', lastSeenMessageId);
                 currentSignal = data;
                 showIncomingCall(data);
             }
@@ -187,14 +212,14 @@
 
     function showIncomingCall(data) {
         const modalEl = document.getElementById('globalCallModal');
+        const modalContent = new bootstrap.Modal(modalEl);
         document.getElementById('gCallName').innerText = data.sender_name;
         document.getElementById('gCallAvatar').src = data.sender_avatar;
         document.getElementById('gCallStatus').innerText = "Incoming " + (data.content.includes('video') ? 'Video' : 'Audio') + " Call...";
+        document.getElementById('gAcceptBtn').style.display = 'inline-block';
         
-        callModal = new bootstrap.Modal(modalEl);
+        callModal = modalContent;
         callModal.show();
-        
-        // Play ringtone or alert here if desired
     }
 
     async function acceptGlobalCall() {
@@ -210,7 +235,7 @@
             const data = await res.json();
             await globalAgoraClient.join(data.appId, channelName, data.token, null);
             
-            document.getElementById('gCallStatus').innerText = "In Call";
+            document.getElementById('gCallStatus').innerText = "In Call (Waiting for Peer...)";
             localAudio = await AgoraRTC.createMicrophoneAudioTrack();
             if (type === 'video') {
                 localVideo = await AgoraRTC.createCameraVideoTrack();
@@ -218,11 +243,6 @@
             } else {
                 await globalAgoraClient.publish([localAudio]);
             }
-            
-            globalAgoraClient.on("user-published", async (user, mediaType) => {
-                await globalAgoraClient.subscribe(user, mediaType);
-                if (mediaType === "audio") user.audioTrack.play();
-            });
         } catch (e) {
             document.getElementById('gCallStatus').innerText = "Connection Failed";
             console.error(e);
@@ -233,13 +253,16 @@
         if (localAudio) { localAudio.stop(); localAudio.close(); localAudio = null; }
         if (localVideo) { localVideo.stop(); localVideo.close(); localVideo = null; }
         if (globalAgoraClient) await globalAgoraClient.leave();
-        if (callModal) callModal.hide();
+        if (callModal) {
+            const modalEl = document.getElementById('globalCallModal');
+            const inst = bootstrap.Modal.getInstance(modalEl);
+            if (inst) inst.hide();
+        }
         currentSignal = null;
-        document.getElementById('gAcceptBtn').style.display = 'inline-block';
     }
 
     {% if user.is_authenticated %}
-    setInterval(checkSignals, 5000); // Check every 5 seconds globally
+    setInterval(checkSignals, 4000); 
     {% endif %}
 </script>
 

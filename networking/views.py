@@ -40,13 +40,23 @@ def networking_view(request):
     students = CustomUser.objects.filter(portal_type='student', is_active=True).exclude(pk=request.user.pk)
     if q:
         students = students.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(skills__icontains=q))
-    my_connections = Connection.objects.filter(
-        Q(from_user=request.user, status='accepted') | Q(to_user=request.user, status='accepted')
-    )
+    
+    # Annotate students with connection status
+    for student in students:
+        conn = Connection.objects.filter(
+            Q(from_user=request.user, to_user=student) | Q(from_user=student, to_user=request.user)
+        ).first()
+        if conn:
+            student.connection_status = conn.status
+            student.connection_id = conn.pk
+            student.is_requester = (conn.from_user == request.user)
+        else:
+            student.connection_status = None
+
     pending_received = Connection.objects.filter(to_user=request.user, status='pending')
     return render(request, 'campus/networking.html', {
         'students': students, 'q': q,
-        'my_connections': my_connections, 'pending_received': pending_received,
+        'pending_received': pending_received,
     })
 
 
@@ -148,11 +158,17 @@ def chat_detail_view(request, pk):
             )
             return redirect('chat_detail', pk=pk)
             
+    is_connected = Connection.objects.filter(
+        (Q(from_user=request.user, to_user=other_user) | Q(from_user=other_user, to_user=request.user)),
+        status='accepted'
+    ).exists()
+
     conversations = get_conversations(request.user)
     return render(request, 'networking/chat_center.html', {
         'conversations': conversations,
         'other_user': other_user,
         'chat_messages': messages,
+        'is_connected': is_connected,
     })
 
 
@@ -210,31 +226,27 @@ def api_get_messages(request, pk):
 @login_required
 def api_check_signals(request):
     """Global endpoint to check for any incoming call signals across all chats."""
-    # Look for very recent [CALL_INVITE] messages sent to the current user 
-    # that are not older than 1 minute and haven't been 'handled'.
     from django.utils import timezone
     from datetime import timedelta
     
-    one_minute_ago = timezone.now() - timedelta(minutes=1)
+    # Check for signals in the last 30 seconds
+    thirty_seconds_ago = timezone.now() - timedelta(seconds=30)
     
-    # We only care about latest 1 signaling message to avoid modal spam
     signal = Message.objects.filter(
         receiver=request.user,
         content__startswith='[CALL_INVITE]',
-        timestamp__gt=one_minute_ago,
-        is_read=False
+        timestamp__gt=thirty_seconds_ago
     ).order_by('-timestamp').first()
     
     if signal:
-        # Don't mark as read yet so the chat poller also sees it, 
-        # but the global poller can track it.
         return JsonResponse({
             'has_signal': True,
             'sender_id': signal.sender.id,
             'sender_name': signal.sender.display_name,
             'sender_avatar': signal.sender.get_avatar_url() if not signal.sender.is_employer else signal.sender.get_logo_url(),
             'content': signal.content,
-            'message_id': signal.id
+            'message_id': signal.id,
+            'timestamp_iso': signal.timestamp.isoformat()
         })
         
     return JsonResponse({'has_signal': False})

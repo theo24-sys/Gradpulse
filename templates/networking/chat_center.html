@@ -490,7 +490,12 @@
                         {% endif %}
                     </div>
                     <div>
-                        <h5>{{ other_user.display_name }}</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5>{{ other_user.display_name }}</h5>
+                            {% if is_connected %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2" style="font-size: 0.65rem;"><i class="fa fa-check-circle"></i> Connected</span>
+                            {% endif %}
+                        </div>
                         <p class="status-text" style="white-space: nowrap;">
                             {% if other_user.is_online %}
                                 <span class="text-success">Active now</span>
