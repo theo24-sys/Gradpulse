@@ -73,6 +73,8 @@ def login_view(request):
         
         if form.is_valid():
             user = form.get_user()
+            import sys
+            print(f"DEBUG AUTH: User {user.username} (ID: {user.id}) matched. is_active={user.is_active}", file=sys.stderr)
             login(request, user)
             messages.success(request, f"Welcome back, {user.display_name}!")
             next_url = request.GET.get('next')
@@ -83,6 +85,8 @@ def login_view(request):
             return redirect('campus_dashboard')
         else:
             # Better error reporting: show specific form errors (like CAPTCHA failure)
+            import sys
+            print(f"DEBUG AUTH FAIL: Form invalid for input {request.POST.get('username')}. Errors: {form.errors.as_text()}", file=sys.stderr)
             for field, errors in form.errors.items():
                 for error in errors:
                     if field == '__all__':
