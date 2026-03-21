@@ -35,11 +35,11 @@ async def main():
         scraper_class = scrapers[scraper_name]
         instance = scraper_class()
         
-        # We override parse to return data instead of saving to DB 
-        # (since this instance won't have the Railway DB access easily)
-        # Actually, we can just run parse() and output to dataset.
+        # We run the scraper in a separate thread to avoid asyncio loop conflicts 
+        # with Playwright Sync API.
         try:
-            items = instance.parse()
+            import asyncio
+            items = await asyncio.to_thread(instance.parse)
             print(f"Scraped {len(items)} items.")
             await Actor.push_data(items)
         except Exception as e:
