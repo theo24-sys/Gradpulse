@@ -17,6 +17,8 @@ SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-inse
 DEBUG = env('DEBUG', default=os.environ.get('DEBUG', 'False')).lower().strip() == 'true'
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=os.environ.get('ALLOWED_HOSTS', '*').split(','))
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', '')).strip()
+APIFY_TOKEN = env('APIFY_TOKEN', default=os.environ.get('APIFY_TOKEN', '')).strip()
+APIFY_ACTOR = env('APIFY_ACTOR', default=os.environ.get('APIFY_ACTOR', 'lUx1E90x9FbPcWvps')).strip()
 
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin

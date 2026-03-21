@@ -9,8 +9,8 @@ from fake_useragent import UserAgent
 from django.utils import timezone
 from .models import ScrapedItem, ScrapeLog
 from urllib.parse import urljoin
-import json
 import re
+from django.conf import settings
 
 try:
     from apify_client import ApifyClient
@@ -28,7 +28,7 @@ class BaseScraper:
     def __init__(self):
         self.ua = UserAgent()
         self.log_entry = None
-        self.apify_token = os.environ.get('APIFY_TOKEN')
+        self.apify_token = getattr(settings, 'APIFY_TOKEN', os.environ.get('APIFY_TOKEN'))
         self.apify_client = ApifyClient(self.apify_token) if self.apify_token and ApifyClient else None
 
     def fetch_js(self, url):
@@ -66,7 +66,7 @@ class BaseScraper:
             return self.fetch_html(url) if url else None
 
         try:
-            target_actor = actor or os.environ.get('APIFY_ACTOR', 'kingly_nomination/gradpulse')
+            target_actor = actor or getattr(settings, 'APIFY_ACTOR', 'kingly_nomination/gradpulse')
             print(f"Railway: Delegating {self.__class__.__name__} to Apify actor {target_actor}...")
 
             run_input = { "scraper": self.__class__.__name__, "url": url }
