@@ -19,9 +19,13 @@ GOOGLE_API_KEY = env('GOOGLE_API_KEY', default='')
 
 # IMMEDIATE DIAGNOSTIC (at the very top)
 import sys
-print(f"--- SETTINGS INITIALIZING (DEBUG={DEBUG}) ---", file=sys.stderr)
-found_vars = [k for k in os.environ.keys() if any(prefix in k for prefix in ['GOOGLE', 'RECAPTCHA', 'AGORA'])]
-print(f"--- DIAGNOSTIC ENV MATCH: {found_vars} ---", file=sys.stderr)
+import os
+print(f"--- SETTINGS INITIALIZING (DEBUG={DEBUG}, ENV_DEBUG={str(os.environ.get('DEBUG'))}) ---", file=sys.stderr)
+diagnostic_keys = ['GOOGLE_API_KEY', 'RECAPTCHA_PUBLIC_KEY', 'RECAPTCHA_PRIVATE_KEY', 'AGORA_APP_ID', 'AGORA_APP_CERTIFICATE']
+for k in diagnostic_keys:
+    val = os.environ.get(k, 'MISSING')
+    prefix = val[:5] if len(val) > 5 else val
+    print(f"--- DIAGNOSTIC: {k}={prefix}... ---", file=sys.stderr)
 
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin
