@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/messages/<int:pk>/', views.api_get_messages, name='api_get_messages'),
     path('api/check-signals/', views.api_check_signals, name='api_check_signals'),
     path('api/send-signal/<int:pk>/', views.api_send_signal, name='api_send_signal'),
+    path('api/accept-signal/<int:pk>/', views.api_accept_signal, name='api_accept_signal'),
 ]

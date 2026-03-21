@@ -451,9 +451,11 @@
                         {% if conv.last_message %}
                             {% if conv.last_message.sender == request.user %}You: {% endif %}
                             {% if conv.last_message.content|slice:":13" == "[CALL_INVITE]" %}
-                                <em><i class="fa fa-phone-slash"></i> Missed Call</em>
+                                <i class="fa fa-phone-slash text-danger me-1"></i> Missed Call
+                            {% elif conv.last_message.content|slice:":15" == "[CALL_ACCEPTED]" %}
+                                <i class="fa fa-phone text-success me-1"></i> Call
                             {% else %}
-                                {{ conv.last_message.content }}
+                                {{ conv.last_message.content|truncatechars:30 }}
                             {% endif %}
                         {% else %}
                             Tap to start chatting
@@ -517,10 +519,16 @@
             <!-- Messages Area -->
             <div class="messages-container" id="messagesBox" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; -webkit-overflow-scrolling: touch;">
                 {% for msg in chat_messages %}
-                    {% if msg.content|slice:":13" == "[CALL_INVITE]" %}
+                    {% if msg.content|slice:":13" == "[CALL_INVITE]" or msg.content|slice:":15" == "[CALL_ACCEPTED]" %}
                         <div class="message-row {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
                             <div class="bubble bg-light text-muted border-dashed py-2 mx-auto" style="border: 1px dashed #ccc; border-radius: 15px; opacity: 0.8; width: fit-content;">
-                                <small><i class="fa fa-phone-slash me-2"></i> Missed Call {% if "video" in msg.content %}Video{% endif %}</small>
+                                <small>
+                                    {% if msg.content|slice:":15" == "[CALL_ACCEPTED]" %}
+                                        <i class="fa fa-phone text-success me-2"></i> {% if "video" in msg.content %}Video{% else %}Voice{% endif %} Call
+                                    {% else %}
+                                        <i class="fa fa-phone-slash text-danger me-2"></i> Missed Call {% if "video" in msg.content %}Video{% endif %}
+                                    {% endif %}
+                                </small>
                                 <span class="bubble-time" style="color:inherit;">{{ msg.timestamp|date:"g:i A" }}</span>
                             </div>
                         </div>
@@ -628,9 +636,13 @@
     function appendMissedCallUI(msg) {
         const row = document.createElement('div');
         row.className = `message-row ${msg.is_me ? 'sent' : 'received'}`;
+        const isAccepted = msg.is_accepted;
         row.innerHTML = `
             <div class="bubble bg-light text-muted border-dashed py-2 mx-auto" style="border: 1px dashed #ccc; border-radius: 15px; opacity: 0.8; width: fit-content;">
-                <small><i class="fa fa-phone-slash me-2"></i> Missed Call</small>
+                <small>
+                    ${isAccepted ? '<i class="fa fa-phone text-success me-2"></i>' : '<i class="fa fa-phone-slash text-danger me-2"></i>'} 
+                    ${isAccepted ? 'Call' : 'Missed Call'}
+                </small>
                 <span class="bubble-time" style="color:inherit;">${msg.timestamp}</span>
             </div>
         `;

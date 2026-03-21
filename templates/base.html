@@ -144,6 +144,9 @@
                 <h4 id="gCallName" class="mb-1 fw-bold"></h4>
                 <p id="gCallStatus" class="text-primary mb-5 pulse">Incoming Call...</p>
                 <div class="d-flex justify-content-center gap-4">
+                    <button id="gMuteBtn" class="btn btn-outline-light rounded-circle p-3" onclick="toggleMute()" style="width:64px; height:64px; display:none;">
+                        <i class="fa fa-microphone fa-2x"></i>
+                    </button>
                     <button class="btn btn-danger rounded-circle p-3" onclick="declineCall()" style="width:64px; height:64px;">
                         <i class="fa fa-phone-slash fa-2x"></i>
                     </button>
@@ -167,6 +170,7 @@
     let localVideo = null;
     let callModal = null;
     let currentSignal = null;
+    let isMuted = false;
     let lastSeenMessageId = parseInt(localStorage.getItem('lastSeenCallId')) || 0;
 
     if (typeof AgoraRTC !== 'undefined') {
@@ -226,6 +230,7 @@
         document.getElementById('gCallStatus').classList.remove('text-success');
 
         document.getElementById('gAcceptBtn').style.display = 'inline-block';
+        document.getElementById('gMuteBtn').style.display = 'none';
         
         callModal = modalContent;
         callModal.show();
@@ -233,6 +238,12 @@
 
     async function acceptGlobalCall() {
         if (!currentSignal) return;
+        
+        // Notify backend that we are answering
+        if (currentSignal.message_id) {
+            fetch(`/networking/api/accept-signal/${currentSignal.message_id}/`).catch(e => {});
+        }
+
         const type = currentSignal.content.includes('video') ? 'video' : 'audio';
         const channelName = "chat_" + Math.min({{ user.pk|default:0 }}, currentSignal.sender_id) + "_" + Math.max({{ user.pk|default:0 }}, currentSignal.sender_id);
         
@@ -245,6 +256,10 @@
             await globalAgoraClient.join(data.appId, channelName, data.token, null);
             
             document.getElementById('gCallStatus').innerText = "In Call (Waiting for Peer...)";
+            document.getElementById('gMuteBtn').style.display = 'inline-block';
+            isMuted = false;
+            updateMuteUI();
+
             localAudio = await AgoraRTC.createMicrophoneAudioTrack();
             if (type === 'video') {
                 localVideo = await AgoraRTC.createCameraVideoTrack();
@@ -255,6 +270,27 @@
         } catch (e) {
             document.getElementById('gCallStatus').innerText = "Connection Failed";
             console.error(e);
+        }
+    }
+
+    function toggleMute() {
+        if (!localAudio) return;
+        isMuted = !isMuted;
+        localAudio.setEnabled(!isMuted);
+        updateMuteUI();
+    }
+
+    function updateMuteUI() {
+        const btn = document.getElementById('gMuteBtn');
+        if (!btn) return;
+        if (isMuted) {
+            btn.innerHTML = '<i class="fa fa-microphone-slash fa-2x"></i>';
+            btn.classList.add('btn-danger');
+            btn.classList.remove('btn-outline-light');
+        } else {
+            btn.innerHTML = '<i class="fa fa-microphone fa-2x"></i>';
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-outline-light');
         }
     }
 

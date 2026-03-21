@@ -201,14 +201,17 @@ def api_get_messages(request, pk):
     
     data = []
     for m in new_messages:
-        # Hide raw [CALL_INVITE] from the main list if desired, 
-        # or format it professionally.
         content = m.content
         is_signal = False
-        if content.startswith('[CALL_INVITE]'):
+        is_accepted = content.startswith('[CALL_ACCEPTED]')
+        
+        if content.startswith('[CALL_INVITE]') or is_accepted:
             is_signal = True
             type_str = content.split(':')[1] if ':' in content else 'voice'
-            content = f"Incoming {type_str} call..."
+            if is_accepted:
+                content = f"{type_str.capitalize()} Call"
+            else:
+                content = f"Incoming {type_str} call..."
             
         data.append({
             'id': m.id,
@@ -217,10 +220,23 @@ def api_get_messages(request, pk):
             'timestamp': m.timestamp.strftime('%g:%i %A'),
             'sender_id': m.sender_id,
             'is_signal': is_signal,
+            'is_accepted': is_accepted,
             'raw_content': m.content if is_signal else None
         })
         
     return JsonResponse({'messages': data})
+
+@login_required
+def api_accept_signal(request, pk):
+    """Mark a signaling message as accepted."""
+    msg = get_object_or_404(Message, pk=pk, receiver=request.user)
+    if msg.content.startswith('[CALL_INVITE]'):
+        type_str = msg.content.split(':')[1] if ':' in msg.content else 'voice'
+        msg.content = f'[CALL_ACCEPTED]:{type_str}'
+        msg.is_read = True
+        msg.save()
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)
 
 
 @login_required
