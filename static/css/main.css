@@ -686,17 +686,23 @@ h1, h2, h3, h4, h5, h6, .brand-text {
   -webkit-backdrop-filter: blur(25px);
   border-top: 1px solid var(--gp-border);
   display: flex !important;
-  overflow-x: auto;
   align-items: center;
-  padding: 0 10px;
-  padding-bottom: env(safe-area-inset-bottom, 10px);
   z-index: 2000;
   box-shadow: 0 -10px 40px rgba(0, 139, 139, 0.1);
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  gap: 5px;
+  padding-bottom: env(safe-area-inset-bottom, 10px);
 }
 
-.gp-mobile-nav::-webkit-scrollbar {
+.gp-mobile-nav-scroll {
+  display: flex !important;
+  overflow-x: auto;
+  width: 100%;
+  gap: 5px;
+  padding: 0 10px;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.gp-mobile-nav-scroll::-webkit-scrollbar {
   display: none; /* Hide scrollbar for Chrome/Safari */
 }
 

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import OpportunityForm, ApplicationForm
+from .models import Opportunity, Application
 from notifications.models import Notification
 
 
@@ -105,19 +106,19 @@ def scrape_discovery(request):
         return redirect('home')
     
     try:
-        # Run synchronously to ensure scraping actually produces results even if
-        # Celery worker/Redis are misconfigured in the environment.
         from django.core.management import call_command
-        call_command('scrape', '--source', 'opportunities')
+        # Run all major categories to ensure the database is populated
+        categories = ['opportunities', 'government', 'ngo', 'youth_programs']
+        for category in categories:
+            call_command('scrape', '--source', category)
         
-        # Notify the admin
         Notification.objects.create(
             user=request.user,
-            message="Live web scraping for Opportunities has completed successfully.",
+            message="Comprehensive Live Scraping completed for all categories (Jobs, Gov, NGO, Youth).",
             link="/admin/scraping/scrapeditem/"
         )
         
-        messages.success(request, "Live web scraping completed for Opportunities. Check the Scraped Items in Admin.")
+        messages.success(request, "Live web scraping completed for all categories. Check results in 'Scraped Items' in Admin.")
     except Exception as e:
         messages.error(request, f"Scraping failed: {str(e)}")
         
