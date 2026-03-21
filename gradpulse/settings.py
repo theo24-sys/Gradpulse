@@ -12,11 +12,11 @@ env = environ.Env(
 )
 environ.Env.read_env(BASE_DIR / '.env')
 
-SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-insecure-gradpulse-change-in-production-xyz-123-abc'))
+SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-insecure-gradpulse-change-in-production-xyz-123-abc')).strip()
 # Force DEBUG=False unless explicitly set to True in a safe way
-DEBUG = env('DEBUG', default=os.environ.get('DEBUG', 'False')).lower() == 'true'
+DEBUG = env('DEBUG', default=os.environ.get('DEBUG', 'False')).lower().strip() == 'true'
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=os.environ.get('ALLOWED_HOSTS', '*').split(','))
-GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', ''))
+GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', '')).strip()
 
 INSTALLED_APPS = [
     # Jazzmin must be before django.contrib.admin
@@ -375,8 +375,8 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 # reCAPTCHA Configuration
-RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default=os.environ.get('RECAPTCHA_PUBLIC_KEY', ''))
-RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default=os.environ.get('RECAPTCHA_PRIVATE_KEY', ''))
+RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default=os.environ.get('RECAPTCHA_PUBLIC_KEY', '')).strip()
+RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default=os.environ.get('RECAPTCHA_PRIVATE_KEY', '')).strip()
 # Some v4 configurations prefer these names
 RECAPTCHA_SITE_KEY = RECAPTCHA_PUBLIC_KEY
 RECAPTCHA_SECRET_KEY = RECAPTCHA_PRIVATE_KEY
