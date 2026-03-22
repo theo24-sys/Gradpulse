@@ -9,10 +9,10 @@ class PSCKenyaScraper(BaseScraper):
     source_name = "Public Service Commission Kenya"
     source_type = "opportunities"
     sector = "government"
-    base_url = "https://www.publicservice.go.ke/index.php/careers"
+    base_url = "https://psckjobs.go.ke/ActiveJobsAdverts.aspx"
 
     def parse(self):
-        # PSC often requires JS rendering or has anti-bot that Apify handles better
+        # PSC requires JS rendering and handles timeouts better on the cloud
         result = self.fetch_apify(self.base_url)
         if isinstance(result, list): return result
         
@@ -22,25 +22,46 @@ class PSCKenyaScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # Use more targeted selector for the table
-        table = soup.select_one('table') or soup.find('table')
-        rows = table.select('tr') if table else soup.find_all('tr')
-
-        for row in rows[1:]: # Skip header
-            cols = row.find_all('td')
-            if len(cols) >= 3:
-                title_link = cols[1].find('a')
-                if title_link:
-                    title = title_link.get_text(strip=True)
-                    url = urljoin(self.base_url, title_link['href'])
+        # Target the jobs table
+        table = soup.select_one('#DataGrid2')
+        if not table:
+            # Fallback for different versions of the portal
+            table = soup.select_one('table[id*="DataGrid"]') or soup.select_one('table')
+            
+        if table:
+            rows = table.find_all('tr')
+            for row in rows:
+                cols = row.find_all('td')
+                # Skip header, pagination, or small rows
+                if len(cols) < 5: continue
+                
+                # Based on inspection:
+                # td 2: Advert Number (Reference)
+                # td 3: Position (Title)
+                # td 10: Close Date (Deadline)
+                
+                title_node = cols[2]
+                title = title_node.get_text(strip=True)
+                
+                # Skip the header row
+                if title.lower() in ["position", "post", "position title"]:
+                    continue
                     
-                    items.append({
-                        'title': title,
-                        'url': url,
-                        'description': cols[2].get_text(strip=True) if len(cols) > 2 else f"Public Service Commission Vacancy: {title}",
-                        'company': "Public Service Commission",
-                        'raw_data': {'column_data': [c.get_text(strip=True) for c in cols]}
-                    })
+                ref = cols[1].get_text(strip=True)
+                deadline = cols[9].get_text(strip=True) if len(cols) > 9 else ""
+                
+                items.append({
+                    'title': title,
+                    'url': self.base_url,
+                    'company': self.source_name,
+                    'description': f"Reference: {ref} | Deadline: {deadline}",
+                    'location': "Kenya",
+                    'job_type': "Government Job",
+                    'raw_data': {
+                        'ref': ref,
+                        'deadline': deadline
+                    }
+                })
         return items
 
 class KRAScraper(BaseScraper):
