@@ -41,6 +41,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         target = options['target'].lower()
 
+        # Aliases for better UX
+        aliases = {
+            'certs': 'learning',
+            'credentials': 'learning',
+            'certification': 'learning',
+            'fairs': 'events',
+            'networking': 'events',
+            'government': 'gov',
+            'internships': 'jobs',
+        }
+        
+        target = aliases.get(target, target)
+
         if target == 'all':
             self.stdout.write(self.style.WARNING('🚀 Running ALL scrapers... This might take a while.'))
             for cat, scrapers in self.CATEGORIES.items():
