@@ -12,7 +12,8 @@ class OpportunitiesForYoungKenyansScraper(BaseScraper):
     base_url = "https://opportunitiesforyoungkenyans.co.ke/"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH: Blog-style site, no JS needed
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
@@ -21,7 +22,6 @@ class OpportunitiesForYoungKenyansScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # This site is usually a blog-style listing
         articles = soup.select('article') or soup.find_all('article')
         
         for article in articles:
@@ -49,6 +49,7 @@ class BrighterMondayInternsScraper(BaseScraper):
     base_url = "https://www.brightermonday.co.ke/jobs/internship-graduate"
 
     def parse(self):
+        # BrighterMonday often requires JS/Apify for full rendering, but fetch_html can work for quick bursts
         result = self.fetch_apify(self.base_url)
         if isinstance(result, list): return result
         
@@ -58,7 +59,6 @@ class BrighterMondayInternsScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # BrighterMonday structure
         job_listings = soup.select('.job-search-card') or soup.select('.w-full.flex.flex-col')
         
         for job in job_listings:
@@ -89,7 +89,8 @@ class MyJobMagInternsScraper(BaseScraper):
     base_url = "https://www.myjobmag.co.ke/cp/internship-opportunities-nairobi"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
@@ -98,7 +99,6 @@ class MyJobMagInternsScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # MyJobMag structure
         job_list = soup.select('.job-info') or soup.find_all('li', class_='job-info')
         
         for job in job_list:
@@ -129,7 +129,8 @@ class CFKAfricaScraper(BaseScraper):
     base_url = "https://cfkafrica.org/work-with-us/"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
@@ -138,7 +139,6 @@ class CFKAfricaScraper(BaseScraper):
         soup = BeautifulSoup(html, 'lxml')
         items = []
         
-        # Specialized NGO careers page
         jobs = soup.select('.job-posting') or soup.find_all('div', class_='careers-list')
         
         for job in jobs:
@@ -166,6 +166,7 @@ class LinkedInInternsScraper(BaseScraper):
     base_url = "https://ke.linkedin.com/jobs/internship-jobs"
 
     def parse(self):
+        # LinkedIn REQUIRES Apify/JS or it blocks bots
         result = self.fetch_apify(self.base_url)
         if isinstance(result, list): return result
         
@@ -205,7 +206,8 @@ class MultiWorkScraper(BaseScraper):
     base_url = "https://www.multiwork.tech/"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result

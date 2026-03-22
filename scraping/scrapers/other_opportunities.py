@@ -12,7 +12,8 @@ class WorldVisionKenyaScraper(BaseScraper):
     base_url = "https://www.wvi.org/kenya/kenya-youth-economic-empowerment-program-kyeep"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH: World Vision is usually static
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
@@ -47,7 +48,8 @@ class CapYEIScraper(BaseScraper):
     base_url = "https://capyei.org/"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH: This site is notoriously slow in Playwright/Apify
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
@@ -84,7 +86,8 @@ class GenerationKenyaScraper(BaseScraper):
     base_url = "https://kenya.generation.org/find-a-career/"
 
     def parse(self):
-        result = self.fetch_apify(self.base_url)
+        # FAST-FETCH
+        result = self.fetch_html(self.base_url)
         if isinstance(result, list): return result
         
         html = result
