@@ -27,7 +27,7 @@ async def main():
         from scraping.scrapers.ngos import UNKenyaScraper, ReliefWebScraper
         from scraping.scrapers.opportunities_expanded import (
             OpportunitiesForYoungKenyansScraper, BrighterMondayInternsScraper, 
-            MyJobMagInternsScraper, CFKAfricaScraper
+            MyJobMagInternsScraper, CFKAfricaScraper, LinkedInInternsScraper, MultiWorkScraper
         )
         from scraping.scrapers.learning_expanded import (
             MicrosoftCredentialsScraper, CourseraCertificatesScraper, 
@@ -35,6 +35,16 @@ async def main():
         )
         from scraping.scrapers.events_multi import (
             PostTrainingFairsScraper, AllConferenceAlertScraper, NLBHEventsScraper
+        )
+        from scraping.scrapers.other_opportunities import (
+            WorldVisionKenyaScraper, CapYEIScraper, GenerationKenyaScraper
+        )
+        from scraping.scrapers.more_learning import (
+            ISACACredentialsScraper, IBMTrainingScraper, ITCILOCoursesScraper
+        )
+        from scraping.scrapers.more_events import (
+            EducationFairsAfricaScraper, ConferenceAlertsNairobiScraper, 
+            InternationalConferenceAlertsScraper
         )
         
         scrapers = {
@@ -54,6 +64,8 @@ async def main():
             'BrighterMondayInternsScraper': BrighterMondayInternsScraper,
             'MyJobMagInternsScraper': MyJobMagInternsScraper,
             'CFKAfricaScraper': CFKAfricaScraper,
+            'LinkedInInternsScraper': LinkedInInternsScraper,
+            'MultiWorkScraper': MultiWorkScraper,
             'MicrosoftCredentialsScraper': MicrosoftCredentialsScraper,
             'CourseraCertificatesScraper': CourseraCertificatesScraper,
             'GoogleGrowScraper': GoogleGrowScraper,
@@ -61,6 +73,15 @@ async def main():
             'PostTrainingFairsScraper': PostTrainingFairsScraper,
             'AllConferenceAlertScraper': AllConferenceAlertScraper,
             'NLBHEventsScraper': NLBHEventsScraper,
+            'WorldVisionKenyaScraper': WorldVisionKenyaScraper,
+            'CapYEIScraper': CapYEIScraper,
+            'GenerationKenyaScraper': GenerationKenyaScraper,
+            'ISACACredentialsScraper': ISACACredentialsScraper,
+            'IBMTrainingScraper': IBMTrainingScraper,
+            'ITCILOCoursesScraper': ITCILOCoursesScraper,
+            'EducationFairsAfricaScraper': EducationFairsAfricaScraper,
+            'ConferenceAlertsNairobiScraper': ConferenceAlertsNairobiScraper,
+            'InternationalConferenceAlertsScraper': InternationalConferenceAlertsScraper,
         }
         
         if scraper_name not in scrapers:

@@ -158,3 +158,78 @@ class CFKAfricaScraper(BaseScraper):
             })
             
         return items
+
+class LinkedInInternsScraper(BaseScraper):
+    source_name = "LinkedIn Kenya Internships"
+    source_type = "opportunities"
+    sector = "private"
+    base_url = "https://ke.linkedin.com/jobs/internship-jobs"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        cards = soup.select('.base-card') or soup.find_all('div', class_='base-search-card')
+        
+        for card in cards:
+            title_node = card.find('h3') or card.find('a')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            link = card.find('a').get('href') if card.find('a') else self.base_url
+            
+            company_node = card.select_one('.base-search-card__subtitle')
+            company = company_node.get_text(strip=True) if company_node else "Unknown"
+            
+            items.append({
+                'title': title,
+                'url': link,
+                'company': company,
+                'description': f"LinkedIn internship opportunity at {company}.",
+                'location': "Kenya (Various)",
+                'job_type': "Internship"
+            })
+            
+        return items
+
+class MultiWorkScraper(BaseScraper):
+    source_name = "MultiWork Tech"
+    source_type = "opportunities"
+    sector = "private"
+    base_url = "https://www.multiwork.tech/"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        opportunities = soup.select('.job-card') or soup.find_all('div', class_='opportunity')
+        
+        for opp in opportunities:
+            title_node = opp.find('h2') or opp.find('a')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            link = opp.find('a').get('href') if opp.find('a') else self.base_url
+            
+            items.append({
+                'title': title,
+                'url': urljoin(self.base_url, link),
+                'company': "MultiWork",
+                'description': "Tech and digital work opportunity.",
+                'location': "Online/Remote",
+                'job_type': "Digital Work"
+            })
+            
+        return items
