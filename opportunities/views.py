@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import OpportunityForm, ApplicationForm
 from .models import Opportunity, Application
 from notifications.models import Notification
+from scraping.utils import get_items_for_student
 
 
 def opportunity_list(request):
@@ -20,8 +21,13 @@ def opportunity_list(request):
         qs = qs.filter(location__icontains=loc_f)
     if q:
         qs = qs.filter(title__icontains=q)
+        
+    # NEW: Fetch live discoveries from scrapers
+    discoveries = get_items_for_student(student=request.user, source_type='opportunities', limit=15)
+    
     return render(request, 'opportunities/list.html', {
         'opportunities': qs,
+        'discoveries': discoveries,
         'filters': request.GET,
         'types': Opportunity.TYPE_CHOICES,
         'sectors': Opportunity.SECTOR_CHOICES,

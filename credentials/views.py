@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.ai_utils import generate_simulation_scenario
 from .models import Credential, Enrollment, Simulation
+from scraping.utils import get_items_for_student
 
 
 @login_required
@@ -13,7 +14,15 @@ def credentials_list(request):
     enrolled_ids = []
     if request.user.is_student:
         enrolled_ids = list(Enrollment.objects.filter(student=request.user).values_list('credential_id', flat=True))
-    return render(request, 'campus/credentials.html', {'credentials': credentials, 'enrolled_ids': enrolled_ids})
+    
+    # NEW: Fetch live discoveries from scrapers (IBM, Microsoft, etc.)
+    discoveries = get_items_for_student(student=request.user, source_type='credentials', limit=12)
+    
+    return render(request, 'campus/credentials.html', {
+        'credentials': credentials, 
+        'enrolled_ids': enrolled_ids,
+        'discoveries': discoveries
+    })
 
 
 @login_required

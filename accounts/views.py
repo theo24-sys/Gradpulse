@@ -11,6 +11,7 @@ from events.models import Event
 from networking.models import Connection
 from grades.models import Grade
 from .ai_utils import parse_transcript_with_gemini
+from scraping.utils import get_items_for_student
 
 
 def home(request):
@@ -117,11 +118,16 @@ def campus_dashboard(request):
     connections_count = Connection.objects.filter(
         Q(from_user=user, status='accepted') | Q(to_user=user, status='accepted')
     ).count()
+    
+    # NEW: Fetch live discoveries from the 34 scrapers
+    discovered_items = get_items_for_student(student=user, limit=6)
+    
     return render(request, 'campus/dashboard.html', {
         'user': user,
         'my_applications': my_applications,
         'upcoming_events': upcoming_events,
         'active_opportunities': active_opportunities,
+        'discovered_items': discovered_items,
         'connections_count': connections_count,
         'applications_count': my_applications.count(),
     })

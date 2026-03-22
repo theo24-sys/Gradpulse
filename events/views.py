@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from .models import Event, RSVP
+from scraping.utils import get_items_for_student
 
 
 def events_list(request):
@@ -11,8 +12,15 @@ def events_list(request):
     rsvped_ids = []
     if request.user.is_authenticated and request.user.is_student:
         rsvped_ids = list(RSVP.objects.filter(student=request.user).values_list('event_id', flat=True))
+    
+    # NEW: Fetch live discoveries from scrapers (Fairs, Networking, etc.)
+    discoveries = get_items_for_student(student=request.user, source_type='events', limit=12)
+    
     return render(request, 'campus/events.html', {
-        'upcoming_events': upcoming, 'past_events': past, 'rsvped_ids': rsvped_ids,
+        'upcoming_events': upcoming, 
+        'past_events': past, 
+        'rsvped_ids': rsvped_ids,
+        'discoveries': discoveries
     })
 
 
