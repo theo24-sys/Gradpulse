@@ -169,3 +169,75 @@ class NYSScraper(BaseScraper):
                 })
                 
         return items
+
+class NYOTAProjectScraper(BaseScraper):
+    source_name = "NYOTA Project"
+    source_type = "youth_programs"
+    sector = "government"
+    # This scraper handles multiple targets for the same project
+    targets = [
+        "https://nyotaproject.go.ke/improving-youth-employability",
+        "https://nyotaproject.go.ke/expanding-employment-opportunities"
+    ]
+
+    def parse(self):
+        items = []
+        for url in self.targets:
+            result = self.fetch_apify(url)
+            if isinstance(result, list): 
+                items.extend(result)
+                continue
+            
+            html = result
+            if not html: continue
+            
+            soup = BeautifulSoup(html, 'lxml')
+            parts = soup.select('.elementor-widget-container') or soup.find_all('div', class_='wp-block-group')
+            
+            for part in parts:
+                title_node = part.find('h3') or part.find('h2')
+                if not title_node: continue
+                
+                title = title_node.get_text(strip=True)
+                items.append({
+                    'title': title,
+                    'url': url,
+                    'company': "NYOTA Project (GoK)",
+                    'description': "Government project for youth employability and employment.",
+                    'location': "Kenya",
+                    'job_type': "Youth Program"
+                })
+        return items
+
+class YouthEmpowermentCentresScraper(BaseScraper):
+    source_name = "Youth Empowerment Centres"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://youth.go.ke/youth-empowerment-centres/"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # Centers are usually listed in a table or list
+        centers = soup.select('tr') or soup.select('li')
+        
+        for center in centers:
+            text = center.get_text(strip=True)
+            if text and len(text) > 5:
+                items.append({
+                    'title': f"Empowerment Centre: {text[:50]}...",
+                    'url': self.base_url,
+                    'company': "Ministry of Youth Affairs",
+                    'description': f"Youth empowerment center information: {text}",
+                    'location': "Kenya (Various)",
+                    'job_type': "Resource Centre"
+                })
+                
+        return items

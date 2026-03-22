@@ -17,16 +17,32 @@ async def main():
         django.setup()
 
         # Dynamic import of the scraper
-        from scraping.scrapers.government import PSCKenyaScraper, AjiraDigitalScraper, NYSScraper
+        from scraping.scrapers.government import (
+            PSCKenyaScraper, AjiraDigitalScraper, NYSScraper, 
+            NYOTAProjectScraper, YouthEmpowermentCentresScraper
+        )
         from scraping.scrapers.events import EventbriteScraper, MeetupScraper
         from scraping.scrapers.private import BrighterMondayScraper
         from scraping.scrapers.scholarships import ScholarshipPositionsScraper, ScholarshipSetScraper
         from scraping.scrapers.ngos import UNKenyaScraper, ReliefWebScraper
+        from scraping.scrapers.opportunities_expanded import (
+            OpportunitiesForYoungKenyansScraper, BrighterMondayInternsScraper, 
+            MyJobMagInternsScraper, CFKAfricaScraper
+        )
+        from scraping.scrapers.learning_expanded import (
+            MicrosoftCredentialsScraper, CourseraCertificatesScraper, 
+            GoogleGrowScraper, LeadershipKEScraper
+        )
+        from scraping.scrapers.events_multi import (
+            PostTrainingFairsScraper, AllConferenceAlertScraper, NLBHEventsScraper
+        )
         
         scrapers = {
             'PSCKenyaScraper': PSCKenyaScraper,
             'AjiraDigitalScraper': AjiraDigitalScraper,
             'NYSScraper': NYSScraper,
+            'NYOTAProjectScraper': NYOTAProjectScraper,
+            'YouthEmpowermentCentresScraper': YouthEmpowermentCentresScraper,
             'EventbriteScraper': EventbriteScraper,
             'MeetupScraper': MeetupScraper,
             'BrighterMondayScraper': BrighterMondayScraper,
@@ -34,6 +50,17 @@ async def main():
             'ScholarshipSetScraper': ScholarshipSetScraper,
             'UNKenyaScraper': UNKenyaScraper,
             'ReliefWebScraper': ReliefWebScraper,
+            'OpportunitiesForYoungKenyansScraper': OpportunitiesForYoungKenyansScraper,
+            'BrighterMondayInternsScraper': BrighterMondayInternsScraper,
+            'MyJobMagInternsScraper': MyJobMagInternsScraper,
+            'CFKAfricaScraper': CFKAfricaScraper,
+            'MicrosoftCredentialsScraper': MicrosoftCredentialsScraper,
+            'CourseraCertificatesScraper': CourseraCertificatesScraper,
+            'GoogleGrowScraper': GoogleGrowScraper,
+            'LeadershipKEScraper': LeadershipKEScraper,
+            'PostTrainingFairsScraper': PostTrainingFairsScraper,
+            'AllConferenceAlertScraper': AllConferenceAlertScraper,
+            'NLBHEventsScraper': NLBHEventsScraper,
         }
         
         if scraper_name not in scrapers:
