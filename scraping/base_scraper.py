@@ -41,7 +41,8 @@ class BaseScraper:
                 with sync_playwright() as p:
                     browser = p.chromium.launch(headless=True)
                     page = browser.new_page()
-                    page.goto(url, wait_until="networkidle", timeout=60000)
+                    # Relax wait_until to 'load' and increase timeout to 90s for heavy sites like IBM
+                    page.goto(url, wait_until="load", timeout=90000)
                     content = page.content()
                     browser.close()
                     return content
