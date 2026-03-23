@@ -155,6 +155,32 @@ class UniSmartResource(models.Model):
         ordering = ['-uploaded_at']
 
 
+class UniSmartMasterCourse(models.Model):
+    LEVEL_CHOICES = [
+        ('degree', 'Degree'),
+        ('tvet', 'TVET / Diploma'),
+    ]
+    
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=50, unique=True)
+    institution = models.CharField(max_length=255, blank=True)
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='degree')
+    cluster_group = models.CharField(max_length=100, blank=True)
+    min_points = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    
+    description = models.TextField(blank=True)
+    requirements = models.TextField(blank=True, help_text="Subject requirements")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+    class Meta:
+        verbose_name = "UniSmart Master Course"
+        ordering = ['name']
+
+
 class UniSmartCourseCart(models.Model):
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='course_basket')
     course_name = models.CharField(max_length=255)

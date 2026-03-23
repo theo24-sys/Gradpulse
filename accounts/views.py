@@ -4,13 +4,17 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Q
-from .models import CustomUser, UniSmartResource, UniSmartCourseCart
+from .models import CustomUser, UniSmartResource, UniSmartCourseCart, UniSmartMasterCourse
 from .forms import StudentRegisterForm, EmployerRegisterForm, UniSmartRegisterForm, StudentProfileForm, EmployerProfileForm, LoginForm
 from opportunities.models import Opportunity, Application
 from events.models import Event
 from networking.models import Connection
 from grades.models import Grade
-from .ai_utils import parse_transcript_with_gemini, unismart_career_chat, get_mentor_recommendation, calculate_kcse_clusters, get_academic_guidance
+from .ai_utils import (
+    parse_transcript_with_gemini, unismart_career_chat, 
+    get_mentor_recommendation, calculate_kcse_clusters, 
+    get_academic_guidance, extract_courses_from_pdf
+)
 from scraping.utils import get_items_for_student
 
 
@@ -129,6 +133,64 @@ def unismart_save_kcse(request):
 def unismart_manage_cart(request):
     cart_items = request.user.course_basket.all()
     return render(request, 'unismart/course_cart.html', {'cart_items': cart_items})
+
+
+@login_required
+def unismart_extract_courses(request, resource_id):
+    if not request.user.is_unismart:
+        return redirect('home')
+    
+    resource = get_object_or_404(UniSmartResource, id=resource_id)
+    if not resource.file:
+        return render(request, 'unismart/extract_result_partial.html', {'error': 'No file found'})
+
+    # Determine if it's TVET or Degree based on title
+    level = 'tvet' if 'tvet' in resource.title.lower() else 'degree'
+    
+    courses_data = extract_courses_from_pdf(resource.file, level=level)
+    
+    count = 0
+    for item in courses_data:
+        try:
+            name = item.get('course_name')
+            code = item.get('course_code')
+            if name and code:
+                UniSmartMasterCourse.objects.update_or_create(
+                    code=code,
+                    defaults={
+                        'name': name,
+                        'institution': item.get('institution', ''),
+                        'cluster_group': item.get('cluster_group', ''),
+                        'min_points': item.get('min_points'),
+                        'level': level
+                    }
+                )
+                count += 1
+        except Exception as e:
+            print(f"Error saving master course: {e}")
+            
+    return render(request, 'unismart/extract_result_partial.html', {
+        'count': count,
+        'title': resource.title
+    })
+
+
+@login_required
+def unismart_course_browser(request):
+    level = request.GET.get('level', 'degree')
+    query = request.GET.get('q', '')
+    
+    courses = UniSmartMasterCourse.objects.filter(level=level)
+    if query:
+        courses = courses.filter(
+            Q(name__icontains=query) | Q(code__icontains=query) | Q(institution__icontains=query)
+        )
+    
+    return render(request, 'unismart/course_browser.html', {
+        'courses': courses,
+        'level': level,
+        'query': query
+    })
 
 
 @login_required

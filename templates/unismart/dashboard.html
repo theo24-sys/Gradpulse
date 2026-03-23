@@ -205,9 +205,20 @@
                                     <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem;">{{ res.title }}</h6>
                                     <span class="text-xs text-muted">{{ res.get_resource_type_display }}</span>
                                 </div>
-                                <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank">
+                                <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank" title="Download">
                                     <i class="fas fa-download small"></i>
                                 </a>
+                                {% if res.resource_type == 'pdf' %}
+                                <button class="btn btn-sm btn-outline-orange rounded-circle ms-1" 
+                                        hx-post="{% url 'unismart_extract_courses' res.id %}"
+                                        hx-indicator="#extract-loading-{{ res.id }}"
+                                        title="Extract Courses with AI">
+                                    <i class="fas fa-magic small"></i>
+                                </button>
+                                <div id="extract-loading-{{ res.id }}" class="htmx-indicator ms-2">
+                                    <span class="spinner-border spinner-border-sm text-orange"></span>
+                                </div>
+                                {% endif %}
                             </div>
                             {% empty %}
                             <div class="text-center py-4">

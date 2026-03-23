@@ -89,18 +89,77 @@ def calculate_kcse_clusters(results):
     
     try:
         response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
-        # Clean the response to ensure it's valid JSON
         text = response.text.strip()
+        
+        # Robust JSON cleaning
         if "```json" in text:
-            text = text.split("```json")[1].split("```")[0].strip()
+            text = text.split("```json")[-1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[-1].split("```")[0].strip()
+        
+        # Remove any leading/trailing non-JSON characters
+        start = text.find('{')
+        end = text.rfind('}') + 1
+        if start != -1 and end != 0:
+            text = text[start:end]
+            
         return json.loads(text)
     except Exception as e:
-        logger.error(f"Error calculating clusters: {e}")
+        logger.error(f"Error calculating clusters: {e}. Raw: {response.text if 'response' in locals() else 'N/A'}")
         return {
-            "clusters": {},
-            "summary": "AI calculation failed. Please consult the official KUCCPS manual.",
+            "clusters": {
+                "Law": 0, "Business": 0, "Engineering": 0, "Medicine": 0
+            },
+            "summary": "AI calculation failed. Please consult the official KUCCPS manual or try again.",
             "recommendations": []
         }
+
+
+def extract_courses_from_pdf(pdf_file, level='degree'):
+    """
+    Parses a KUCCPS manual PDF to extract courses.
+    """
+    text = extract_text_from_pdf(pdf_file)
+    if not text:
+        return []
+    
+    client = get_client()
+    if client is None:
+        return []
+        
+    prompt = f"""
+    Act as a KUCCPS data specialist. Extract all courses from the following snippet of the KUCCPS {level} manual.
+    For each course, extract:
+    - course_name
+    - course_code
+    - institution (if unique to one)
+    - cluster_group
+    - min_points (as a float)
+    
+    Format as a JSON list.
+    Snippet:
+    {text[:8000]}  # Limit text to avoid token overflow
+    
+    Return ONLY valid JSON.
+    """
+    
+    try:
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+        content = response.text.strip()
+        
+        # Robust JSON cleaning
+        if "```json" in content:
+            content = content.split("```json")[-1].split("```")[0].strip()
+        
+        start = content.find('[')
+        end = content.rfind(']') + 1
+        if start != -1 and end != 0:
+            content = content[start:end]
+            
+        return json.loads(content)
+    except Exception as e:
+        logger.error(f"Gemini course extraction error: {e}")
+        return []
 
 
 def get_academic_guidance(course):

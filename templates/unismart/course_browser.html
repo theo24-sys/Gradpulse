@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}UniSmart — Course Browser{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="gp-card p-4 sticky-top" style="top: 100px;">
+                <h5 class="fw-bold mb-4">Filters</h5>
+                
+                <form method="GET" action="{% url 'unismart_course_browser' %}" id="filter-form">
+                    <div class="mb-4">
+                        <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Study Level</label>
+                        <select name="level" class="form-select border-light shadow-sm" onchange="this.form.submit()">
+                            <option value="degree" {% if level == 'degree' %}selected{% endif %}>Degree Programs</option>
+                            <option value="tvet" {% if level == 'tvet' %}selected{% endif %}>TVET / Diploma</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Search</label>
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control border-light shadow-sm" placeholder="Course name or code..." value="{{ query }}">
+                            <button class="btn btn-navy" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+                <a href="{% url 'unismart_manage_cart' %}" class="btn gp-btn-outline w-100 rounded-pill">
+                    <i class="fas fa-shopping-basket me-2"></i>My Cart
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-end mb-4 animate-fade-up">
+                <div>
+                    <h2 class="fw-800 text-navy mb-1">Available Courses</h2>
+                    <p class="text-muted mb-0">Browse and add courses to your application basket.</p>
+                </div>
+                <div class="text-muted small">
+                    Showing {{ courses.count }} results
+                </div>
+            </div>
+
+            <div class="row g-4 animate-fade-up">
+                {% for course in courses %}
+                <div class="col-md-6">
+                    <div class="gp-card p-4 h-100 d-flex flex-column hover-up">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge bg-light-orange text-orange px-3 py-1 rounded-pill small fw-bold">
+                                {{ course.get_level_display }}
+                            </span>
+                            <span class="text-muted small fw-bold">CODE: {{ course.code }}</span>
+                        </div>
+                        <h5 class="fw-bold text-navy mb-2">{{ course.name }}</h5>
+                        <p class="small text-muted mb-3 flex-grow-1">
+                            <i class="fas fa-university me-1"></i> {{ course.institution|default:"Multiple Institutions" }}<br>
+                            {% if course.cluster_group %}
+                            <i class="fas fa-layer-group me-1"></i> Cluster: {{ course.cluster_group }}
+                            {% endif %}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <div>
+                                {% if course.min_points %}
+                                <div class="text-xs text-muted">Min. Points</div>
+                                <div class="fw-bold text-navy">{{ course.min_points }}</div>
+                                {% endif %}
+                            </div>
+                            <div id="add-btn-{{ course.id }}">
+                                <button class="btn btn-orange rounded-pill px-4 btn-sm fw-bold"
+                                        hx-post="{% url 'unismart_add_to_cart' %}"
+                                        hx-vals='{"course_name": "{{ course.name|escapejs }}", "course_code": "{{ course.code|escapejs }}", "institution": "{{ course.institution|escapejs }}"}'
+                                        hx-target="#add-btn-{{ course.id }}"
+                                        hx-swap="innerHTML">
+                                    <i class="fas fa-plus me-2"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5 gp-card">
+                    <i class="fas fa-search fa-3x text-muted opacity-25 mb-3"></i>
+                    <h4>No courses found</h4>
+                    <p class="text-muted">No courses have been extracted for this level yet. Use the dashboard to "Extract Courses" from the KUCCPS manual.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.fw-800 { font-weight: 800; }
+.text-xs { font-size: 0.7rem; }
+.bg-light-orange { background: rgba(253, 126, 20, 0.1); }
+</style>
+{% endblock %}

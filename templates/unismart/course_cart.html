@@ -17,9 +17,14 @@
                     <h1 class="display-5 fw-800 text-navy mb-2">My Course Cart</h1>
                     <p class="text-muted mb-0">Saved courses for your KUCCPS application.</p>
                 </div>
-                <a href="{% url 'unismart_dashboard' %}" class="btn gp-btn-outline rounded-pill">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'unismart_course_browser' %}" class="btn btn-orange rounded-pill">
+                        <i class="fas fa-search me-2"></i>Browse More Courses
+                    </a>
+                    <a href="{% url 'unismart_dashboard' %}" class="btn gp-btn-outline rounded-pill">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
             </div>
 
             <!-- Cart Table -->
