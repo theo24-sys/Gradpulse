@@ -44,7 +44,9 @@
                             {% for item in cart_items %}
                             <tr id="cart-item-{{ item.id }}">
                                 <td class="ps-4">
-                                    <div class="fw-bold text-navy">{{ item.course_name }}</div>
+                                    <a href="https://students.kuccps.net/programmes/?q={{ item.course_name|urlencode }}" target="_blank" class="fw-bold text-navy text-decoration-none hover-orange">
+                                        {{ item.course_name }} <i class="fas fa-external-link-alt ms-1 small opacity-50"></i>
+                                    </a>
                                 </td>
                                 <td><span class="badge bg-light text-dark border">{{ item.course_code|default:"N/A" }}</span></td>
                                 <td>{{ item.institution|default:"Multiple" }}</td>

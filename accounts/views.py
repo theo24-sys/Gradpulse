@@ -51,19 +51,26 @@ def unismart_dashboard(request):
     if not request.user.is_unismart:
         return redirect('home')
     
-    # Fetch resources relevant to the student's category
-    resources = UniSmartResource.objects.filter(
-        category=request.user.student_category,
-        is_active=True
-    ).order_by('-uploaded_at')
-    
     # Get a random mentor recommendation for and initial "connection" hint
     mentor = get_mentor_recommendation(request.user.target_career)
     
     return render(request, 'unismart/dashboard.html', {
         'user': request.user,
-        'resources': resources,
         'mentor': mentor
+    })
+
+@login_required
+def unismart_resources(request):
+    if not request.user.is_unismart:
+        return redirect('home')
+        
+    resources = UniSmartResource.objects.filter(
+        category=request.user.student_category,
+        is_active=True
+    ).order_by('-uploaded_at')
+    
+    return render(request, 'unismart/resources.html', {
+        'resources': resources
     })
 
 
@@ -328,7 +335,9 @@ def unismart_remove_from_cart(request, item_id):
     if request.method == 'POST':
         item = get_object_or_404(UniSmartCourseCart, id=item_id, student=request.user)
         item.delete()
-        return render(request, 'unismart/cart_removed_partial.html')
+        response = render(request, 'unismart/cart_removed_partial.html')
+        response['HX-Trigger'] = 'cartUpdated'
+        return response
     return redirect('unismart_manage_cart')
 
 

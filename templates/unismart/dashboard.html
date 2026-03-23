@@ -21,7 +21,7 @@
 
     <!-- Stats/Progress Row -->
     <div class="row g-4 mb-5 animate-fade-up" style="animation-delay: 0.1s;">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
                 <div class="d-flex align-items-center mb-2">
                     <div class="p-2 bg-light-blue rounded shadow-sm me-3">
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
                 <div class="d-flex align-items-center mb-2">
                     <div class="p-2 bg-light-orange rounded shadow-sm me-3">
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
                 <div class="d-flex align-items-center mb-2">
                     <div class="p-2 bg-light-green rounded shadow-sm me-3">
@@ -67,17 +67,6 @@
                     <div class="small fw-bold text-muted">Tasks Done</div>
                 </div>
                 <div class="h5 fw-bold mb-0">{% if user.target_career %}1{% else %}0{% endif %} / 5</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
-                <div class="d-flex align-items-center mb-2">
-                    <div class="p-2 bg-light-purple rounded shadow-sm me-3">
-                        <i class="fa fa-bell text-secondary"></i>
-                    </div>
-                    <div class="small fw-bold text-muted">Alerts</div>
-                </div>
-                <div class="h5 fw-bold mb-0">{% if not user.target_career %}1 Action Needed{% else %}Caught up!{% endif %}</div>
             </div>
         </div>
     </div>
@@ -104,19 +93,21 @@
                     <a href="{% url 'unismart_helb_guide' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
                         <i class="fas fa-hand-holding-usd me-2"></i>HELB Guide
                     </a>
+                    <a href="{% url 'unismart_resources' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-folder-open me-2"></i>Resource Center
+                    </a>
                     <hr class="my-3">
                     <a href="#" class="nav-link rounded-pill px-4 text-muted hover-light">
                         <i class="fas fa-user-circle me-2"></i>My Profile
                     </a>
                 </nav>
 
-                <!-- User Progress Card -->
                 <div class="mt-5 p-3 bg-light-orange rounded-4 text-center">
                     <h6 class="fw-bold text-orange mb-2">Academic Roadmap</h6>
                     <div class="progress mb-2" style="height: 6px;">
-                        <div class="progress-bar bg-orange" style="width: 45%"></div>
+                        <div class="progress-bar bg-orange" style="width: {% if user.target_career and user.course_basket.count > 0 %}85{% elif user.target_career %}45{% elif user.course_basket.count > 0 %}35{% else %}10{% endif %}%"></div>
                     </div>
-                    <p class="small text-muted mb-0">45% Path Discovered</p>
+                    <p class="small text-muted mb-0">{% if user.target_career and user.course_basket.count > 0 %}85{% elif user.target_career %}45{% elif user.course_basket.count > 0 %}35{% else %}10{% endif %}% Path Discovered</p>
                 </div>
             </div>
         </div>
