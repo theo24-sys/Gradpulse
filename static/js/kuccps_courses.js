@@ -240,16 +240,19 @@ function render() {
               return `
                 <div class="course-card">
                   <div class="course-name">${highlight(course, searchQuery)}</div>
-                  <div id="add-btn-${c.id}-${sIndex}-${cIndex}">
-                    <button class="add-btn" 
-                            hx-post="/unismart/add-to-cart/"
-                            hx-headers='{"X-CSRFToken": "${csrfToken}"}'
-                            hx-vals='{"course_name": "${safeCourseName}", "course_code": "", "institution": "${safeInstName}"}'
-                            hx-target="#add-btn-${c.id}-${sIndex}-${cIndex}"
-                            hx-swap="innerHTML"
-                            onclick="event.stopPropagation();">
-                        <i class="fas fa-plus me-1"></i> Add to Selection
-                    </button>
+                  <div id="add-btn-${c.id}-${sIndex}-${cIndex}" class="mt-2 text-center">
+                    <form hx-post="/unismart/add-to-cart/"
+                          hx-target="#add-btn-${c.id}-${sIndex}-${cIndex}"
+                          hx-swap="innerHTML"
+                          onsubmit="event.stopPropagation();">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                        <input type="hidden" name="course_name" value="${safeCourseName}">
+                        <input type="hidden" name="institution" value="${safeInstName}">
+                        <input type="hidden" name="course_code" value="">
+                        <button class="add-btn w-100 m-0" type="submit">
+                            <i class="fas fa-plus me-1"></i> Add to Selection
+                        </button>
+                    </form>
                   </div>
                 </div>
               `;

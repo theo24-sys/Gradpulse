@@ -284,7 +284,9 @@ def unismart_add_to_cart(request):
                 institution=institution,
                 course_code=course_code
             )
-            return render(request, 'unismart/cart_added_partial.html', {'course_name': course_name})
+            response = render(request, 'unismart/cart_added_partial.html', {'course_name': course_name})
+            response['HX-Trigger'] = 'cartUpdated'
+            return response
     return render(request, 'unismart/cart_added_partial.html', {'error': 'Failed to add'})
 
 @login_required
@@ -293,6 +295,32 @@ def unismart_cart_count(request):
         return HttpResponse("0")
     count = UniSmartCourseCart.objects.filter(student=request.user).count()
     return HttpResponse(str(count))
+
+
+@login_required
+def unismart_set_goal(request):
+    if request.method == 'POST':
+        goal = request.POST.get('career_goal', '').strip()
+        if goal:
+            request.user.target_career = goal
+            request.user.save()
+            return HttpResponse(f"""
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="h5 fw-bold mb-0 text-navy">{goal}</div>
+                    <button class="btn btn-sm btn-light rounded-circle" hx-get="/unismart/set-goal/" hx-target="#goal-container" title="Edit Goal">
+                        <i class="fas fa-pencil-alt text-muted small"></i>
+                    </button>
+                </div>
+            """)
+    
+    # Render form for GET
+    return HttpResponse(f"""
+        <form hx-post="/unismart/set-goal/" hx-target="#goal-container" class="d-flex gap-2 w-100">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{request.META.get('CSRF_COOKIE', '')}">
+            <input type="text" name="career_goal" class="form-control form-control-sm border-orange" placeholder="e.g. Software Engineer" required autofocus value="{request.user.target_career or ''}">
+            <button type="submit" class="btn btn-sm btn-orange"><i class="fas fa-check"></i></button>
+        </form>
+    """)
 
 
 @login_required

@@ -29,7 +29,20 @@
                     </div>
                     <div class="small fw-bold text-muted">Current Goal</div>
                 </div>
-                <div class="h5 fw-bold mb-0">{{ user.target_career|default:"Set Career Goal" }}</div>
+                <div class="h5 fw-bold mb-0" id="goal-container">
+                    {% if user.target_career %}
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="h5 fw-bold mb-0 text-navy" style="font-size: 1.1rem;">{{ user.target_career }}</div>
+                        <button class="btn btn-sm btn-light rounded-circle" hx-get="{% url 'unismart_set_goal' %}" hx-target="#goal-container" title="Edit Goal">
+                            <i class="fas fa-pencil-alt text-muted small"></i>
+                        </button>
+                    </div>
+                    {% else %}
+                    <button class="btn btn-sm btn-orange w-100 fw-bold" hx-get="{% url 'unismart_set_goal' %}" hx-target="#goal-container">
+                        Set Career Goal
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="col-md-3">
@@ -40,7 +53,9 @@
                     </div>
                     <div class="small fw-bold text-muted">Points</div>
                 </div>
-                <div class="h5 fw-bold mb-0">0 XP</div>
+                <div class="h5 fw-bold mb-0" id="xp-counter" hx-get="/unismart/dashboard/" hx-trigger="cartUpdated from:body" hx-select="#xp-counter" hx-swap="outerHTML">
+                    {% if user.target_career %}{{ user.course_basket.count|add:5 }}0{% else %}{{ user.course_basket.count }}0{% endif %} XP
+                </div>
             </div>
         </div>
         <div class="col-md-3">
@@ -51,7 +66,7 @@
                     </div>
                     <div class="small fw-bold text-muted">Tasks Done</div>
                 </div>
-                <div class="h5 fw-bold mb-0">0 / 5</div>
+                <div class="h5 fw-bold mb-0">{% if user.target_career %}1{% else %}0{% endif %} / 5</div>
             </div>
         </div>
         <div class="col-md-3">
@@ -62,7 +77,7 @@
                     </div>
                     <div class="small fw-bold text-muted">Alerts</div>
                 </div>
-                <div class="h5 fw-bold mb-0">1 New</div>
+                <div class="h5 fw-bold mb-0">{% if not user.target_career %}1 Action Needed{% else %}Caught up!{% endif %}</div>
             </div>
         </div>
     </div>
@@ -191,42 +206,58 @@
 
                 <!-- Side Widgets -->
                 <div class="col-md-4">
-                    <!-- Resource Center -->
-                    <div class="gp-card p-4 mb-4" style="max-height: 400px; overflow-y: auto;">
-                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                            <i class="fas fa-folder-open text-orange"></i>Resource Center
-                        </h5>
-                        <p class="small text-muted mb-4">Official KUCCPS documents and guides for your level.</p>
+                    <!-- Spacer instead of Resource Center -->
+                </div>
+            </div>
+
+            <!-- Resource Center Full Width Area -->
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <div class="gp-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                                    <i class="fas fa-folder-open text-orange"></i>Resource Center
+                                </h5>
+                                <p class="small text-muted mb-0">Official KUCCPS documents and guides for your level.</p>
+                            </div>
+                        </div>
                         
-                        <div class="resource-list">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
                             {% for res in resources %}
-                            <div class="resource-item d-flex align-items-center gap-3 p-2 mb-2 rounded-3 hover-light border border-light">
-                                <div class="resource-icon text-danger">
-                                    <i class="fas {% if res.resource_type == 'pdf' %}fa-file-pdf{% elif res.resource_type == 'link' %}fa-external-link-alt{% else %}fa-video{% endif %} fa-lg"></i>
+                            <div class="col">
+                                <div class="gp-card p-3 h-100 d-flex flex-column hover-up" style="border: 1px solid var(--gp-light); box-shadow: none;">
+                                    <div class="d-flex align-items-start gap-3 mb-3">
+                                        <div class="resource-icon text-danger bg-light-danger p-2 rounded-3">
+                                            <i class="fas {% if res.resource_type == 'pdf' %}fa-file-pdf{% elif res.resource_type == 'link' %}fa-external-link-alt{% else %}fa-video{% endif %} fa-lg"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1 text-navy lh-sm">{{ res.title }}</h6>
+                                            <span class="badge bg-light text-muted border">{{ res.get_resource_type_display }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-auto d-flex justify-content-between align-items-center border-top pt-3">
+                                        <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light fw-bold px-3 rounded-pill" target="_blank">
+                                            <i class="fas fa-download me-1"></i> Open
+                                        </a>
+                                        {% if res.resource_type == 'pdf' %}
+                                        <button class="btn btn-sm btn-outline-orange rounded-pill px-3" 
+                                                hx-post="{% url 'unismart_extract_courses' res.id %}"
+                                                hx-indicator="#extract-loading-{{ res.id }}">
+                                            <i class="fas fa-magic me-1"></i> Extract
+                                        </button>
+                                        <div id="extract-loading-{{ res.id }}" class="htmx-indicator ms-2">
+                                            <span class="spinner-border spinner-border-sm text-orange"></span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="flex-grow-1" style="min-width: 0;">
-                                    <h6 class="fw-bold mb-0 text-navy" style="font-size: 0.9rem; line-height: 1.2;">{{ res.title }}</h6>
-                                    <span class="text-xs text-muted">{{ res.get_resource_type_display }}</span>
-                                </div>
-                                <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank" title="Download">
-                                    <i class="fas fa-download small"></i>
-                                </a>
-                                {% if res.resource_type == 'pdf' %}
-                                <button class="btn btn-sm btn-outline-orange rounded-circle ms-1" 
-                                        hx-post="{% url 'unismart_extract_courses' res.id %}"
-                                        hx-indicator="#extract-loading-{{ res.id }}"
-                                        title="Extract Courses with AI">
-                                    <i class="fas fa-magic small"></i>
-                                </button>
-                                <div id="extract-loading-{{ res.id }}" class="htmx-indicator ms-2">
-                                    <span class="spinner-border spinner-border-sm text-orange"></span>
-                                </div>
-                                {% endif %}
                             </div>
                             {% empty %}
-                            <div class="text-center py-4">
-                                <i class="fas fa-info-circle text-muted mb-2"></i>
-                                <p class="small text-muted mb-0">No resources found for your category yet.</p>
+                            <div class="col-12 py-5 text-center bg-light rounded-4">
+                                <i class="fas fa-inbox text-muted fa-3x mb-3"></i>
+                                <h5>No Resources Yet</h5>
+                                <p class="text-muted mb-0">We are currently gathering official documents for your academic level.</p>
                             </div>
                             {% endfor %}
                         </div>
