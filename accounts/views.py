@@ -180,8 +180,16 @@ def unismart_extract_courses(request, resource_id):
 def unismart_course_browser(request):
     level = request.GET.get('level', 'degree')
     query = request.GET.get('q', '')
+    cluster_filter = request.GET.get('cluster', '')
     
     courses = UniSmartMasterCourse.objects.filter(level=level)
+    
+    # Get cluster groups and counts for the sidebar
+    cluster_stats = UniSmartMasterCourse.objects.filter(level=level).values('cluster_group').annotate(count=Count('id')).order_by('cluster_group')
+    
+    if cluster_filter:
+        courses = courses.filter(cluster_group=cluster_filter)
+        
     if query:
         courses = courses.filter(
             Q(name__icontains=query) | Q(code__icontains=query) | Q(institution__icontains=query)
@@ -190,7 +198,9 @@ def unismart_course_browser(request):
     return render(request, 'unismart/course_browser.html', {
         'courses': courses,
         'level': level,
-        'query': query
+        'query': query,
+        'cluster_filter': cluster_filter,
+        'cluster_stats': cluster_stats
     })
 
 

@@ -1,133 +1,259 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}UniSmart — Course Browser{% endblock %}
+{% block extra_css %}
+<style>
+    :root {
+        --kuccps-red: #800000;
+        --kuccps-yellow: #ffc107;
+        --kuccps-bg: #f4f7f6;
+    }
+    body { background-color: var(--kuccps-bg); }
+    .browser-container {
+        display: flex;
+        gap: 25px;
+        margin-top: 20px;
+    }
+    .cluster-sidebar {
+        width: 320px;
+        flex-shrink: 0;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        height: fit-content;
+        position: sticky;
+        top: 90px;
+    }
+    .sidebar-header {
+        background: var(--kuccps-red);
+        color: white;
+        padding: 15px 20px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+    }
+    .cluster-list {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    .cluster-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid #eee;
+        color: #555;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    .cluster-item:hover {
+        background: #fff5f5;
+        color: var(--kuccps-red);
+    }
+    .cluster-item.active {
+        background: #f8f9fa;
+        color: var(--kuccps-red);
+        border-left: 4px solid var(--kuccps-red);
+        font-weight: 600;
+    }
+    .count-badge {
+        background: #eee;
+        color: #777;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+    }
+    .cluster-item.active .count-badge {
+        background: var(--kuccps-red);
+        color: white;
+    }
+    .main-content { flex-grow: 1; }
+    .search-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+    }
+    .course-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        padding: 20px;
+        margin-bottom: 15px;
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .course-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .course-code {
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: #999;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .course-title {
+        color: var(--kuccps-red);
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-bottom: 5px;
+        line-height: 1.3;
+    }
+    .inst-name {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    .req-box {
+        background: #fffbe6;
+        border: 1px solid #ffe58f;
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: #856404;
+    }
+    .btn-maroon {
+        background: var(--kuccps-red);
+        color: white;
+        border: none;
+        transition: opacity 0.2s;
+    }
+    .btn-maroon:hover {
+        background: #600000;
+        color: white;
+    }
+    .sticky-toolbar {
+        background: white;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-3">
-            <div class="gp-card p-4 sticky-top" style="top: 100px;">
-                <h5 class="fw-bold mb-4">Filters</h5>
-                
-                <form method="GET" action="{% url 'unismart_course_browser' %}" id="filter-form">
-                    <div class="mb-4">
-                        <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Study Level</label>
-                        <select name="level" class="form-select border-light shadow-sm" onchange="this.form.submit()">
-                            <option value="degree" {% if level == 'degree' %}selected{% endif %}>Degree Programs</option>
-                            <option value="tvet" {% if level == 'tvet' %}selected{% endif %}>TVET / Diploma</option>
-                        </select>
-                    </div>
+<div class="container-fluid px-4 py-4">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{% url 'unismart_dashboard' %}" class="text-maroon">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Programmes</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-maroon mb-0">KUCCPS Master List</h2>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-warning rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
+                <i class="fas fa-magic me-2"></i> Bulk Add (AI Paste)
+            </button>
+            <a href="{% url 'unismart_manage_cart' %}" class="btn btn-outline-maroon rounded-pill px-4 shadow-sm">
+                <i class="fas fa-shopping-basket me-2"></i> My Selection Cart
+            </a>
+        </div>
+    </div>
 
-                    <div class="mb-4">
-                        <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Search</label>
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control border-light shadow-sm" placeholder="Course name or code..." value="{{ query }}">
-                            <button class="btn btn-navy" type="submit"><i class="fas fa-search"></i></button>
+    <div class="browser-container">
+        <!-- Sidebar -->
+        <div class="cluster-sidebar">
+            <div class="sidebar-header">DEGREE PROGRAMMES</div>
+            <div class="cluster-list">
+                <a href="?level=degree" class="cluster-item {% if not cluster_filter %}active{% endif %}">
+                    All Programmes
+                    <span class="count-badge">{{ cluster_stats.count }} Groups</span>
+                </a>
+                {% for item in cluster_stats %}
+                    {% if item.cluster_group %}
+                    <a href="?cluster={{ item.cluster_group|urlencode }}&level={{ level }}" class="cluster-item {% if cluster_filter == item.cluster_group %}active{% endif %}">
+                        {{ item.cluster_group }}
+                        <span class="count-badge">{{ item.count }}</span>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Search & Filter Bar -->
+            <div class="search-card">
+                <form method="GET" class="row g-3">
+                    <input type="hidden" name="level" value="{{ level }}">
+                    {% if cluster_filter %}<input type="hidden" name="cluster" value="{{ cluster_filter }}">{% endif %}
+                    <div class="col-md-9">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" name="q" class="form-control border-start-0" placeholder="Search by name, code or university..." value="{{ query }}">
                         </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-maroon btn-lg w-100 rounded-3">Search</button>
                     </div>
                 </form>
-
-                <hr class="my-4">
-                <button type="button" class="btn btn-navy w-100 rounded-pill mb-3" data-bs-toggle="modal" data-bs-target="#bulkAddModal">
-                    <i class="fas fa-magic me-2"></i>Bulk Add (Paste Text)
-                </button>
-                <a href="{% url 'unismart_manage_cart' %}" class="btn gp-btn-outline w-100 rounded-pill">
-                    <i class="fas fa-shopping-basket me-2"></i>My Cart
-                </a>
-            </div>
-        </div>
-
-        <!-- Bulk Add Modal -->
-        <div class="modal fade" id="bulkAddModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                    <div class="modal-header border-0 pb-0">
-                        <h5 class="fw-bold mb-0">AI Bulk Course Extractor</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{% url 'unismart_bulk_extract' %}" method="POST">
-                        {% csrf_token %}
-                        <div class="modal-body py-4">
-                            <p class="text-muted small mb-3">Paste raw text from the KUCCPS manual here. Our AI will automatically organize it into your course database.</p>
-                            
-                            <div class="mb-3">
-                                <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Study Level</label>
-                                <select name="level" class="form-select border-light shadow-sm">
-                                    <option value="degree">Degree Programs</option>
-                                    <option value="tvet">TVET / Diploma</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-0">
-                                <label class="small fw-bold text-muted text-uppercase mb-2 d-block">Paste Text Here</label>
-                                <textarea name="bulk_text" class="form-control border-light shadow-sm" rows="12" placeholder="Example: 1234567 LLB LAW UNIVERSITY OF NAIROBI 45.678..." required></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-navy rounded-pill px-4 fw-bold">
-                                Start AI Extraction
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-9">
-            <div class="d-flex justify-content-between align-items-end mb-4 animate-fade-up">
-                <div>
-                    <h2 class="fw-800 text-navy mb-1">Available Courses</h2>
-                    <p class="text-muted mb-0">Browse and add courses to your application basket.</p>
-                </div>
-                <div class="text-muted small">
-                    Showing {{ courses.count }} results
-                </div>
             </div>
 
-            <div class="row g-4 animate-fade-up">
+            <!-- Results -->
+            <div id="results-area">
+                {% if cluster_filter %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-muted">Filtered by: <span class="text-maroon fw-bold">{{ cluster_filter }}</span></h5>
+                    <a href="?level={{ level }}" class="text-decoration-none small text-maroon">Clear filter</a>
+                </div>
+                {% endif %}
+
                 {% for course in courses %}
-                <div class="col-md-6">
-                    <div class="gp-card p-4 h-100 d-flex flex-column hover-up">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-light-orange text-orange px-3 py-1 rounded-pill small fw-bold">
-                                {{ course.get_level_display }}
-                            </span>
-                            <span class="text-muted small fw-bold">CODE: {{ course.code }}</span>
+                <div class="course-card">
+                    <div class="row align-items-center">
+                        <div class="col-md-9">
+                            <small class="course-code text-uppercase">{{ course.code }}</small>
+                            <h4 class="course-title">{{ course.name }}</h4>
+                            <div class="inst-name">
+                                <i class="fas fa-university me-2 text-muted"></i> {{ course.institution }}
+                            </div>
+                            
+                            <div class="req-box">
+                                <div class="d-flex">
+                                    <i class="fas fa-info-circle me-3 mt-1 opacity-50"></i>
+                                    <div>
+                                        <div class="fw-bold mb-1" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Subject Requirements</div>
+                                        {{ course.requirements|default:"Please refer to the official KUCCPS manual for specific subject requirements for this programme." }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <h5 class="fw-bold text-navy mb-2">{{ course.name }}</h5>
-                        <p class="small text-muted mb-3 flex-grow-1">
-                            <i class="fas fa-university me-1"></i> {{ course.institution|default:"Multiple Institutions" }}<br>
-                            {% if course.cluster_group %}
-                            <i class="fas fa-layer-group me-1"></i> Cluster: {{ course.cluster_group }}
-                            {% endif %}
-                        </p>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                            <div>
-                                {% if course.min_points %}
-                                <div class="text-xs text-muted">Min. Points</div>
-                                <div class="fw-bold text-navy">{{ course.min_points }}</div>
-                                {% endif %}
+                        <div class="col-md-3 text-end pt-3 pt-md-0">
+                            <div class="mb-2">
+                                <span class="badge bg-light text-muted border px-3 py-2 rounded-pill small uppercase">
+                                    {{ course.level }}
+                                </span>
                             </div>
                             <div id="add-btn-{{ course.id }}">
-                                <button class="btn btn-orange rounded-pill px-4 btn-sm fw-bold"
-                                        hx-post="{% url 'unismart_add_to_cart' %}"
-                                        hx-vals='{"course_name": "{{ course.name|escapejs }}", "course_code": "{{ course.code|escapejs }}", "institution": "{{ course.institution|escapejs }}"}'
-                                        hx-target="#add-btn-{{ course.id }}"
-                                        hx-swap="innerHTML">
-                                    <i class="fas fa-plus me-2"></i>Add to Cart
-                                </button>
+                                <form hx-post="{% url 'unismart_add_to_cart' %}" hx-swap="outerHTML">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="course_name" value="{{ course.name }}">
+                                    <input type="hidden" name="institution" value="{{ course.institution }}">
+                                    <input type="hidden" name="course_code" value="{{ course.code }}">
+                                    <button type="submit" class="btn btn-maroon rounded-pill px-4 shadow-sm w-100">
+                                        <i class="fas fa-plus-circle me-2"></i> Add to Selection
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-12 text-center py-5 gp-card">
-                    <i class="fas fa-search fa-3x text-muted opacity-25 mb-3"></i>
-                    <h4>No courses found</h4>
-                    <p class="text-muted">No courses have been extracted for this level yet. Use the dashboard to "Extract Courses" from the KUCCPS manual.</p>
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+                    <img src="{% static 'img/empty-box.svg' %}" alt="No Results" style="width: 120px; opacity: 0.3;" class="mb-4">
+                    <h4 class="text-muted">No courses found</h4>
+                    <p class="text-muted">No programmes match your search or filter criteria.<br>Try adjusting your keywords.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -135,9 +261,40 @@
     </div>
 </div>
 
-<style>
-.fw-800 { font-weight: 800; }
-.text-xs { font-size: 0.7rem; }
-.bg-light-orange { background: rgba(253, 126, 20, 0.1); }
-</style>
+<!-- Bulk Import Modal -->
+<div class="modal fade" id="bulkImportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+            <div class="modal-header bg-maroon text-white" style="border-radius: 15px 15px 0 0;">
+                <h5 class="modal-title fw-bold"><i class="fas fa-magic me-2"></i> AI Bulk Programme Extractor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'unismart_bulk_extract' %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body p-4">
+                    <div class="alert alert-info border-0 shadow-sm small mb-4">
+                        <i class="fas fa-lightbulb me-2"></i> <strong>Pro Tip:</strong> Simply copy the programme list from your PDF or the KUCCPS site and paste it below. Our system will automatically detect names, institutions, and clusters.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-uppercase">Study Level</label>
+                        <select name="level" class="form-select border-light shadow-sm">
+                            <option value="degree">Degree Programmes</option>
+                            <option value="tvet">TVET / Diploma Programmes</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label fw-bold small text-uppercase">Paste Content Here</label>
+                        <textarea name="bulk_text" class="form-control border-light shadow-sm" rows="12" placeholder="Example: 1 1057101 EGERTON UNIVERSITY BACHELOR OF ARTS 24.188 26.783..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-maroon rounded-pill px-5 fw-bold">Process & Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
