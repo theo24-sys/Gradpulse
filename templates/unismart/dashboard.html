@@ -120,70 +120,181 @@
                         </div>
                     </div>
                     {% if user.student_category == 'graduate' %}
-                    <div class="roadmap-item d-flex mb-4">
-                        <div class="roadmap-icon me-3">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">2</div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">KUCCPS Application</h6>
-                            <p class="small text-muted mb-0">Review the cluster documents in the Resource Center before applying.</p>
-                        </div>
+        <!-- Side Navigation -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="gp-card p-4 sticky-top" style="top: 100px;">
+                <nav class="nav flex-column gap-2">
+                    <a href="{% url 'unismart_dashboard' %}" class="nav-link active rounded-pill px-4">
+                        <i class="fas fa-th-large me-2"></i>Dashboard
+                    </a>
+                    <a href="{% url 'unismart_kcse_entry' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-file-invoice me-2"></i>KCSE Analysis
+                    </a>
+                    <a href="{% url 'unismart_manage_cart' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-shopping-basket me-2"></i>Course Cart
+                    </a>
+                    <a href="{% url 'unismart_helb_guide' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-hand-holding-usd me-2"></i>HELB Guide
+                    </a>
+                    <hr class="my-3">
+                    <a href="#" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-user-circle me-2"></i>My Profile
+                    </a>
+                </nav>
+
+                <!-- User Progress Card -->
+                <div class="mt-5 p-3 bg-light-orange rounded-4 text-center">
+                    <h6 class="fw-bold text-orange mb-2">Academic Roadmap</h6>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-orange" style="width: 45%"></div>
                     </div>
-                    {% endif %}
+                    <p class="small text-muted mb-0">45% Path Discovered</p>
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Sidebar -->
-        <div class="col-lg-4">
-            <!-- Resource Center -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px;">
-                <div class="card-header bg-white border-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0"><i class="fa fa-folder-open me-2 text-warning"></i>Resource Center</h5>
+        <!-- Main Content Area -->
+        <div class="col-lg-9">
+            <!-- Top Actions Bar -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_kcse_entry' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up border-orange border-dashed bg-light-orange">
+                        <div class="rounded-circle bg-orange text-white p-3">
+                            <i class="fas fa-calculator fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-orange">Cluster Points</h6>
+                            <p class="small text-muted mb-0">Calculate & Qualify</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="card-body p-4">
-                    <p class="text-muted small">Official KUCCPS documents and guides for your level.</p>
-                    <div class="resource-list">
-                        {% for resource in resources %}
-                        <div class="d-flex align-items-center mb-3 p-2 rounded hover-light pointer">
-                            <div class="bg-light-orange p-2 rounded me-3">
-                                <i class="fa {% if resource.resource_type == 'pdf' %}fa-file-pdf text-danger{% else %}fa-link text-primary{% endif %}"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="small fw-bold mb-0">{{ resource.title }}</h6>
-                                <span class="x-small text-muted">{{ resource.get_resource_type_display }}</span>
-                            </div>
-                            <a href="{% if resource.file %}{{ resource.file.url }}{% else %}{{ resource.url }}{% endif %}" target="_blank" class="btn btn-sm btn-light border">
-                                <i class="fa fa-download"></i>
-                            </a>
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_manage_cart' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up">
+                        <div class="rounded-circle bg-primary text-white p-3">
+                            <i class="fas fa-list-ul fa-lg"></i>
                         </div>
-                        {% empty %}
-                        <div class="text-center py-3">
-                            <p class="small text-muted">No resources uploaded for your category yet.</p>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-navy">My Course Cart</h6>
+                            <p class="small text-muted mb-0">{{ user.course_basket.count }} Saved Courses</p>
                         </div>
-                        {% endfor %}
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_helb_guide' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up">
+                        <div class="rounded-circle bg-success text-white p-3">
+                            <i class="fas fa-money-check-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-success">HELB Funding</h6>
+                            <p class="small text-muted mb-0">Application Guide</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- UniSmart Career AI -->
+                <div class="col-md-8">
+                    <div class="gp-card p-0" style="height: 600px; display: flex; flex-direction: column;">
+                        <div class="gp-card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-orange text-white p-2" style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-navy">UniSmart Career AI</h5>
+                            </div>
+                            <span class="badge rounded-pill bg-light-orange text-orange px-3 py-1 fw-600 small pulse">Live Advisor</span>
+                        </div>
+                        
+                        <!-- Chat Area -->
+                        <div id="chat-window" class="gp-card-body chat-container p-4 overflow-auto flex-grow-1" style="background-image: radial-gradient(rgba(217, 126, 27, 0.03) 1px, transparent 1px); background-size: 20px 20px;">
+                            <div class="chat-message ai mb-4 d-flex gap-3">
+                                <div class="rounded-circle bg-orange text-white flex-shrink-0" style="width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">
+                                    <i class="fas fa-robot small"></i>
+                                </div>
+                                <div class="p-3 bg-light rounded-4 border-0" style="max-width: 85%;">
+                                    <p class="mb-0">Hello! I'm your UniSmart AI. Ask me anything about university courses, KUCCPS clusters, or career paths in Kenya. I can even recommend a mentorship link with a university senior!</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Input -->
+                        <div class="p-3 border-top bg-white">
+                            <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-indicator="#chat-loading">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="message" class="form-control border-light-orange rounded-pill-start ps-4" placeholder="Ask about cluster points, courses, etc..." style="border-right: none;">
+                                    <button class="btn btn-orange rounded-pill-end px-4" type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                                <div id="chat-loading" class="htmx-indicator mt-2 small text-muted text-center">
+                                    <span class="spinner-border spinner-border-sm me-1"></span> UniSmart AI is thinking...
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Mentor Spotlight -->
-            {% if mentor %}
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; background: linear-gradient(135deg, var(--gp-orange) 0%, #ff8c00 100%); color: white;">
-                <div class="card-body p-4 text-center">
-                    <h5 class="fw-bold mb-3">Mentor Spotlight 🌟</h5>
-                    <img src="{{ mentor.get_avatar_url }}" alt="{{ mentor.display_name }}" class="rounded-circle mb-3 border border-3 border-white shadow" style="width:80px;height:80px;object-fit:cover;">
-                    <h6 class="fw-bold mb-1">{{ mentor.display_name }}</h6>
-                    <p class="small opacity-75 mb-3">{{ mentor.course }}<br>{{ mentor.institution }}</p>
-                    <a href="{% url 'networking' %}" class="btn btn-light btn-sm w-100 fw-bold rounded-pill">Chat with {{ mentor.first_name }}</a>
-                </div>
-            </div>
-            {% endif %}
+                <!-- Side Widgets -->
+                <div class="col-md-4">
+                    <!-- Resource Center -->
+                    <div class="gp-card p-4 mb-4" style="max-height: 400px; overflow-y: auto;">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <i class="fas fa-folder-open text-orange"></i>Resource Center
+                        </h5>
+                        <p class="small text-muted mb-4">Official KUCCPS documents and guides for your level.</p>
+                        
+                        <div class="resource-list">
+                            {% for res in resources %}
+                            <div class="resource-item d-flex align-items-center gap-3 p-2 mb-2 rounded-3 hover-light border border-light">
+                                <div class="resource-icon text-danger">
+                                    <i class="fas {% if res.resource_type == 'pdf' %}fa-file-pdf{% elif res.resource_type == 'link' %}fa-external-link-alt{% else %}fa-video{% endif %} fa-lg"></i>
+                                </div>
+                                <div class="flex-grow-1 overflow-hidden" style="cursor: pointer;">
+                                    <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem;">{{ res.title }}</h6>
+                                    <span class="text-xs text-muted">{{ res.get_resource_type_display }}</span>
+                                </div>
+                                <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank">
+                                    <i class="fas fa-download small"></i>
+                                </a>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-info-circle text-muted mb-2"></i>
+                                <p class="small text-muted mb-0">No resources found for your category yet.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; background: var(--gp-navy); color: white;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">HELB & Financing</h5>
-                    <p class="small opacity-75 mb-4">Learn about university funding, bursaries, and educational loans in Kenya.</p>
-                    <a href="#" class="btn btn-light btn-sm w-100 fw-bold">Read Guide</a>
+                    <!-- Mentor Spotlight -->
+                    <div id="mentor-spotlight">
+                        {% if mentor %}
+                        <div class="gp-card p-4 border-orange border-dashed bg-light-orange mb-4">
+                            <h6 class="fw-bold mb-3 text-orange">Mentor Spotlight</h6>
+                            <div class="text-center mb-3">
+                                <img src="{{ mentor.get_avatar_url }}" class="rounded-circle mb-3 border border-3 border-white shadow-sm" width="80" height="80" style="object-fit:cover;">
+                                <h6 class="fw-bold mb-1">{{ mentor.display_name }}</h6>
+                                <p class="small text-muted">{{ mentor.course }} at {{ mentor.institution }}</p>
+                            </div>
+                            <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold">
+                                Request Mentorship
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        {% if user.student_category == 'graduate' %}
+                        <!-- KUCCPS Guided Mode -->
+                        <div class="gp-card p-4 bg-navy text-white rounded-4 border-0">
+                            <h6 class="fw-bold mb-2"><i class="fas fa-magic me-2"></i>Guided KUCCPS Mode</h6>
+                            <p class="small opacity-75 mb-3">Login to KUCCPS and our AI will guide you through field filling with your saved codes.</p>
+                            <a href="https://students.kuccps.net/login/" target="_blank" class="btn btn-light btn-sm w-100 rounded-pill fw-bold text-navy">
+                                Launch Guided Portal
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

@@ -62,6 +62,11 @@ class CustomUser(AbstractUser):
     website = models.URLField(blank=True)
     company_about = models.TextField(blank=True)
     actively_hiring = models.BooleanField(default=True)
+    
+    # Advanced UniSmart data
+    kcse_results = models.JSONField(blank=True, null=True, help_text="Subject grades: {'MATH': 'A', ...}")
+    cluster_points = models.JSONField(blank=True, null=True, help_text="Calculated clusters per group")
+    
     last_seen = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -148,3 +153,19 @@ class UniSmartResource(models.Model):
 
     class Meta:
         ordering = ['-uploaded_at']
+
+
+class UniSmartCourseCart(models.Model):
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='course_basket')
+    course_name = models.CharField(max_length=255)
+    course_code = models.CharField(max_length=50, blank=True)
+    institution = models.CharField(max_length=255, blank=True)
+    added_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.course_name} - {self.student.username}"
+
+    class Meta:
+        verbose_name = "UniSmart Course Cart"
+        ordering = ['-added_at']

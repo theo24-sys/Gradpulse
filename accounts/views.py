@@ -4,13 +4,13 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Q
-from .models import CustomUser, UniSmartResource
+from .models import CustomUser, UniSmartResource, UniSmartCourseCart
 from .forms import StudentRegisterForm, EmployerRegisterForm, UniSmartRegisterForm, StudentProfileForm, EmployerProfileForm, LoginForm
 from opportunities.models import Opportunity, Application
 from events.models import Event
 from networking.models import Connection
 from grades.models import Grade
-from .ai_utils import parse_transcript_with_gemini, unismart_career_chat, get_mentor_recommendation
+from .ai_utils import parse_transcript_with_gemini, unismart_career_chat, get_mentor_recommendation, calculate_kcse_clusters, get_academic_guidance
 from scraping.utils import get_items_for_student
 
 
@@ -79,6 +79,83 @@ def unismart_chat(request):
             'mentor': mentor
         })
     return redirect('unismart_dashboard')
+
+
+@login_required
+def unismart_helb_guide(request):
+    return render(request, 'unismart/helb_guide.html')
+
+
+@login_required
+def unismart_kcse_entry(request):
+    grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'E']
+    return render(request, 'unismart/kcse_results.html', {'grades_list': grades})
+
+
+@login_required
+def unismart_save_kcse(request):
+    if request.method == 'POST':
+        results = {}
+        for key in ['ENG', 'KISW', 'MATH', 'BIO', 'PHYS', 'CHEM']:
+            val = request.POST.get(key)
+            if val:
+                results[key] = val
+        
+        # Capture optional subjects
+        h1_key = request.POST.get('H1_KEY')
+        h1_val = request.POST.get('H1_VAL')
+        if h1_key and h1_val:
+            results[h1_key] = h1_val
+            
+        e1_key = request.POST.get('E1_KEY')
+        e1_val = request.POST.get('E1_VAL')
+        if e1_key and e1_val:
+            results[e1_key] = e1_val
+            
+        request.user.kcse_results = results
+        
+        # Calculate clusters using AI
+        analysis = calculate_kcse_clusters(results)
+        request.user.cluster_points = analysis.get('clusters', {})
+        request.user.save()
+        
+        return render(request, 'unismart/kcse_analysis_partial.html', {
+            'analysis': analysis
+        })
+    return redirect('unismart_dashboard')
+
+
+@login_required
+def unismart_manage_cart(request):
+    cart_items = request.user.course_basket.all()
+    return render(request, 'unismart/course_cart.html', {'cart_items': cart_items})
+
+
+@login_required
+def unismart_add_to_cart(request):
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name')
+        institution = request.POST.get('institution', '')
+        course_code = request.POST.get('course_code', '')
+        
+        if course_name:
+            UniSmartCourseCart.objects.create(
+                student=request.user,
+                course_name=course_name,
+                institution=institution,
+                course_code=course_code
+            )
+            return render(request, 'unismart/cart_added_partial.html', {'course_name': course_name})
+    return render(request, 'unismart/cart_added_partial.html', {'error': 'Failed to add'})
+
+
+@login_required
+def unismart_remove_from_cart(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(UniSmartCourseCart, id=item_id, student=request.user)
+        item.delete()
+        return render(request, 'unismart/cart_removed_partial.html')
+    return redirect('unismart_manage_cart')
 
 
 def register_view(request):
@@ -178,6 +255,9 @@ def campus_dashboard(request):
     # NEW: Fetch live discoveries from the 34 scrapers
     discovered_items = get_items_for_student(student=user, limit=6)
     
+    # AI Academic Guidance (sample or cached)
+    academic_tip = get_academic_guidance(user.course or "General Studies")
+    
     return render(request, 'campus/dashboard.html', {
         'user': user,
         'my_applications': my_applications,
@@ -186,6 +266,7 @@ def campus_dashboard(request):
         'discovered_items': discovered_items,
         'connections_count': connections_count,
         'applications_count': my_applications.count(),
+        'academic_tip': academic_tip,
     })
 
 

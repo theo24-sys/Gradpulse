@@ -55,6 +55,9 @@
               <li><a class="dropdown-item" href="{% url 'campus_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
               <li><a class="dropdown-item" href="{% url 'campus_profile' %}"><i class="fa fa-user me-2 text-muted"></i>Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'grades' %}"><i class="fa fa-chart-line me-2 text-muted"></i>My Grades</a></li>
+              {% elif user.is_unismart %}
+              <li><a class="dropdown-item" href="{% url 'unismart_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fa fa-user me-2 text-muted"></i>My Profile</a></li>
               {% else %}
               <li><a class="dropdown-item" href="{% url 'corporate_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
               <li><a class="dropdown-item" href="{% url 'corporate_profile' %}"><i class="fa fa-building me-2 text-muted"></i>Company Profile</a></li>

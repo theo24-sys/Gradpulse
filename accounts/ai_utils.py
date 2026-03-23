@@ -42,6 +42,84 @@ def extract_text_from_pdf(pdf_file):
         return None
 
 
+def calculate_kcse_clusters(results):
+    """
+    Uses Gemini to calculate cluster points and suggest courses.
+    results: dict of grades {'ENG': 'A', ...}
+    """
+    client = get_client()
+    if client is None:
+        logger.warning("Gemini client not available for KCSE cluster calculation.")
+        return {
+            "clusters": {},
+            "summary": "AI calculation failed. Gemini client not available.",
+            "recommendations": []
+        }
+
+    prompt = f"""
+    You are a Kenyan career consultant and KUCCPS expert.
+    The student has the following KCSE results: {results}
+    
+    1. Calculate the Cluster Points for the following 4 main clusters as defined by KUCCPS:
+       - Law & Humanities
+       - Business & Economics
+       - Engineering & Technology
+       - Medicine & Health Sciences
+    
+    2. Give a summary of whether the student qualifies for Degree, Diploma, or Certificate level.
+    
+    3. List 5 specific courses they qualify for based on these grades.
+    
+    Return the response as a JSON object with this structure:
+    {{
+        "clusters": {{
+            "Law": 42.1,
+            "Business": 38.5,
+            "Engineering": 35.2,
+            "Medicine": 32.8
+        }},
+        "summary": "Overall grade is X. You qualify for...",
+        "recommendations": [
+            {{"name": "Bachelor of Laws", "code": "1234567", "institution": "UoN"}},
+            ...
+        ]
+    }}
+    Only return valid JSON. No other text.
+    """
+    
+    try:
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+        # Clean the response to ensure it's valid JSON
+        text = response.text.strip()
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        return json.loads(text)
+    except Exception as e:
+        logger.error(f"Error calculating clusters: {e}")
+        return {
+            "clusters": {},
+            "summary": "AI calculation failed. Please consult the official KUCCPS manual.",
+            "recommendations": []
+        }
+
+
+def get_academic_guidance(course):
+    """
+    Returns a quick academic success tip for a student's course.
+    """
+    client = get_client()
+    if client is None:
+        return "Stay focused and manage your time well!"
+    
+    prompt = f"Give one specific academic success tip for a university student studying {course}. Keep it under 150 characters. Be concise and practical."
+    try:
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+        return response.text.strip()
+    except Exception as e:
+        logger.error(f"Grade AI error: {e}")
+        return "Consistency is the key to better grades."
+
+
 def parse_text_transcript_with_gemini(text):
     if not text.strip():
         return []
@@ -162,9 +240,10 @@ def unismart_career_chat(query, user_context=""):
     Context about the student: {user_context}
     
     Guidelines:
-    1. Be encouraging and provide specific advice relevant to the Kenyan education system (e.g., talk about KCSE, University groups, TVET).
-    2. If asked about a specific course, explain what it entails and mention typical cluster requirements.
-    3. Keep responses concise and formatted with markdown for readability.
+    1. Be encouraging and provide specific advice relevant to the Kenyan education system (e.g., talk about KCSE, University groups, TVET, and KUCCPS).
+    2. If you mention or recommend a specific course, explain what it entails and mention typical cluster requirements.
+    3. Proactively suggest that the student can "add this course to their basket" if they seem interested, so they can track it later.
+    4. Keep responses concise and formatted with markdown for readability.
     
     User Query: {query}
     """

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}UniSmart — My Course Cart{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-end mb-5 animate-fade-up">
+                <div>
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light-orange text-orange mb-3">
+                        <i class="fas fa-shopping-basket"></i>
+                        <span class="fw-bold small text-uppercase tracking-wider">Dream Courses</span>
+                    </div>
+                    <h1 class="display-5 fw-800 text-navy mb-2">My Course Cart</h1>
+                    <p class="text-muted mb-0">Saved courses for your KUCCPS application.</p>
+                </div>
+                <a href="{% url 'unismart_dashboard' %}" class="btn gp-btn-outline rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Cart Table -->
+            <div class="gp-card overflow-hidden animate-fade-up animate-delay-1">
+                <div class="table-responsive">
+                    <table class="table gp-table mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Course Name</th>
+                                <th>Code</th>
+                                <th>Institution</th>
+                                <th>Added Date</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr id="cart-item-{{ item.id }}">
+                                <td class="ps-4">
+                                    <div class="fw-bold text-navy">{{ item.course_name }}</div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">{{ item.course_code|default:"N/A" }}</span></td>
+                                <td>{{ item.institution|default:"Multiple" }}</td>
+                                <td class="text-muted small">{{ item.added_at|date:"M d, Y" }}</td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-danger rounded-circle" 
+                                            hx-post="{% url 'unismart_remove_from_cart' item.id %}" 
+                                            hx-confirm="Remove this course?"
+                                            hx-target="#cart-item-{{ item.id }}"
+                                            hx-swap="outerHTML">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-5 text-center text-muted">
+                                    <div class="mb-3"><i class="fas fa-shopping-basket fa-3x opacity-25"></i></div>
+                                    <p class="mb-3">Your cart is empty. Chat with UniSmart AI to find courses!</p>
+                                    <a href="{% url 'unismart_dashboard' %}" class="btn btn-orange rounded-pill px-4">Start Exploring</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Helpful Code Box -->
+            <div class="mt-5 p-4 bg-navy text-white rounded-4 animate-fade-up animate-delay-2" style="background: linear-gradient(135deg, #1A3C59 0%, #008b8b 100%);">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="fw-bold mb-2"><i class="fas fa-magic me-2"></i>KUCCPS Application Guide</h4>
+                        <p class="mb-0 opacity-75">When you log in to the KUCCPS portal, use the codes in your cart to quickly fill in your choices. You can copy them one by one!</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="https://students.kuccps.net/login/" target="_blank" class="btn btn-light rounded-pill px-4 fw-bold">
+                             Go to KUCCPS Portal <i class="fas fa-external-link-alt ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-navy { background-color: #1A3C59; }
+.text-xs { font-size: 0.75rem; }
+.fw-800 { font-weight: 800; }
+</style>
+{% endblock %}
