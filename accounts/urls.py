@@ -14,5 +14,6 @@ urlpatterns = [
     path('unismart/courses/bulk/', views.unismart_bulk_extract, name='unismart_bulk_extract'),
     path('unismart/extract/<int:resource_id>/', views.unismart_extract_courses, name='unismart_extract_courses'),
     path('unismart/add-to-cart/', views.unismart_add_to_cart, name='unismart_add_to_cart'),
+    path('unismart/cart-count/', views.unismart_cart_count, name='unismart_cart_count'),
     path('unismart/remove-from-cart/<int:item_id>/', views.unismart_remove_from_cart, name='unismart_remove_from_cart'),
 ]

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -285,6 +286,13 @@ def unismart_add_to_cart(request):
             )
             return render(request, 'unismart/cart_added_partial.html', {'course_name': course_name})
     return render(request, 'unismart/cart_added_partial.html', {'error': 'Failed to add'})
+
+@login_required
+def unismart_cart_count(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("0")
+    count = UniSmartCourseCart.objects.filter(student=request.user).count()
+    return HttpResponse(str(count))
 
 
 @login_required
