@@ -89,7 +89,19 @@ def calculate_kcse_clusters(results):
     
     try:
         response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+        
+        if not response.text:
+            # Check for safety blocks
+            feedback = getattr(response, 'prompt_feedback', 'No feedback')
+            logger.warning(f"Gemini returned empty text. Feedback: {feedback}")
+            return {
+                "clusters": {"Law": 0, "Business": 0, "Engineering": 0, "Medicine": 0},
+                "summary": "AI response was blocked or empty. Please ensure your grades are standard.",
+                "recommendations": []
+            }
+
         text = response.text.strip()
+        logger.info(f"KCSE Cluster AI Raw Response: {text}")
         
         # Robust JSON cleaning
         if "```json" in text:
@@ -105,14 +117,67 @@ def calculate_kcse_clusters(results):
             
         return json.loads(text)
     except Exception as e:
-        logger.error(f"Error calculating clusters: {e}. Raw: {response.text if 'response' in locals() else 'N/A'}")
+        raw_resp = "N/A"
+        try:
+            raw_resp = response.text if 'response' in locals() else 'N/A'
+        except:
+            raw_resp = "Response blocked (Accessing .text failed)"
+            
+        logger.error(f"Error calculating clusters: {e}. Raw: {raw_resp}")
         return {
             "clusters": {
                 "Law": 0, "Business": 0, "Engineering": 0, "Medicine": 0
             },
-            "summary": "AI calculation failed. Please consult the official KUCCPS manual or try again.",
+            "summary": f"AI calculation failed. Error: {str(e)[:100]}. Please try again later.",
             "recommendations": []
         }
+
+
+def extract_courses_from_text(text, level='degree'):
+    """
+    Parses raw text to extract courses using Gemini.
+    """
+    if not text.strip():
+        return []
+    
+    client = get_client()
+    if client is None:
+        return []
+        
+    prompt = f"""
+    Act as a KUCCPS data specialist. Extract all courses from the following raw text which appears to be from a KUCCPS {level} manual.
+    For each course, extract:
+    - course_name
+    - course_code
+    - institution (if unique to one)
+    - cluster_group
+    - min_points (as a float)
+    
+    Format as a JSON list. 
+    Format example: [ {{"course_name": "Law", "course_code": "123", ...}}, ... ]
+    
+    Text:
+    {text[:10000]}
+    
+    Return ONLY valid JSON. No other text.
+    """
+    
+    try:
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
+        content = response.text.strip()
+        
+        if "```json" in content:
+            content = content.split("```json")[-1].split("```")[0].strip()
+        
+        start = content.find('[')
+        end = content.rfind(']') + 1
+        if start != -1 and end != 0:
+            content = content[start:end]
+            
+        return json.loads(content)
+    except Exception as e:
+        logger.error(f"Gemini text course extraction error: {e}")
+        return []
 
 
 def extract_courses_from_pdf(pdf_file, level='degree'):

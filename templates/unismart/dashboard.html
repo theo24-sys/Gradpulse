@@ -201,8 +201,8 @@
                                 <div class="resource-icon text-danger">
                                     <i class="fas {% if res.resource_type == 'pdf' %}fa-file-pdf{% elif res.resource_type == 'link' %}fa-external-link-alt{% else %}fa-video{% endif %} fa-lg"></i>
                                 </div>
-                                <div class="flex-grow-1 overflow-hidden" style="cursor: pointer;">
-                                    <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem;">{{ res.title }}</h6>
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <h6 class="fw-bold mb-0 text-navy" style="font-size: 0.9rem; line-height: 1.2;">{{ res.title }}</h6>
                                     <span class="text-xs text-muted">{{ res.get_resource_type_display }}</span>
                                 </div>
                                 <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank" title="Download">

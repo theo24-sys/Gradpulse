@@ -13,7 +13,8 @@ from grades.models import Grade
 from .ai_utils import (
     parse_transcript_with_gemini, unismart_career_chat, 
     get_mentor_recommendation, calculate_kcse_clusters, 
-    get_academic_guidance, extract_courses_from_pdf
+    get_academic_guidance, extract_courses_from_pdf,
+    extract_courses_from_text
 )
 from scraping.utils import get_items_for_student
 
@@ -191,6 +192,45 @@ def unismart_course_browser(request):
         'level': level,
         'query': query
     })
+
+
+@login_required
+def unismart_bulk_extract(request):
+    if not request.user.is_unismart:
+        return redirect('home')
+        
+    if request.method == 'POST':
+        text = request.POST.get('bulk_text', '')
+        level = request.POST.get('level', 'degree')
+        
+        courses_data = extract_courses_from_text(text, level=level)
+        
+        count = 0
+        for item in courses_data:
+            try:
+                name = item.get('course_name')
+                code = item.get('course_code')
+                if name and code:
+                    UniSmartMasterCourse.objects.update_or_create(
+                        code=code,
+                        defaults={
+                            'name': name,
+                            'institution': item.get('institution', ''),
+                            'cluster_group': item.get('cluster_group', ''),
+                            'min_points': item.get('min_points'),
+                            'level': level
+                        }
+                    )
+                    count += 1
+            except Exception as e:
+                print(f"Error saving bulk course: {e}")
+        
+        if count > 0:
+            messages.success(request, f"Successfully extracted {count} new courses!")
+        else:
+            messages.warning(request, "AI couldn't find any courses in the text you pasted.")
+            
+    return redirect('unismart_course_browser')
 
 
 @login_required
