@@ -68,58 +68,8 @@
     </div>
 
     <!-- Main Content Grid -->
+    {% if user.student_category == 'graduate' %}
     <div class="row g-4 animate-fade-up" style="animation-delay: 0.2s;">
-        <!-- Left Column: Guidance & Chat -->
-        <div class="col-lg-8">
-            <!-- AI Career Chat -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; border-top: 5px solid var(--gp-orange) !important;">
-                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0 text-orange"><i class="fa fa-robot me-2"></i>UniSmart Career AI</h5>
-                    <span class="badge bg-light text-orange border">Live Advisor</span>
-                </div>
-                <div class="card-body p-4">
-                    <div id="chat-window" class="chat-container mb-3 p-3 bg-light rounded-3" style="height: 350px; overflow-y: auto;">
-                        <div class="ai-message mb-3">
-                            <div class="d-flex align-items-start">
-                                <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
-                                    <i class="fa fa-robot"></i>
-                                </div>
-                                <div class="bg-white p-3 rounded-3 shadow-sm">
-                                    <p class="mb-0 small">Hello! I'm your UniSmart AI. Ask me anything about university courses, KUCCPS clusters, or career paths in Kenya. I can even recommend a mentorship link with a university senior!</p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Chat messages will appear here -->
-                    </div>
-                    
-                    <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-on::after-request="this.reset(); document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" name="message" class="form-control border-orange py-2" placeholder="Ask about Law, Engineering, Medicine..." required>
-                            <button class="btn btn-warning text-white px-4" type="submit">
-                                <i class="fa fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Academic Roadmap -->
-            <div class="card border-0 shadow-sm" style="border-radius: 20px; overflow: hidden;">
-                <div class="card-header bg-white border-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0">Academic Roadmap</h5>
-                </div>
-                <div class="card-body p-4">
-                    <div class="roadmap-item d-flex mb-4">
-                        <div class="roadmap-icon me-3">
-                            <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">1</div>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-1">Subject Selection</h6>
-                            <p class="small text-muted mb-0">Identify the best subjects for your target career using our AI guide.</p>
-                        </div>
-                    </div>
-                    {% if user.student_category == 'graduate' %}
         <!-- Side Navigation -->
         <div class="col-lg-3 d-none d-lg-block">
             <div class="gp-card p-4 sticky-top" style="top: 100px;">
@@ -284,7 +234,6 @@
                         </div>
                         {% endif %}
 
-                        {% if user.student_category == 'graduate' %}
                         <!-- KUCCPS Guided Mode -->
                         <div class="gp-card p-4 bg-navy text-white rounded-4 border-0">
                             <h6 class="fw-bold mb-2"><i class="fas fa-magic me-2"></i>Guided KUCCPS Mode</h6>
@@ -293,12 +242,115 @@
                                 Launch Guided Portal
                             </a>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+    <!-- JSS / Continuing Student Layout -->
+    <div class="row g-4 animate-fade-up" style="animation-delay: 0.2s;">
+        <!-- Left Column: Guidance & Chat -->
+        <div class="col-lg-8">
+            <!-- AI Career Chat -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; border-top: 5px solid var(--gp-orange) !important;">
+                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-orange"><i class="fa fa-robot me-2"></i>UniSmart Career AI</h5>
+                    <span class="badge bg-light text-orange border">Live Advisor</span>
+                </div>
+                <div class="card-body p-4">
+                    <div id="chat-window-jss" class="chat-container mb-3 p-3 bg-light rounded-3" style="height: 350px; overflow-y: auto;">
+                        <div class="ai-message mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
+                                    <i class="fa fa-robot"></i>
+                                </div>
+                                <div class="bg-white p-3 rounded-3 shadow-sm">
+                                    <p class="mb-0 small">Hello! I'm your UniSmart AI. Ask me anything about university courses, KUCCPS clusters, or career paths in Kenya. I can even recommend a mentorship link with a university senior!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window-jss" hx-swap="beforeend" hx-on::after-request="this.reset(); document.getElementById('chat-window-jss').scrollTop = document.getElementById('chat-window-jss').scrollHeight;">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="message" class="form-control border-orange py-2" placeholder="Ask about Law, Engineering, Medicine..." required>
+                            <button class="btn btn-warning text-white px-4" type="submit">
+                                <i class="fa fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Academic Roadmap -->
+            <div class="card border-0 shadow-sm" style="border-radius: 20px; overflow: hidden;">
+                <div class="card-header bg-white border-0 p-4 pb-0">
+                    <h5 class="fw-bold mb-0">Academic Roadmap</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="roadmap-item d-flex mb-4">
+                        <div class="roadmap-icon me-3">
+                            <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">1</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Subject Selection</h6>
+                            <p class="small text-muted mb-0">Identify the best subjects for your target career using our AI guide.</p>
+                        </div>
+                    </div>
+                    <div class="roadmap-item d-flex mb-4">
+                        <div class="roadmap-icon me-3">
+                            <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">2</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Career Research</h6>
+                            <p class="small text-muted mb-0">Explore what professionals in your interest areas actually do.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Tools & Resources -->
+        <div class="col-lg-4">
+             <!-- Resource Center -->
+             <div class="gp-card p-4 mb-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fas fa-folder-open text-orange"></i>Resources
+                </h5>
+                <div class="resource-list">
+                    {% for res in resources %}
+                    <div class="resource-item d-flex align-items-center gap-3 p-2 mb-2 rounded-3 hover-light border border-light">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem;">{{ res.title }}</h6>
+                        </div>
+                        <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank">
+                            <i class="fas fa-download small"></i>
+                        </a>
+                    </div>
+                    {% empty %}
+                    <p class="small text-muted">No resources yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Mentor Spotlight -->
+            {% if mentor %}
+            <div class="gp-card p-4 border-orange border-dashed bg-light-orange">
+                <h6 class="fw-bold mb-3 text-orange">Recommended Mentor</h6>
+                <div class="text-center mb-3">
+                    <img src="{{ mentor.get_avatar_url }}" class="rounded-circle mb-3 shadow-sm" width="60" height="60" style="object-fit:cover;">
+                    <h6 class="fw-bold mb-1 small">{{ mentor.display_name }}</h6>
+                </div>
+                <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold">
+                    Chat Now
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <style>
@@ -308,5 +360,14 @@
     .bg-light-purple { background: rgba(111, 66, 193, 0.1); }
     .border-dashed { border-style: dashed !important; border-width: 2px !important; }
     .x-small { font-size: 0.75rem; }
+    .hover-light:hover { background: var(--gp-light); }
+    .rounded-pill-start { border-top-left-radius: 50px !important; border-bottom-left-radius: 50px !important; }
+    .rounded-pill-end { border-top-right-radius: 50px !important; border-bottom-right-radius: 50px !important; }
+    .text-orange { color: var(--gp-orange) !important; }
+    .border-orange { border-color: var(--gp-orange) !important; }
+    .bg-orange { background-color: var(--gp-orange) !important; }
+    .bg-light-orange { background-color: rgba(253, 126, 20, 0.1) !important; }
+    .btn-orange { background-color: var(--gp-orange); color: white; border: none; }
+    .btn-orange:hover { background-color: #e86400; color: white; }
 </style>
 {% endblock %}
