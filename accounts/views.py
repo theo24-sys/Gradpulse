@@ -181,12 +181,31 @@ def unismart_course_browser(request):
     level = request.GET.get('level', 'degree')
     query = request.GET.get('q', '')
     cluster_filter = request.GET.get('cluster', '')
+    active_category = request.GET.get('category', 'all')
     
     courses = UniSmartMasterCourse.objects.filter(level=level)
     
-    # Get cluster groups and counts for the sidebar
+    # Category to Cluster ID mapping
+    category_map = {
+        'business': [1, 2, 10],
+        'arts': [3, 11, 14, 17, 18, 20, 8, 12], # Added 8 (Agribusiness) and 12 (Natural Resources) to relevant groups
+        'science': [4, 5, 6, 7, 9, 15, 16],
+        'health': [13],
+        'education': [19],
+    }
+    
+    # Get all cluster stats for counts
     cluster_stats = UniSmartMasterCourse.objects.filter(level=level).values('cluster_group').annotate(count=Count('id')).order_by('cluster_group')
     
+    # Filter by category if requested
+    if active_category != 'all' and active_category in category_map:
+        cluster_ids = category_map[active_category]
+        # Match "Cluster X:" pattern
+        query_filter = Q()
+        for cid in cluster_ids:
+            query_filter |= Q(cluster_group__startswith=f"Cluster {cid}:")
+        courses = courses.filter(query_filter)
+
     if cluster_filter:
         courses = courses.filter(cluster_group=cluster_filter)
         
@@ -195,12 +214,19 @@ def unismart_course_browser(request):
             Q(name__icontains=query) | Q(code__icontains=query) | Q(institution__icontains=query)
         )
     
+    # Order by cluster group for regrouping in template
+    courses = courses.order_by('cluster_group', 'name')
+    
+    total_courses = UniSmartMasterCourse.objects.filter(level=level).count()
+    
     return render(request, 'unismart/course_browser.html', {
         'courses': courses,
         'level': level,
         'query': query,
         'cluster_filter': cluster_filter,
-        'cluster_stats': cluster_stats
+        'cluster_stats': cluster_stats,
+        'active_category': active_category,
+        'total_courses': total_courses,
     })
 
 
