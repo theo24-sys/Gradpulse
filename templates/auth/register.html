@@ -9,12 +9,15 @@
     <!-- Portal switcher -->
     <div class="row justify-content-center mb-4">
       <div class="col-auto">
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap justify-content-center">
           <a href="?portal=student" class="btn {% if portal == 'student' %}gp-btn-navy{% else %}btn-outline-secondary{% endif %} px-4">
-            <i class="fa fa-user-graduate me-2"></i>Student
+            <i class="fa fa-user-graduate me-2"></i>Campus
+          </a>
+          <a href="{% url 'unismart_role_selection' %}" class="btn {% if portal == 'unismart' %}btn-warning text-white{% else %}btn-outline-secondary{% endif %} px-4">
+            <i class="fa fa-school me-2"></i>UniSmart
           </a>
           <a href="?portal=employer" class="btn {% if portal == 'employer' %}gp-btn-primary{% else %}btn-outline-secondary{% endif %} px-4">
-            <i class="fa fa-building me-2"></i>Employer
+            <i class="fa fa-building me-2"></i>Corporate
           </a>
         </div>
       </div>
@@ -26,12 +29,16 @@
           <div class="text-center mb-4">
             {% if portal == 'employer' %}
             <div style="font-size:2rem;">🏢</div>
-            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Employer Registration</h2>
+            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Corporate Registration</h2>
             <p class="text-muted small">Create your company account to start hiring</p>
+            {% elif portal == 'unismart' %}
+            <div style="font-size:2rem;">🏫</div>
+            <h2 class="fw-bold mt-2" style="color:var(--gp-orange);">UniSmart Registration</h2>
+            <p class="text-muted small">Academic & Career Guidance for Kenya's Youth</p>
             {% else %}
             <div style="font-size:2rem;">🎓</div>
-            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Student Registration</h2>
-            <p class="text-muted small">Join 500+ students on GradPulse</p>
+            <h2 class="fw-bold mt-2" style="color:var(--gp-navy);">Campus Registration</h2>
+            <p class="text-muted small">Join 12,000+ students on GradPulse</p>
             {% endif %}
           </div>
 
@@ -39,7 +46,7 @@
             {% csrf_token %}
             <input type="hidden" name="portal_type" value="{{ portal }}">
             {{ form|crispy }}
-            <button type="submit" class="btn {% if portal == 'employer' %}gp-btn-primary{% else %}gp-btn-navy{% endif %} w-100 py-2 mt-3 justify-content-center">
+            <button type="submit" class="btn {% if portal == 'employer' %}gp-btn-primary{% elif portal == 'unismart' %}btn-warning text-white{% else %}gp-btn-navy{% endif %} w-100 py-2 mt-3 justify-content-center">
               Create Account <i class="fa fa-arrow-right ms-2"></i>
             </button>
           </form>

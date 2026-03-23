@@ -70,36 +70,56 @@
 <section class="py-5" style="background: white;">
   <div class="container">
     <div class="row g-4 align-items-stretch">
-      <div class="col-md-6 animate-fade-up">
-        <div class="portal-card pc-employer">
-          <div class="portal-tag">For Corporates & Organizations</div>
-          <h2 class="portal-title">GradPulse Corporate</h2>
-          <p class="portal-desc">Source exceptional graduate talent instantly. Filter candidates by exact skills, post opportunities, and build your early-career pipeline.</p>
+      <!-- High School & Graduates (UniSmart) -->
+      <div class="col-lg-4 animate-fade-up">
+        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-orange);">
+          <div class="portal-tag">For High Schoolers & Graduates</div>
+          <h2 class="portal-title">UniSmart</h2>
+          <p class="portal-desc">Academic and career guidance for JSS, Form 1-4, and KCSE graduates. Specialized pathways for university transition.</p>
           <ul class="pc-list">
-            <li><i class="fa fa-check-circle"></i> Instant talent matching & shortlisting</li>
-            <li><i class="fa fa-check-circle"></i> Direct access to verified student credentials</li>
-            <li><i class="fa fa-check-circle"></i> Post internships, freelance tasks, and graduate roles</li>
-            <li><i class="fa fa-check-circle"></i> Track applicant pipelines seamlessly</li>
+            <li><i class="fa fa-check-circle text-warning"></i> AI-powered course matching</li>
+            <li><i class="fa fa-check-circle text-warning"></i> KCSE & KUCCPS application help</li>
+            <li><i class="fa fa-check-circle text-warning"></i> HELB financing & grant guides</li>
+            <li><i class="fa fa-check-circle text-warning"></i> Early career awareness modules</li>
           </ul>
-          <a href="{% url 'register' %}?portal=employer" class="portal-btn text-decoration-none">
-            Enter Corporate Dashboard <i class="fa fa-arrow-right ms-1"></i>
+          <a href="{% url 'unismart_role_selection' %}" class="portal-btn text-decoration-none" style="background: var(--gp-orange); color: white; border: none;">
+            Enter UniSmart Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
       </div>
-      
-      <div class="col-md-6 animate-fade-up animate-delay-1">
-        <div class="portal-card pc-employer">
-          <div class="portal-tag">Learning, Networking & Community</div>
+
+      <!-- University & TVET (Campus) -->
+      <div class="col-lg-4 animate-fade-up animate-delay-1">
+        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-blue);">
+          <div class="portal-tag">For University & TVET Students</div>
           <h2 class="portal-title">GradPulse Campus</h2>
-          <p class="portal-desc">The ultimate workspace for University and TVET students. Track grades, earn credentials, and join project collaborations matched to your learning path.</p>
+          <p class="portal-desc">The ultimate workspace for current higher-ed students. Track grades, earn credentials, and join project collaborations.</p>
           <ul class="pc-list">
-            <li><i class="fa fa-check-circle"></i> Grade tracking (GPA) across all semesters</li>
-            <li><i class="fa fa-check-circle"></i> Integrated verified credentials & certificates</li>
-            <li><i class="fa fa-check-circle"></i> RSVP to events (fairs, hackathons, webinars)</li>
-            <li><i class="fa fa-check-circle"></i> Peer networking, alumni mentorship & collaborations</li>
+            <li><i class="fa fa-check-circle text-primary"></i> Grade tracking & GPA Calculator</li>
+            <li><i class="fa fa-check-circle text-primary"></i> Integrated verified credentials</li>
+            <li><i class="fa fa-check-circle text-primary"></i> RSVP to fairs, hackathons & events</li>
+            <li><i class="fa fa-check-circle text-primary"></i> Peer networking & mentorship</li>
           </ul>
           <a href="{% url 'register' %}?portal=student" class="portal-btn text-decoration-none">
             Enter Campus Portal <i class="fa fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Corporates & Organizations (Corporate) -->
+      <div class="col-lg-4 animate-fade-up animate-delay-2">
+        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-navy);">
+          <div class="portal-tag">For Corporates & Organizations</div>
+          <h2 class="portal-title">GradPulse Corporate</h2>
+          <p class="portal-desc">Source exceptional graduate talent instantly. Filter candidates by exact skills and build your early-career pipeline.</p>
+          <ul class="pc-list">
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Instant talent matching & ranking</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Access to verified student data</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Post internships & graduate roles</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Applicant pipeline management</li>
+          </ul>
+          <a href="{% url 'register' %}?portal=employer" class="portal-btn text-decoration-none" style="background: var(--gp-navy);">
+            Enter Corporate Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
       </div>

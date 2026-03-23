@@ -148,3 +148,52 @@ def generate_search_queries(traits, category="events"):
         else:
             logger.error(f"Gemini query generation error: {e}")
         return []
+
+
+def unismart_career_chat(query, user_context=""):
+    client = get_client()
+    if client is None:
+        return "I'm sorry, my AI career guidance system is temporarily unavailable. Please try again later."
+    
+    system_prompt = f"""
+    You are 'UniSmart Assistant', a specialized Kenyan academic and career advisor for high school students.
+    Your goal is to guide students on course selection, KUCCPS clusters, and career pathways in Kenya.
+    
+    Context about the student: {user_context}
+    
+    Guidelines:
+    1. Be encouraging and provide specific advice relevant to the Kenyan education system (e.g., talk about KCSE, University groups, TVET).
+    2. If asked about a specific course, explain what it entails and mention typical cluster requirements.
+    3. Keep responses concise and formatted with markdown for readability.
+    
+    User Query: {query}
+    """
+    try:
+        response = client.models.generate_content(model='gemini-1.5-flash', contents=system_prompt)
+        return response.text
+    except Exception as e:
+        logger.error(f"Gemini UniSmart chat error: {e}")
+        return "I encountered an error while processing your request. Please try again."
+
+
+def get_mentor_recommendation(course_interest=None):
+    """
+    Finds a university student studying the interested course who is marked as a mentor.
+    """
+    from .models import CustomUser
+    from django.db.models import Q
+    
+    # Base query for mentors
+    mentors = CustomUser.objects.filter(
+        portal_type=CustomUser.PORTAL_STUDENT,
+        is_mentor=True
+    ).exclude(course="")
+    
+    if course_interest:
+        # Search for similar course names in student portal
+        mentors = mentors.filter(
+            Q(course__icontains=course_interest) | 
+            Q(institution__icontains=course_interest)
+        )
+    
+    return mentors.order_by('?')[:1].first() # Randomly pick one

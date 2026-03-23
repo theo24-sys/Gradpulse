@@ -4,13 +4,13 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Q
-from .models import CustomUser
-from .forms import StudentRegisterForm, EmployerRegisterForm, StudentProfileForm, EmployerProfileForm, LoginForm
+from .models import CustomUser, UniSmartResource
+from .forms import StudentRegisterForm, EmployerRegisterForm, UniSmartRegisterForm, StudentProfileForm, EmployerProfileForm, LoginForm
 from opportunities.models import Opportunity, Application
 from events.models import Event
 from networking.models import Connection
 from grades.models import Grade
-from .ai_utils import parse_transcript_with_gemini
+from .ai_utils import parse_transcript_with_gemini, unismart_career_chat, get_mentor_recommendation
 from scraping.utils import get_items_for_student
 
 
@@ -18,9 +18,12 @@ def home(request):
     if request.user.is_authenticated:
         if request.user.is_employer:
             return redirect('corporate_dashboard')
+        if request.user.is_unismart:
+            return redirect('unismart_dashboard')
         return redirect('campus_dashboard')
     stats = {
         'students': CustomUser.objects.filter(portal_type='student', is_active=True).count(),
+        'unismart': CustomUser.objects.filter(portal_type='unismart', is_active=True).count(),
         'employers': CustomUser.objects.filter(portal_type='employer', is_active=True).count(),
         'opportunities': Opportunity.objects.filter(status='active').count(),
         'applications': Application.objects.count(),
@@ -33,11 +36,60 @@ def home(request):
                                           'recent_opportunities': recent_opportunities})
 
 
+def unismart_role_selection(request):
+    return render(request, 'auth/unismart_roles.html')
+
+
+@login_required
+def unismart_dashboard(request):
+    if not request.user.is_unismart:
+        return redirect('home')
+    
+    # Fetch resources relevant to the student's category
+    resources = UniSmartResource.objects.filter(
+        category=request.user.student_category,
+        is_active=True
+    ).order_by('-uploaded_at')
+    
+    # Get a random mentor recommendation for and initial "connection" hint
+    mentor = get_mentor_recommendation(request.user.target_career)
+    
+    return render(request, 'unismart/dashboard.html', {
+        'user': request.user,
+        'resources': resources,
+        'mentor': mentor
+    })
+
+
+@login_required
+def unismart_chat(request):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        if not message:
+            return render(request, 'unismart/chat_response.html', {'response': "Please enter a message."})
+        
+        user_context = f"Category: {request.user.get_student_category_display()}, Grade: {request.user.grade_level}, Interest: {request.user.target_career}"
+        ai_response = unismart_career_chat(message, user_context)
+        
+        # Check if query implies a course to recommend a mentor
+        mentor = get_mentor_recommendation(message)
+        
+        return render(request, 'unismart/chat_response.html', {
+            'response': ai_response,
+            'mentor': mentor
+        })
+    return redirect('unismart_dashboard')
+
+
 def register_view(request):
     portal = request.GET.get('portal', 'student')
+    category = request.GET.get('category', '')
+    
     if request.method == 'POST':
         if portal == 'employer':
             form = EmployerRegisterForm(request.POST, request.FILES)
+        elif portal == 'unismart':
+            form = UniSmartRegisterForm(request.POST, request.FILES)
         else:
             form = StudentRegisterForm(request.POST, request.FILES)
         
@@ -52,10 +104,14 @@ def register_view(request):
             messages.success(request, f"Welcome to GradPulse, {user.display_name}!")
             if user.is_employer:
                 return redirect('corporate_dashboard')
+            if user.is_unismart:
+                return redirect('unismart_dashboard')
             return redirect('campus_dashboard')
     else:
         if portal == 'employer':
             form = EmployerRegisterForm()
+        elif portal == 'unismart':
+            form = UniSmartRegisterForm(initial={'student_category': category})
         else:
             form = StudentRegisterForm()
     return render(request, 'auth/register.html', {'form': form, 'portal': portal})

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from .models import CustomUser
+from .models import CustomUser, UniSmartResource
 
 
 @admin.register(CustomUser)
@@ -17,7 +17,11 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = UserAdmin.fieldsets + (
         ('Portal & Status', {
-            'fields': ('portal_type', 'is_verified', 'profile_photo', 'bio', 'phone', 'location'),
+            'fields': ('portal_type', 'is_verified', 'is_mentor', 'profile_photo', 'bio', 'phone', 'location'),
+        }),
+        ('UniSmart specific', {
+            'classes': ('collapse',),
+            'fields': ('student_category', 'grade_level', 'target_career'),
         }),
         ('Student Info', {
             'classes': ('collapse',),
@@ -60,3 +64,11 @@ class CustomUserAdmin(UserAdmin):
         queryset.update(is_verified=False)
         self.message_user(request, f"{queryset.count()} user(s) unverified.")
     unverify_users.short_description = '✖ Unverify selected users'
+
+
+@admin.register(UniSmartResource)
+class UniSmartResourceAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'resource_type', 'is_active', 'uploaded_at')
+    list_filter = ('category', 'resource_type', 'is_active')
+    search_fields = ('title', 'description')
+    ordering = ('-uploaded_at',)

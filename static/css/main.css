@@ -762,3 +762,18 @@ h1, h2, h3, h4, h5, h6, .brand-text {
   body { padding-bottom: 90px !important; }
   .gp-content { padding: 1.5rem 1rem !important; }
 }
+/* ── UniSmart Extras ────────────────────────────────────── */
+.text-orange { color: var(--gp-orange) !important; }
+.bg-orange { background-color: var(--gp-orange) !important; color: white !important; }
+.border-orange { border-color: var(--gp-orange) !important; }
+.bg-light-orange { background: rgba(229, 90, 64, 0.1) !important; }
+
+.chat-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gp-orange) transparent;
+}
+.chat-container::-webkit-scrollbar { width: 6px; }
+.chat-container::-webkit-scrollbar-thumb { background: var(--gp-orange); border-radius: 10px; }
+
+.hover-light:hover { background: rgba(0,0,0,0.03); transition: background 0.2s; }
+.pointer { cursor: pointer; }
