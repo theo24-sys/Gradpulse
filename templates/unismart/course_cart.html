@@ -44,7 +44,7 @@
                             {% for item in cart_items %}
                             <tr id="cart-item-{{ item.id }}">
                                 <td class="ps-4">
-                                    <a href="https://students.kuccps.net/programmes/?q={{ item.course_name|urlencode }}" target="_blank" class="fw-bold text-navy text-decoration-none hover-orange">
+                                    <a href="https://students.kuccps.net/programmes/" target="_blank" onclick="copyAndRedirect(event, '{{ item.course_name|escapejs }}')" class="fw-bold text-navy text-decoration-none hover-orange" title="Click to copy name and open KUCCPS portal">
                                         {{ item.course_name }} <i class="fas fa-external-link-alt ms-1 small opacity-50"></i>
                                     </a>
                                 </td>
@@ -98,4 +98,25 @@
 .text-xs { font-size: 0.75rem; }
 .fw-800 { font-weight: 800; }
 </style>
+
+<script>
+function copyAndRedirect(e, text) {
+    e.preventDefault();
+    const url = e.currentTarget.href;
+    
+    // Fallback for older browsers
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        alert('Course name copied! Paste it into the KUCCPS search bar: \n"' + text + '"');
+    } catch (err) {
+        console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
+    window.open(url, '_blank');
+}
+</script>
 {% endblock %}
