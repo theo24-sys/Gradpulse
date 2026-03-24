@@ -17,5 +17,6 @@ urlpatterns = [
     path('unismart/cart-count/', views.unismart_cart_count, name='unismart_cart_count'),
     path('unismart/set-goal/', views.unismart_set_goal, name='unismart_set_goal'),
     path('unismart/resources/', views.unismart_resources, name='unismart_resources'),
+    path('unismart/mentorship/', views.unismart_mentorship, name='unismart_mentorship'),
     path('unismart/remove-from-cart/<int:item_id>/', views.unismart_remove_from_cart, name='unismart_remove_from_cart'),
 ]

@@ -54,8 +54,54 @@ def unismart_dashboard(request):
     # Get a random mentor recommendation for and initial "connection" hint
     mentor = get_mentor_recommendation(request.user.target_career)
     
+    # Restore resources for JSS/Secondary inline dashboard
+    resources = UniSmartResource.objects.filter(
+        category=request.user.student_category,
+        is_active=True
+    ).order_by('-uploaded_at')
+    
     return render(request, 'unismart/dashboard.html', {
         'user': request.user,
+        'mentor': mentor,
+        'resources': resources
+    })
+
+@login_required
+def unismart_mentorship(request):
+    if not request.user.is_unismart:
+        return redirect('home')
+
+    books = [
+        {
+            'title': 'Atomic Habits',
+            'author': 'James Clear',
+            'description': 'Tiny changes, remarkable results. Learn how to build good habits and break bad ones.',
+            'cover_url': 'https://covers.openlibrary.org/b/id/12882339-L.jpg',
+        },
+        {
+            'title': 'The 7 Habits of Highly Effective Teens',
+            'author': 'Sean Covey',
+            'description': 'A step-by-step guide to helping teens improve self-image, build friendships, and achieve their goals.',
+            'cover_url': 'https://covers.openlibrary.org/b/id/8231846-L.jpg',
+        },
+        {
+            'title': 'Gifted Hands',
+            'author': 'Ben Carson',
+            'description': 'The inspiring true story of a boy from the inner city who became a world-renowned neurosurgeon.',
+            'cover_url': 'https://covers.openlibrary.org/b/id/8301138-L.jpg',
+        },
+        {
+            'title': 'Think Big',
+            'author': 'Ben Carson',
+            'description': 'Unleashing your potential for excellence by thinking beyond your limitations.',
+            'cover_url': 'https://covers.openlibrary.org/b/id/10517726-L.jpg',
+        }
+    ]
+
+    mentor = get_mentor_recommendation(request.user.target_career)
+
+    return render(request, 'unismart/mentorship.html', {
+        'books': books,
         'mentor': mentor
     })
 
