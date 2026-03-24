@@ -37,7 +37,7 @@
         {% if opp.poster %}
         <a href="{% url 'opportunity_detail' opp.pk %}">
           <div class="mb-3" style="margin: -1.5rem -1.5rem 1rem -1.5rem; overflow: hidden; border-radius: 12px 12px 0 0; background: #f8f9fa; text-align: center;">
-            <img src="{{ opp.poster.url }}" alt="Poster" class="img-fluid" style="max-height: 250px; width: auto; object-fit: contain;">
+            <img src="{{ opp.poster.url }}" alt="Poster" class="img-fluid" style="max-height: 350px; width: auto; object-fit: contain;">
           </div>
         </a>
         {% endif %}

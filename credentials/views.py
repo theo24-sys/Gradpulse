@@ -45,7 +45,14 @@ def simulations_list(request):
         list(simulations[:1])
     except ProgrammingError:
         simulations = []
-    return render(request, 'campus/simulations.html', {'simulations': simulations})
+        
+    # NEW: Fetch live discoveries from scrapers
+    discoveries = get_items_for_student(student=request.user, source_type='simulations', limit=12)
+    
+    return render(request, 'campus/simulations.html', {
+        'simulations': simulations,
+        'discoveries': discoveries
+    })
 
 
 @login_required
@@ -146,4 +153,11 @@ def qualifications_list(request):
         list(quals[:1])
     except ProgrammingError:
         quals = []
-    return render(request, 'campus/qualifications.html', {'qualifications': quals})
+        
+    # NEW: Fetch live discoveries from scrapers
+    discoveries = get_items_for_student(student=request.user, source_type='qualifications', limit=12)
+    
+    return render(request, 'campus/qualifications.html', {
+        'qualifications': quals,
+        'discoveries': discoveries
+    })

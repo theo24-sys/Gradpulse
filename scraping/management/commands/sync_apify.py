@@ -58,24 +58,62 @@ class Command(BaseCommand):
         for ds_id in dataset_ids:
             self.stdout.write(f'Syncing dataset {ds_id}...')
             try:
-                items = client.dataset(ds_id).list_items().items
+                # Get dataset details to help with categorization
+                dataset_info = client.dataset(ds_id).get()
+                ds_name = (dataset_info.get('name') or dataset_info.get('label') or '').lower()
                 
+                # Mapping dataset keywords to source types
+                ds_type_map = {
+                    'cert': 'credentials',
+                    'course': 'credentials',
+                    'learn': 'credentials',
+                    'event': 'events',
+                    'workshop': 'events',
+                    'job': 'opportunities',
+                    'intern': 'opportunities',
+                    'youth': 'youth_programs',
+                    'empower': 'youth_programs',
+                    'scholarship': 'scholarships',
+                    'simulation': 'simulations',
+                    'qualification': 'qualifications'
+                }
+                
+                ds_inferred_type = None
+                for kw, s_type in ds_type_map.items():
+                    if kw in ds_name:
+                        ds_inferred_type = s_type
+                        break
+
+                items = client.dataset(ds_id).list_items().items
                 for item in items:
-                    url = item.get('url')
+                    url = item.get('url') or item.get('link') or item.get('job_link')
                     if not url:
                         continue
                     
                     url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
 
-                    # Determine source info (default to generic if missing)
+                    # Determine source info
                     source_name = item.get('company') or item.get('source_name') or 'Apify Scraper'
+                    title = item.get('title', 'Unknown Title')
                     
-                    source_type = name_to_type.get(source_name)
-                    if not source_type:
-                        source_type = item.get('job_type') or item.get('source_type') or 'opportunities'
-                        
+                    # Fuzzy match source_name against scraper class source_names
+                    matched_type = None
+                    for s_name, s_type in name_to_type.items():
+                        # check if scraper source_name is in item company/source, or vice versa
+                        if s_name.lower() in source_name.lower() or source_name.lower() in s_name.lower():
+                            matched_type = s_type
+                            break
+                    
+                    source_type = matched_type or ds_inferred_type or item.get('job_type') or item.get('source_type') or 'opportunities'
+                    
                     if source_type not in [c[0] for c in ScrapedItem.SOURCE_TYPES]:
-                        source_type = 'opportunities'
+                        # maybe the title has clues
+                        if 'course' in title.lower() or 'cert' in title.lower():
+                            source_type = 'credentials'
+                        elif 'event' in title.lower() or 'workshop' in title.lower():
+                            source_type = 'events'
+                        else:
+                            source_type = 'opportunities'
 
                     existing = ScrapedItem.objects.filter(url_hash=url_hash).first()
                     if existing:
@@ -88,8 +126,8 @@ class Command(BaseCommand):
                     ScrapedItem.objects.create(
                         source_name=source_name[:200],
                         source_type=source_type,
-                        sector='private',  # simplistic default
-                        title=item.get('title', 'Unknown Title')[:500],
+                        sector='private',
+                        title=title[:500],
                         company=item.get('company', '')[:255],
                         location=item.get('location', '')[:255],
                         description=item.get('description', ''),
@@ -98,9 +136,9 @@ class Command(BaseCommand):
                         deadline=item.get('deadline'),
                         salary=item.get('salary', '')[:255],
                         job_type=item.get('job_type', '')[:255],
-                        course_tags=scraper_util.get_course_tags(item.get('title', ''), item.get('description', '')),
-                        year_tags=scraper_util.get_year_tags(item.get('title', ''), item.get('description', '')),
-                        raw_data=item.get('raw_data', {}),
+                        course_tags=scraper_util.get_course_tags(title, item.get('description', '')),
+                        year_tags=scraper_util.get_year_tags(title, item.get('description', '')),
+                        raw_data=item,
                         status='pending'
                     )
                     total_saved += 1

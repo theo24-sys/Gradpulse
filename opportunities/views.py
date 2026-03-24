@@ -104,7 +104,14 @@ def edit_opportunity(request, pk):
 def youth_programs_list(request):
     from .models import YouthProgram
     programs = YouthProgram.objects.all().order_by('-created_at')
-    return render(request, 'campus/youth_programs.html', {'programs': programs})
+    
+    # NEW: Fetch live discoveries from scrapers
+    discoveries = get_items_for_student(student=request.user, source_type='youth_programs', limit=12)
+    
+    return render(request, 'campus/youth_programs.html', {
+        'programs': programs,
+        'discoveries': discoveries
+    })
 @login_required
 def scrape_discovery(request):
     if not request.user.is_superuser:

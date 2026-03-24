@@ -46,5 +46,37 @@
       </div>
     {% endfor %}
   </div>
+
+  {% if discoveries %}
+  <div class="mt-5 mb-5 p-4 bg-light rounded-4 border-dashed">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-0" style="color:var(--gp-navy);"><i class="fa fa-magic text-accent me-2"></i>Live Discoveries / Youth Focus</h3>
+        <p class="text-muted small mb-0">AI-matched youth empowerment programs found by our scrapers</p>
+      </div>
+      <span class="badge bg-soft-success text-success px-3">Live Updates</span>
+    </div>
+
+    <div class="row g-3">
+      {% for item in discoveries %}
+      <div class="col-md-6 col-lg-4">
+        <div class="gp-card h-100 border-accent-soft">
+          <div class="gp-card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-soft-navy text-navy">Scraped Discovery</span>
+              <span class="text-muted" style="font-size: 0.75rem;">{{ item.scraped_at|timesince }} ago</span>
+            </div>
+            <h6 class="fw-bold mb-1">{{ item.title|truncatechars:60 }}</h6>
+            <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>Source: {{ item.source_name }}</div>
+            <div class="mt-auto d-flex justify-content-end mt-3">
+              <a href="{{ item.url }}" target="_blank" class="btn gp-btn-outline-primary btn-sm px-3">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
