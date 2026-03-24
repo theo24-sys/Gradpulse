@@ -24,7 +24,7 @@ class OpportunityAdmin(admin.ModelAdmin):
     readonly_fields = ('views_count', 'created_at', 'updated_at')
 
     fieldsets = (
-        ('Overview', {'fields': ('company', 'title', 'type', 'sector', 'status')}),
+        ('Overview', {'fields': ('company', 'title', 'type', 'sector', 'status', 'poster')}),
         ('Details', {'fields': ('description', 'requirements', 'skills_required', 'location', 'deadline')}),
         ('Compensation', {'fields': ('stipend_min', 'stipend_max')}),
         ('Metrics', {'fields': ('views_count', 'created_at', 'updated_at'), 'classes': ('collapse',)}),

@@ -231,6 +231,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'scraping.tasks.run_all_scrapers',
         'schedule': crontab(hour=1, minute=0, day_of_week='sunday'),
     },
+    'delete-expired-daily': {
+        'task': 'opportunities.tasks.delete_expired_items',
+        'schedule': crontab(hour=0, minute=5), # Delete soon after midnight
+    },
 }
 
 # ─── Email (Resend via Anymail) ───────────────────────────────────────────────
@@ -289,8 +293,6 @@ JAZZMIN_SETTINGS = {
     # Top navigation
     "topmenu_links": [
         {"name": "Home", "url": "/", "new_window": True},
-        {"name": "Campus Portal", "url": "/campus/dashboard/", "new_window": True},
-        {"name": "Corporate Portal", "url": "/corporate/dashboard/", "new_window": True},
         {"name": "Messages", "url": "/networking/inbox/", "new_window": True, "icon": "fas fa-envelope"},
         {"model": "accounts.CustomUser"},
     ],
@@ -366,8 +368,8 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "flatly",
-    "dark_mode_theme": None,
+    "theme": "pulse",
+    "dark_mode_theme": "darkly",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",

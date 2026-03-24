@@ -23,8 +23,9 @@ class Opportunity(models.Model):
     ]
 
     company = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                 related_name='opportunities', limit_choices_to={'portal_type': 'employer'})
+                                 related_name='opportunities', limit_choices_to={'portal_type': 'employer'}, null=True, blank=True)
     title = models.CharField(max_length=200)
+    poster = models.ImageField(upload_to='opportunities/posters/', blank=True, null=True)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='internship')
     sector = models.CharField(max_length=100, choices=SECTOR_CHOICES)
     location = models.CharField(max_length=200)
