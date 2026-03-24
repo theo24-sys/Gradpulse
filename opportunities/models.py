@@ -35,6 +35,7 @@ class Opportunity(models.Model):
     stipend_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     stipend_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     deadline = models.DateField(null=True, blank=True)
+    external_link = models.URLField(blank=True, help_text="Link to apply externally if not using GradPulse")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     views_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

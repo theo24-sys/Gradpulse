@@ -25,7 +25,7 @@ class OpportunityAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Overview', {'fields': ('company', 'title', 'type', 'sector', 'status', 'poster')}),
-        ('Details', {'fields': ('description', 'requirements', 'skills_required', 'location', 'deadline')}),
+        ('Details', {'fields': ('description', 'requirements', 'skills_required', 'location', 'deadline', 'external_link')}),
         ('Compensation', {'fields': ('stipend_min', 'stipend_max')}),
         ('Metrics', {'fields': ('views_count', 'created_at', 'updated_at'), 'classes': ('collapse',)}),
     )

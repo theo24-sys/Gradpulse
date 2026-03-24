@@ -70,6 +70,11 @@
             <div class="text-center py-3">
               <span class="pill pill-hired"><i class="fa fa-check-circle me-2"></i>Already Applied</span>
             </div>
+            {% elif opportunity.external_link %}
+            <h6 class="fw-bold mb-3">Apply Externally</h6>
+            <a href="{{ opportunity.external_link }}" target="_blank" class="btn gp-btn-primary w-100 py-2 mt-2 justify-content-center" style="display:flex;align-items:center;">
+              <i class="fa fa-external-link-alt me-2"></i>Apply on Company Site
+            </a>
             {% else %}
             <h6 class="fw-bold mb-3">Apply Now</h6>
             <form method="post" action="{% url 'apply_opportunity' opportunity.pk %}">
