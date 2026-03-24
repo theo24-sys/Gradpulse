@@ -54,6 +54,7 @@
                                 <td class="text-end pe-4">
                                     <button class="btn btn-sm btn-outline-danger rounded-circle" 
                                             hx-post="{% url 'unismart_remove_from_cart' item.id %}" 
+                                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                             hx-confirm="Remove this course?"
                                             hx-target="#cart-item-{{ item.id }}"
                                             hx-swap="outerHTML">
