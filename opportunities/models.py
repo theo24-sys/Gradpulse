@@ -44,8 +44,11 @@ class Opportunity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        c_name = self.external_company_name or (self.company.company_name if self.company else 'External') or getattr(self.company, 'username', 'External')
-        return f"{self.title} — {c_name}"
+        return f"{self.title} — {self.display_company_name}"
+
+    @property
+    def display_company_name(self):
+        return self.external_company_name or (self.company.company_name if self.company else '') or getattr(self.company, 'username', 'External')
 
     def get_skills_list(self):
         return [s.strip() for s in self.skills_required.split(',') if s.strip()]
