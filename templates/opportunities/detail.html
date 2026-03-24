@@ -14,12 +14,12 @@
               <img src="{{ opportunity.company.company_logo.url }}" width="60" height="60" style="border-radius:12px;object-fit:cover;" alt="Logo">
             {% else %}
               <div style="width:60px;height:60px;border-radius:12px;background:var(--gp-navy);display:flex;align-items:center;justify-content:center;color:white;font-size:1.4rem;font-weight:700;">
-                {{ opportunity.company.company_name|first|upper }}
+                {{ opp.company.company_name|default:opp.external_company_name|first|upper }}
               </div>
             {% endif %}
             <div>
               <h2 class="fw-bold mb-1" style="color:var(--gp-navy);">{{ opportunity.title }}</h2>
-              <div class="text-muted small">{{ opportunity.company.company_name }} · {{ opportunity.location }}</div>
+              <div class="text-muted small">{{ opportunity.external_company_name|default:opportunity.company.company_name|default:opportunity.company.username }} · {{ opportunity.location }}</div>
               <div class="d-flex flex-wrap gap-2 mt-2">
                 <span class="pill pill-pending">{{ opportunity.get_type_display }}</span>
                 <span class="pill pill-shortlisted">{{ opportunity.sector }}</span>

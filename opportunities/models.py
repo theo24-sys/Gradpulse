@@ -10,6 +10,7 @@ class Opportunity(models.Model):
         ('freelance', 'Freelance'),
         ('attachment', 'Industrial Attachment'),
         ('volunteer', 'Volunteer'),
+        ('funding', 'Funding / Grants / Loans'),
     ]
     STATUS_CHOICES = [
         ('active', 'Active'),
@@ -24,6 +25,7 @@ class Opportunity(models.Model):
 
     company = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                  related_name='opportunities', limit_choices_to={'portal_type': 'employer'}, null=True, blank=True)
+    external_company_name = models.CharField(max_length=200, blank=True, help_text="Name of organization if not registered on GradPulse")
     title = models.CharField(max_length=200)
     poster = models.ImageField(upload_to='opportunities/posters/', blank=True, null=True)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='internship')
@@ -42,7 +44,8 @@ class Opportunity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title} — {self.company.company_name or self.company.username}"
+        c_name = self.external_company_name or (self.company.company_name if self.company else 'External') or getattr(self.company, 'username', 'External')
+        return f"{self.title} — {c_name}"
 
     def get_skills_list(self):
         return [s.strip() for s in self.skills_required.split(',') if s.strip()]

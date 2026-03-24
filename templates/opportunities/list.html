@@ -39,7 +39,7 @@
           {% if opp.stipend_min %}<span class="text-muted small">KSh {{ opp.stipend_min|floatformat:0 }}+</span>{% endif %}
         </div>
         <h6 class="fw-bold mb-1">{{ opp.title }}</h6>
-        <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>{{ opp.company.company_name }}</div>
+        <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>{{ opp.external_company_name|default:opp.company.company_name|default:opp.company.username }}</div>
         <div class="text-muted small mb-1"><i class="fa fa-map-marker-alt me-1"></i>{{ opp.location }}</div>
         <div class="text-muted small mb-3"><i class="fa fa-tag me-1"></i>{{ opp.sector }}</div>
         {% if opp.deadline %}<div class="text-muted" style="font-size:.75rem;" class="mb-2"><i class="fa fa-clock me-1"></i>Deadline: {{ opp.deadline|date:"M d, Y" }}</div>{% endif %}

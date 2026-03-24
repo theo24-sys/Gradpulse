@@ -24,14 +24,14 @@ class OpportunityAdmin(admin.ModelAdmin):
     readonly_fields = ('views_count', 'created_at', 'updated_at')
 
     fieldsets = (
-        ('Overview', {'fields': ('company', 'title', 'type', 'sector', 'status', 'poster')}),
+        ('Overview', {'fields': ('company', 'external_company_name', 'title', 'type', 'sector', 'status', 'poster')}),
         ('Details', {'fields': ('description', 'requirements', 'skills_required', 'location', 'deadline', 'external_link')}),
         ('Compensation', {'fields': ('stipend_min', 'stipend_max')}),
         ('Metrics', {'fields': ('views_count', 'created_at', 'updated_at'), 'classes': ('collapse',)}),
     )
 
     def company_name(self, obj):
-        return obj.company.company_name or obj.company.username
+        return obj.external_company_name or (obj.company.company_name if obj.company else '') or getattr(obj.company, 'username', 'External')
     company_name.short_description = 'Company'
 
     def application_count_display(self, obj):
