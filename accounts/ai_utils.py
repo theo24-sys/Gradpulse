@@ -400,9 +400,12 @@ def get_mentor_recommendation(course_interest=None):
     
     if course_interest:
         # Search for similar course names in student portal
-        mentors = mentors.filter(
+        targeted_mentors = mentors.filter(
             Q(course__icontains=course_interest) | 
             Q(institution__icontains=course_interest)
         )
+        if targeted_mentors.exists():
+            return targeted_mentors.order_by('?')[:1].first()
     
-    return mentors.order_by('?')[:1].first() # Randomly pick one
+    # Fallback to any random mentor if no match or no interest
+    return mentors.order_by('?')[:1].first()

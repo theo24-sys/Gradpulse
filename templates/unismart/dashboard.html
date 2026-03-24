@@ -201,20 +201,29 @@
                 <!-- Side Widgets -->
                 <div class="col-md-4">
                     <!-- Mentor Spotlight -->
-                    <div id="mentor-spotlight">
-                        {% if mentor %}
                         <div class="gp-card p-4 border-orange border-dashed bg-light-orange mb-4">
-                            <h6 class="fw-bold mb-3 text-orange">Mentor Spotlight</h6>
+                            <h6 class="fw-bold mb-3 text-orange">Mentorship & Books</h6>
+                            {% if mentor %}
                             <div class="text-center mb-3">
                                 <img src="{{ mentor.get_avatar_url }}" class="rounded-circle mb-3 border border-3 border-white shadow-sm" width="80" height="80" style="object-fit:cover;">
                                 <h6 class="fw-bold mb-1">{{ mentor.display_name }}</h6>
-                                <p class="small text-muted">{{ mentor.course }} at {{ mentor.institution }}</p>
+                                <p class="small text-muted mb-2">{{ mentor.course }}</p>
                             </div>
-                            <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold">
+                            <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold mb-2">
                                 Request Mentorship
                             </a>
+                            {% else %}
+                            <div class="text-center mb-3">
+                                <div class="rounded-circle bg-white d-inline-flex justify-content-center align-items-center shadow-sm mb-3" style="width:60px; height:60px;">
+                                    <i class="fas fa-user-graduate text-muted fa-lg"></i>
+                                </div>
+                                <p class="small text-muted mb-0">Set your career goal to match with a mentor!</p>
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'unismart_mentorship' %}" class="btn btn-light border-orange text-orange w-100 rounded-pill btn-sm fw-bold">
+                                <i class="fas fa-book-open me-1"></i> Full Reading List
+                            </a>
                         </div>
-                        {% endif %}
 
                         <!-- KUCCPS Guided Mode -->
                         <div class="gp-card p-4 bg-navy text-white rounded-4 border-0 mb-4">

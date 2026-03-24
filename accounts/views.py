@@ -73,28 +73,28 @@ def unismart_mentorship(request):
 
     books = [
         {
-            'title': 'Atomic Habits',
-            'author': 'James Clear',
-            'description': 'Tiny changes, remarkable results. Learn how to build good habits and break bad ones.',
-            'cover_url': 'https://covers.openlibrary.org/b/id/12882339-L.jpg',
+            'title': 'Unbowed: A Memoir',
+            'author': 'Wangari Maathai',
+            'description': 'The inspirational autobiography of the first African woman to win the Nobel Peace Prize. A story of courage, resilience, and environmental activism in Kenya.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780307275202-L.jpg',
         },
         {
-            'title': 'The 7 Habits of Highly Effective Teens',
-            'author': 'Sean Covey',
-            'description': 'A step-by-step guide to helping teens improve self-image, build friendships, and achieve their goals.',
-            'cover_url': 'https://covers.openlibrary.org/b/id/8231846-L.jpg',
-        },
-        {
-            'title': 'Gifted Hands',
-            'author': 'Ben Carson',
-            'description': 'The inspiring true story of a boy from the inner city who became a world-renowned neurosurgeon.',
-            'cover_url': 'https://covers.openlibrary.org/b/id/8301138-L.jpg',
+            'title': 'The River and the Source',
+            'author': 'Margaret A. Ogola',
+            'description': 'An epic Kenyan story following four generations of women. It highlights the power of education, perseverance, and changing cultural landscapes.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9966882057-L.jpg',
         },
         {
             'title': 'Think Big',
             'author': 'Ben Carson',
-            'description': 'Unleashing your potential for excellence by thinking beyond your limitations.',
-            'cover_url': 'https://covers.openlibrary.org/b/id/10517726-L.jpg',
+            'description': 'A staple read in Kenyan high schools, this book reveals the philosophy behind Dr. Carson\'s success and teaches how to overcome any obstacle.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780310214594-L.jpg',
+        },
+        {
+            'title': 'You Can Win',
+            'author': 'Shiv Khera',
+            'description': 'A practical, common-sense guide that will help you establish new goals, develop a new sense of purpose, and generate new ideas about your future.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9781904910038-L.jpg',
         }
     ]
 
