@@ -71,6 +71,17 @@
         </div>
     </div>
 
+    <!-- Mobile Quick Nav -->
+    <div class="d-block d-lg-none mb-4 animate-fade-up" style="animation-delay: 0.15s;">
+        <div class="d-flex overflow-auto pb-2 gap-2" style="white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <a href="{% url 'unismart_dashboard' %}" class="btn btn-sm btn-orange rounded-pill px-3 shadow-sm"><i class="fas fa-th-large me-2"></i>Dashboard</a>
+            <a href="{% url 'unismart_course_browser' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-search me-2"></i>Programmes</a>
+            <a href="{% url 'unismart_manage_cart' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-shopping-basket me-2"></i>Cart</a>
+            <a href="{% url 'unismart_resources' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-folder-open me-2"></i>Resources</a>
+            <a href="{% url 'unismart_mentorship' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-book-reader me-2"></i>Mentorship</a>
+        </div>
+    </div>
+
     <!-- Main Content Grid -->
     {% if user.student_category == 'graduate' %}
     <div class="row g-4 animate-fade-up" style="animation-delay: 0.2s;">
@@ -217,7 +228,11 @@
                                 <div class="rounded-circle bg-white d-inline-flex justify-content-center align-items-center shadow-sm mb-3" style="width:60px; height:60px;">
                                     <i class="fas fa-user-graduate text-muted fa-lg"></i>
                                 </div>
+                                {% if user.target_career %}
+                                <p class="small text-muted mb-0">No mentors are currently available for your career goal. Check back soon!</p>
+                                {% else %}
                                 <p class="small text-muted mb-0">Set your career goal to match with a mentor!</p>
+                                {% endif %}
                             </div>
                             {% endif %}
                             <a href="{% url 'unismart_mentorship' %}" class="btn btn-light border-orange text-orange w-100 rounded-pill btn-sm fw-bold">
@@ -250,7 +265,7 @@
                     <span class="badge bg-light text-orange border">Live Advisor</span>
                 </div>
                 <div class="card-body p-4">
-                    <div id="chat-window-jss" class="chat-container mb-3 p-3 bg-light rounded-3" style="height: 350px; overflow-y: auto;">
+                    <div id="chat-window-jss" class="chat-container mb-3 p-3 bg-light rounded-3" style="height: 50vh; min-height: 300px; max-height: 400px; overflow-y: auto;">
                         <div class="ai-message mb-3">
                             <div class="d-flex align-items-start">
                                 <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
@@ -342,7 +357,11 @@
                     <div class="rounded-circle bg-white d-inline-flex justify-content-center align-items-center shadow-sm mb-3" style="width:60px; height:60px;">
                         <i class="fas fa-user-graduate text-muted fa-lg"></i>
                     </div>
+                    {% if user.target_career %}
+                    <p class="small text-muted mb-0">No mentors are currently available for your career goal. Check back soon!</p>
+                    {% else %}
                     <p class="small text-muted mb-0">Set your career goal to match with a mentor!</p>
+                    {% endif %}
                 </div>
                 {% endif %}
                 <a href="{% url 'unismart_mentorship' %}" class="btn btn-light border-orange text-orange w-100 rounded-pill btn-sm fw-bold">

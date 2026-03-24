@@ -31,7 +31,7 @@
                     <div class="card h-100 border-0 shadow-sm hover-up" style="border-radius: 16px;">
                         <div class="row g-0 h-100">
                             <div class="col-4 bg-light d-flex align-items-center justify-content-center p-2" style="border-top-left-radius: 16px; border-bottom-left-radius: 16px;">
-                                <img src="{{ book.cover_url }}" class="img-fluid rounded shadow-sm" alt="{{ book.title }} Cover" style="max-height: 120px; object-fit: cover;">
+                                <img src="{{ book.cover_url }}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Book+Cover&background=f8f9fa&color=1A3C59&size=300'" class="img-fluid rounded shadow-sm" alt="{{ book.title }} Cover" style="max-height: 120px; object-fit: cover;">
                             </div>
                             <div class="col-8">
                                 <div class="card-body p-3 d-flex flex-column h-100">
@@ -75,7 +75,11 @@
             {% else %}
             <div class="card border-0 bg-light p-5 text-center rounded-4 mb-4">
                 <i class="fas fa-user-graduate fa-3x text-muted mb-3 opacity-50"></i>
+                {% if user.target_career %}
+                <p class="text-muted mb-0">No mentors are currently available for your career goal. Check back soon!</p>
+                {% else %}
                 <p class="text-muted mb-0">Set your Career Goal on the dashboard to get tailored mentor matches!</p>
+                {% endif %}
             </div>
             {% endif %}
             
