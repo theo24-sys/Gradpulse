@@ -95,6 +95,90 @@ def unismart_mentorship(request):
             'author': 'Shiv Khera',
             'description': 'A practical, common-sense guide that will help you establish new goals, develop a new sense of purpose, and generate new ideas about your future.',
             'cover_url': 'https://covers.openlibrary.org/b/isbn/9781904910038-L.jpg',
+        },
+        {
+            'title': 'Atomic Habits',
+            'author': 'James Clear',
+            'description': 'An easy and proven way to build good habits and break bad ones. Essential for building study routines.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg',
+        },
+        {
+            'title': 'The Magic of Thinking Big',
+            'author': 'David J. Schwartz',
+            'description': 'Set your goals high and exceed them! A timeless classic on achieving success by changing your mindset.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780671646783-L.jpg',
+        },
+        {
+            'title': 'Mindset: The New Psychology of Success',
+            'author': 'Carol S. Dweck',
+            'description': 'Learn how a simple belief about yourself—a growth mindset—can guide your life and help you reach your potential.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780345472328-L.jpg',
+        },
+        {
+            'title': 'The 7 Habits of Highly Effective People',
+            'author': 'Stephen R. Covey',
+            'description': 'Teaches principles of effectiveness, responsibility, and goal setting. A masterclass in personal change.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9781451639612-L.jpg',
+        },
+        {
+            'title': 'Who Moved My Cheese?',
+            'author': 'Spencer Johnson',
+            'description': 'A short, simple story about adapting to change, crucial for navigating the challenges of high school and university transition.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780399144462-L.jpg',
+        },
+        {
+            'title': 'Eat That Frog!',
+            'author': 'Brian Tracy',
+            'description': 'Provides techniques to stop procrastinating and get more done in less time. A must-read for students tackling big assignments.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9781523095134-L.jpg',
+        },
+        {
+            'title': 'How Teens Win',
+            'author': 'Jon Acuff',
+            'description': 'A guide to helping teenagers set and accomplish big goals, overcome overthinking, and build their future.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780593541814-L.jpg',  
+        },
+        {
+            'title': 'The Daily Stoic',
+            'author': 'Ryan Holiday',
+            'description': 'Daily meditations on wisdom and perseverance. Learn how to stay calm and focused amidst the chaos of studying.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780735211735-L.jpg',
+        },
+        {
+            'title': 'Learning How to Learn',
+            'author': 'Barbara Oakley',
+            'description': 'A guide for teens on how to succeed in school without spending all their time studying. Master the science of learning.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780143132547-L.jpg',
+        },
+        {
+            'title': "It's Okay To Be Different",
+            'author': 'Todd Parr',
+            'description': 'A colorful, reassuring book that cleverly delivers the important messages of acceptance, understanding, and confidence.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780316043472-L.jpg',
+        },
+        {
+            'title': 'KNEC Career Guidance Handbook',
+            'author': 'Kenya National Examinations Council',
+            'description': 'The official guide from the examinations council, distributed to schools to help students match their intellectual capacity and interests with viable career options.',
+            'cover_url': 'https://ui-avatars.com/api/?name=KNEC+Career+Guide&background=1A3C59&color=fff&size=300',
+        },
+        {
+            'title': "Career Choice: What's the Best Career for You?",
+            'author': 'Dr. Ndirangu Wanjuki et al.',
+            'description': 'A locally-authored resource that uses the "Recser Career Formula" to help African students select fulfilling career paths.',
+            'cover_url': 'https://ui-avatars.com/api/?name=Career+Choice&background=FD7E14&color=fff&size=300',
+        },
+        {
+            'title': 'Essential Career Guide',
+            'author': 'Kenya Literature Bureau (KLB)',
+            'description': 'A standard text for KCSE students that outlines various career paths and the subjects required for each.',
+            'cover_url': 'https://ui-avatars.com/api/?name=KLB+Career+Guide&background=0D8ABC&color=fff&size=300',
+        },
+        {
+            'title': 'The Careers Handbook',
+            'author': 'DK Publishing',
+            'description': 'A highly visual guide ideal for teenagers to explore global and local job market trends, charting a path to their dream job.',
+            'cover_url': 'https://covers.openlibrary.org/b/isbn/9780241369766-L.jpg',
         }
     ]
 
