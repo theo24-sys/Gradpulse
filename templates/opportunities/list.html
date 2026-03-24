@@ -34,6 +34,11 @@
     {% for opp in opportunities %}
     <div class="col-md-6 col-lg-4">
       <div class="opp-card">
+        {% if opp.poster %}
+        <div class="mb-3" style="margin: -1.5rem -1.5rem 1rem -1.5rem; overflow: hidden; border-radius: 12px 12px 0 0;">
+          <img src="{{ opp.poster.url }}" alt="Poster" class="img-fluid w-100" style="height: 160px; object-fit: cover;">
+        </div>
+        {% endif %}
         <div class="d-flex justify-content-between align-items-start mb-3">
           <span class="pill pill-pending opp-type-badge">{{ opp.get_type_display }}</span>
           {% if opp.stipend_min %}<span class="text-muted small">KSh {{ opp.stipend_min|floatformat:0 }}+</span>{% endif %}

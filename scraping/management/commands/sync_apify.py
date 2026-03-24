@@ -42,6 +42,19 @@ class Command(BaseCommand):
         # Instantiate a dummy scraper to access utility methods like get_course_tags
         scraper_util = BaseScraper()
 
+        # Create a mapping from source_name to scraper
+        import pkgutil
+        import importlib
+        from scraping import scrapers
+        
+        name_to_type = {}
+        for _, block_name, _ in pkgutil.iter_modules(scrapers.__path__):
+            mod = importlib.import_module(f'scraping.scrapers.{block_name}')
+            for attr_name in dir(mod):
+                attr = getattr(mod, attr_name)
+                if isinstance(attr, type) and issubclass(attr, BaseScraper) and attr != BaseScraper:
+                    name_to_type[attr.source_name] = attr.source_type
+
         for ds_id in dataset_ids:
             self.stdout.write(f'Syncing dataset {ds_id}...')
             try:
@@ -59,7 +72,11 @@ class Command(BaseCommand):
 
                     # Determine source info (default to generic if missing)
                     source_name = item.get('company') or item.get('source_name') or 'Apify Scraper'
-                    source_type = item.get('job_type') or item.get('source_type') or 'opportunities'
+                    
+                    source_type = name_to_type.get(source_name)
+                    if not source_type:
+                        source_type = item.get('job_type') or item.get('source_type') or 'opportunities'
+                        
                     if source_type not in [c[0] for c in ScrapedItem.SOURCE_TYPES]:
                         source_type = 'opportunities'
                     

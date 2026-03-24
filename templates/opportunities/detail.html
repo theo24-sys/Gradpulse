@@ -28,6 +28,12 @@
             </div>
           </div>
 
+          {% if opportunity.poster %}
+            <div class="mb-4 text-center pb-4 border-bottom">
+              <img src="{{ opportunity.poster.url }}" alt="Poster" class="img-fluid rounded shadow-sm" style="max-height: 500px; object-fit: contain;">
+            </div>
+          {% endif %}
+
           <h6 class="fw-bold mt-4 mb-2">Description</h6>
           <div class="text-muted" style="font-size:.9rem;line-height:1.7;">{{ opportunity.description|linebreaks }}</div>
 
