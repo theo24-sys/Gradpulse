@@ -66,9 +66,6 @@ class Command(BaseCommand):
                         continue
                     
                     url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
-                    if ScrapedItem.objects.filter(url_hash=url_hash).exists():
-                        total_skipped += 1
-                        continue
 
                     # Determine source info (default to generic if missing)
                     source_name = item.get('company') or item.get('source_name') or 'Apify Scraper'
@@ -79,6 +76,14 @@ class Command(BaseCommand):
                         
                     if source_type not in [c[0] for c in ScrapedItem.SOURCE_TYPES]:
                         source_type = 'opportunities'
+
+                    existing = ScrapedItem.objects.filter(url_hash=url_hash).first()
+                    if existing:
+                        if existing.source_type != source_type:
+                            existing.source_type = source_type
+                            existing.save()
+                        total_skipped += 1
+                        continue
                     
                     ScrapedItem.objects.create(
                         source_name=source_name[:200],
