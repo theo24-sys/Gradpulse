@@ -8,4 +8,5 @@ cmds = ["python -m venv --copies /opt/venv && /opt/venv/bin/pip install -r requi
 cmds = ["/opt/venv/bin/python manage.py collectstatic --noinput"]
 
 [deploy]
+preDeployCmd = "/opt/venv/bin/python manage.py sync_apify --limit 10"
 startCmd = "/opt/venv/bin/python manage.py migrate --noinput && /opt/venv/bin/gunicorn gradpulse.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120"
