@@ -16,9 +16,12 @@ SECRET_KEY = env('SECRET_KEY', default=os.environ.get('SECRET_KEY', 'django-inse
 # Force DEBUG=False unless explicitly set to True in a safe way
 DEBUG = env('DEBUG', default=os.environ.get('DEBUG', 'False')).lower().strip() == 'true'
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=os.environ.get('ALLOWED_HOSTS', '*').split(','))
+<<<<<<< HEAD
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
 
+=======
+>>>>>>> 66af34c25490de149b9e83d959013e7e8f230cc0
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', '')).strip()
 APIFY_TOKEN = env('APIFY_TOKEN', default=os.environ.get('APIFY_TOKEN', '')).strip()
 APIFY_ACTOR = env('APIFY_ACTOR', default=os.environ.get('APIFY_ACTOR', 'lUx1E90x9FbPcWvps')).strip()
@@ -178,9 +181,12 @@ if not DEBUG:
         'https://gradpulse.up.railway.app',
         'https://gradpulse.co.ke',
     ])
+<<<<<<< HEAD
     if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
         CORS_ALLOWED_ORIGINS.append(f"https://{os.environ.get('RENDER_EXTERNAL_HOSTNAME')}")
         
+=======
+>>>>>>> 66af34c25490de149b9e83d959013e7e8f230cc0
     CORS_ALLOW_CREDENTIALS = True
     CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
     CORS_ALLOW_HEADERS = ['accept', 'accept-encoding', 'authorization', 'content-type', 'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with']
@@ -190,8 +196,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://gradpulse.co.ke',
     'http://localhost:3000',
 ]
+<<<<<<< HEAD
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     CSRF_TRUSTED_ORIGINS.append(f"https://{os.environ.get('RENDER_EXTERNAL_HOSTNAME')}")
+=======
+>>>>>>> 66af34c25490de149b9e83d959013e7e8f230cc0
 
 # ─── Password Hashers (Bcrypt) ────────────────────────────────────────────────
 PASSWORD_HASHERS = [
