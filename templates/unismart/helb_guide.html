@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}UniSmart — HELB Financial Aid Guide{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <!-- Header -->
+            <div class="text-center mb-5 animate-fade-up">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light-orange text-orange mb-3">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span class="fw-bold small text-uppercase tracking-wider">Financial Aid</span>
+                </div>
+                <h1 class="display-4 fw-800 text-navy mb-3">HELB & Higher Education Funding</h1>
+                <p class="lead text-muted">A comprehensive guide on how to secure your university and college funding in Kenya.</p>
+            </div>
+
+            <!-- Main Guide Card -->
+            <div class="gp-card p-4 p-md-5 mb-5 animate-fade-up animate-delay-1">
+                <h2 class="h3 fw-bold mb-4 border-bottom pb-2">What is HEF/HELB?</h2>
+                <p>The Higher Education Financing (HEF) portal is the unified platform for all government financial support for university and college students. This includes <strong>Scholarships</strong>, <strong>Loans (HELB)</strong>, and <strong>Bursaries</strong>.</p>
+                
+                <div class="row g-4 mt-2">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <h5 class="fw-bold"><i class="fas fa-graduation-cap text-orange me-2"></i>Scholarships</h5>
+                            <p class="small text-muted mb-0">Government grants based on your level of need. You don't pay these back.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <h5 class="fw-bold"><i class="fas fa-coins text-orange me-2"></i>HELB Loans</h5>
+                            <p class="small text-muted mb-0">Financial loans that you start repaying after graduation and a grace period.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded-3 bg-light h-100">
+                            <h5 class="fw-bold"><i class="fas fa-university text-orange me-2"></i>Bursaries</h5>
+                            <p class="small text-muted mb-0">Additional funds typically provided by constituencies or counties.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="h3 fw-bold mt-5 mb-4 border-bottom pb-2">How to Apply</h2>
+                <div class="timeline ps-3 border-start border-orange border-2 py-2">
+                    <div class="timeline-item mb-4 position-relative">
+                        <div class="position-absolute translate-middle-x" style="left: -19px; top: 5px;">
+                            <span class="badge rounded-circle bg-orange p-2">1</span>
+                        </div>
+                        <h5 class="fw-bold ps-3">Registration</h5>
+                        <p class="ps-3 text-muted">Create an account on the HEF portal using your ID/Birth Certificate number and a valid email address.</p>
+                    </div>
+                    <div class="timeline-item mb-4 position-relative">
+                        <div class="position-absolute translate-middle-x" style="left: -19px; top: 5px;">
+                            <span class="badge rounded-circle bg-orange p-2">2</span>
+                        </div>
+                        <h5 class="fw-bold ps-3">Profile Completion</h5>
+                        <p class="ps-3 text-muted">Fill in your personal, academic, and parents'/guardians' details accurately. You will need your KCSE index number and university admission details.</p>
+                    </div>
+                    <div class="timeline-item position-relative">
+                        <div class="position-absolute translate-middle-x" style="left: -19px; top: 5px;">
+                            <span class="badge rounded-circle bg-orange p-2">3</span>
+                        </div>
+                        <h5 class="fw-bold ps-3">Submit Documents</h5>
+                        <p class="ps-3 text-muted">Upload scanned copies of required documents (ID, Admission Letter, Parent IDs, etc.) and submit.</p>
+                    </div>
+                </div>
+
+                <div class="mt-5 text-center p-4 bg-light-orange rounded-4 border border-orange border-dashed">
+                    <h3 class="fw-bold text-orange mb-3">Ready to start?</h3>
+                    <p class="mb-4">Click below to go directly to the official Higher Education Financing portal.</p>
+                    <a href="https://portal.hef.co.ke/auth/signin" target="_blank" class="btn gp-btn-primary btn-lg px-5">
+                        <i class="fas fa-external-link-alt me-2"></i>Go to HEF Portal
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tips & Tricks -->
+            <div class="row g-4 mb-5 animate-fade-up animate-delay-2">
+                <div class="col-md-6">
+                    <div class="gp-card p-4 h-100">
+                        <h4 class="fw-bold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Tips & Tricks</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Apply Early:</strong> Portals can be slow near deadlines.</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Correct Phone:</strong> Use a Safaricom number registered in your name for M-Pesa disbursements.</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong>Guarantors:</strong> Have the ID numbers and phone numbers of two non-relative guarantors ready.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="gp-card p-4 h-100">
+                        <h4 class="fw-bold mb-3"><i class="fas fa-wallet text-orange me-2"></i>Money Management</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i><strong>Priority:</strong> Use the funds for tuition and accommodation first.</li>
+                            <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i><strong>Budgeting:</strong> Divide the remaining money by the number of months in the semester.</li>
+                            <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i><strong>Avoid Debt:</strong> Don't lend your HELB money to friends; focus on your survival.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tracking-wider { letter-spacing: 0.1em; }
+.fw-800 { font-weight: 800; }
+.text-navy { color: var(--gp-navy); }
+.border-dashed { border-style: dashed !important; }
+.pulse { animation: gp-pulse 2s infinite; }
+@keyframes gp-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'corporate/layout.html' %}
+
+{% block title %}Corporate Dashboard — GradPulse{% endblock %}
+
+{% block corporate_content %}
+<!-- Header -->
+<div class="dash-header">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+      <div class="dash-greeting">Welcome back 👋</div>
+      <h1 class="dash-title">{{ user.company_name }}</h1>
+      <div class="d-flex flex-wrap gap-2 mt-1">
+        {% if user.sector %}<span class="hero-badge"><i class="fa fa-industry me-1"></i>{{ user.sector }}</span>{% endif %}
+        {% if user.is_verified %}<span class="hero-badge"><i class="fa fa-check-circle text-success me-1"></i>Verified</span>{% endif %}
+        {% if user.actively_hiring %}<span class="hero-badge"><span class="otw-dot active"></span>Actively Hiring</span>{% endif %}
+      </div>
+    </div>
+    <a href="{% url 'post_opportunity' %}" class="btn gp-btn-primary px-4">
+      <i class="fa fa-plus me-2"></i>Post Opportunity
+    </a>
+  </div>
+</div>
+
+<!-- Metric Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-navy">
+      <div class="metric-icon ic-navy"><i class="fa fa-briefcase"></i></div>
+      <div class="metric-value">{{ stats.active_listings }}</div>
+      <div class="metric-label">Active Listings</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-green">
+      <div class="metric-icon ic-green"><i class="fa fa-file-alt"></i></div>
+      <div class="metric-value">{{ stats.total_applications }}</div>
+      <div class="metric-label">Total Applications</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-accent">
+      <div class="metric-icon ic-accent"><i class="fa fa-list-check"></i></div>
+      <div class="metric-value">{{ stats.shortlisted }}</div>
+      <div class="metric-label">Shortlisted</div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="metric-card mc-purple">
+      <div class="metric-icon ic-purple"><i class="fa fa-user-check"></i></div>
+      <div class="metric-value">{{ stats.hired }}</div>
+      <div class="metric-label">Hired</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Active Listings -->
+  <div class="col-lg-7">
+    <div class="gp-card">
+      <div class="gp-card-header">
+        <h6 class="fw-bold mb-0"><i class="fa fa-briefcase text-muted me-2"></i>Active Listings</h6>
+        <a href="{% url 'post_opportunity' %}" class="btn gp-btn-primary btn-sm px-3">+ New</a>
+      </div>
+      <div class="p-0">
+        {% if my_listings %}
+        <div class="table-responsive">
+          <table class="table gp-table mb-0">
+            <thead><tr><th>Title</th><th>Type</th><th>Apps</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {% for opp in my_listings %}
+              <tr>
+                <td class="fw-500 small">{{ opp.title|truncatechars:30 }}</td>
+                <td><span class="pill pill-pending small">{{ opp.get_type_display }}</span></td>
+                <td class="text-center fw-bold">{{ opp.app_count }}</td>
+                <td><span class="pill pill-{{ opp.status }}">{{ opp.get_status_display }}</span></td>
+                <td><a href="{% url 'edit_opportunity' opp.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="fa fa-briefcase fa-2x mb-3 d-block opacity-30"></i>
+          <p class="small">No listings yet.</p>
+          <a href="{% url 'post_opportunity' %}" class="btn gp-btn-primary btn-sm px-3">Post Your First Opportunity</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Applications + Quick Actions -->
+  <div class="col-lg-5 d-flex flex-column gap-4">
+    <div class="gp-card">
+      <div class="gp-card-header">
+        <h6 class="fw-bold mb-0"><i class="fa fa-file-alt text-muted me-2"></i>Recent Applications</h6>
+        <a href="{% url 'corporate_applications' %}" class="btn btn-link btn-sm p-0 text-success">View All</a>
+      </div>
+      <div class="gp-card-body">
+        {% if recent_applications %}
+          {% for app in recent_applications|slice:":5" %}
+          <div class="d-flex align-items-center gap-3 {% if not forloop.last %}mb-3{% endif %}">
+            <div class="gp-avatar-sm" style="background:var(--gp-navy);">{{ app.student.display_name|first|upper }}</div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="fw-600 small text-truncate">{{ app.student.display_name }}</div>
+              <div class="text-muted" style="font-size:.75rem;">{{ app.opportunity.title|truncatechars:25 }}</div>
+            </div>
+            <span class="pill pill-{{ app.status }}">{{ app.get_status_display }}</span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted small text-center py-2 mb-0">No applications yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="gp-card">
+      <div class="gp-card-body">
+        <h6 class="fw-bold mb-3">Quick Actions</h6>
+        <div class="d-grid gap-2">
+          <a href="{% url 'talent_search' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-users me-2"></i>Search Talent</a>
+          <a href="{% url 'corporate_applications' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-file-alt me-2"></i>Manage Applications</a>
+          <a href="{% url 'corporate_profile' %}" class="btn btn-outline-secondary btn-sm text-start"><i class="fa fa-building me-2"></i>Edit Company Profile</a>
+          {% if user.is_superuser %}
+          <a href="{% url 'scrape_discovery' %}" class="btn btn-warning btn-sm text-start fw-bold mt-2"><i class="fa fa-sync-alt me-2"></i>Run Live Webscraping</a>
+          {% endif %}
+        </div>
+
+        <h6 class="fw-bold mb-3 mt-4">Help & Support</h6>
+        <div class="d-grid gap-2">
+          <a href="mailto:ict.support@gradpulse.co.ke" class="btn btn-outline-info btn-sm text-start"><i class="fa fa-headset me-2"></i>ICT Support</a>
+          <a href="mailto:marketing@gradpulse.co.ke" class="btn btn-outline-info btn-sm text-start"><i class="fa fa-bullhorn me-2"></i>Marketing</a>
+          <a href="mailto:partnerships@gradpulse.co.ke" class="btn btn-outline-info btn-sm text-start"><i class="fa fa-handshake me-2"></i>Partnerships</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

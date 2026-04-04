@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Corporate — GradPulse{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpg' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<nav class="gp-navbar navbar navbar-expand-lg navbar-light sticky-top">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand gp-brand" href="{% url 'home' %}">
+      <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
+    </a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">
+        <img src="{% static 'images/chat_icon.png' %}" alt="Messages" style="height: 22px; width: 22px; object-fit: contain;">
+        {% if unread_messages_count > 0 %}
+        <span class="badge bg-primary rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_messages_count }}</span>
+        {% endif %}
+      </a>
+      <a class="nav-link text-dark position-relative" href="{% url 'notifications' %}">
+        <i class="fa fa-bell"></i>
+        {% if unread_notifications > 0 %}
+        <span class="badge bg-danger rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_notifications }}</span>
+        {% endif %}
+      </a>
+      <div class="dropdown">
+        <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
+            <img src="{{ user.get_logo_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid var(--gp-border);">
+          <span class="text-dark d-none d-md-inline small fw-500">{{ user.company_name|truncatechars:20 }}</span>
+          <i class="fa fa-chevron-down text-dark small"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <li><a class="dropdown-item" href="{% url 'corporate_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
+          <li><a class="dropdown-item" href="{% url 'corporate_profile' %}"><i class="fa fa-building me-2 text-muted"></i>Company Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+<div class="px-3 mt-2">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show gp-alert">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="gp-sidebar-layout">
+  <aside class="gp-sidebar d-none d-lg-block">
+    <div class="gp-sidebar-brand">
+        <img src="{{ user.get_logo_url }}" alt="Logo" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;margin-right:12px;">
+      <div>
+        <div class="sb-name">{{ user.company_name|truncatechars:20 }}</div>
+        <div class="sb-sub">{{ user.sector }}</div>
+      </div>
+    </div>
+    {% if user.is_verified %}
+    <div class="px-3 mb-3">
+      <span class="otw-badge" style="width:100%;justify-content:center;">
+        <i class="fa fa-check-circle text-success me-1"></i> Verified Employer
+      </span>
+    </div>
+    {% endif %}
+    <ul class="gp-sidebar-nav">
+      <li class="nav-section">Main</li>
+      <li><a href="{% url 'corporate_dashboard' %}" class="{% if request.resolver_match.url_name == 'corporate_dashboard' %}active{% endif %}"><i class="fa fa-th-large"></i> Dashboard</a></li>
+      <li><a href="{% url 'corporate_profile' %}" class="{% if request.resolver_match.url_name == 'corporate_profile' %}active{% endif %}"><i class="fa fa-building"></i> Company Profile</a></li>
+      <li class="nav-section">Recruitment</li>
+      <li><a href="{% url 'post_opportunity' %}" class="{% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}"><i class="fa fa-plus-circle"></i> Post Opportunity</a></li>
+      <li><a href="{% url 'corporate_applications' %}" class="{% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}"><i class="fa fa-file-alt"></i> Applications</a></li>
+      <li><a href="{% url 'talent_search' %}" class="{% if request.resolver_match.url_name == 'talent_search' %}active{% endif %}"><i class="fa fa-users"></i> Talent Search</a></li>
+      <li class="nav-section">Creator Studio</li>
+      <li><a href="{% url 'manage_simulations' %}" class="{% if 'simulations' in request.path %}active{% endif %}"><i class="fa fa-brain"></i> My Simulations</a></li>
+      <li><a href="{% url 'simulation_create' %}"><i class="fa fa-plus-circle"></i> Create Scenario</a></li>
+    </ul>
+  </aside>
+  <main class="gp-content">
+    {% block corporate_content %}{% endblock %}
+  </main>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="gp-mobile-nav d-lg-none">
+  <a href="{% url 'corporate_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_dashboard' %}active{% endif %}">
+    <i class="fa fa-th-large"></i>
+    <span>Dashboard</span>
+  </a>
+  <a href="{% url 'corporate_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_profile' %}active{% endif %}">
+    <i class="fa fa-building"></i>
+    <span>Profile</span>
+  </a>
+  <a href="{% url 'post_opportunity' %}" class="nav-item {% if request.resolver_match.url_name == 'post_opportunity' %}active{% endif %}">
+    <i class="fa fa-plus-circle"></i>
+    <span>Post</span>
+  </a>
+  <a href="{% url 'corporate_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'corporate_applications' %}active{% endif %}">
+    <i class="fa fa-file-alt"></i>
+    <span>Apps</span>
+  </a>
+  <a href="{% url 'inbox' %}" class="nav-item {% if 'networking/chat' in request.path or request.resolver_match.url_name == 'inbox' %}active{% endif %}">
+    <i class="fa fa-envelope"></i>
+    <span>Messages</span>
+    {% if unread_messages_count > 0 %}
+    <span class="badge bg-primary rounded-pill">{{ unread_messages_count }}</span>
+    {% endif %}
+  </a>
+  <a href="{% url 'manage_simulations' %}" class="nav-item {% if 'simulations' in request.path %}active{% endif %}">
+    <i class="fa fa-brain"></i>
+    <span>Scenarios</span>
+  </a>
+  <a href="{% url 'talent_search' %}" class="nav-item {% if request.resolver_match.url_name == 'talent_search' %}active{% endif %}">
+    <i class="fa fa-users"></i>
+    <span>Talent</span>
+  </a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

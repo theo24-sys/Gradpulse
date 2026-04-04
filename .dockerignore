@@ -1,0 +1,17 @@
+.git
+.venv
+venv
+ENV
+env
+node_modules
+staticfiles
+media
+db.sqlite3
+*.pyc
+__pycache__
+.pytest_cache
+.coverage
+.antigravity
+.gemini
+brain
+*.log

@@ -1,0 +1,74 @@
+{% extends 'campus/layout.html' %}
+
+{% block title %}Networking — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">Networking</h2>
+  <p class="text-muted small">Connect with peers, mentors, and alumni</p>
+</div>
+
+<!-- Search bar -->
+<form method="get" class="gp-filter-bar mb-4">
+  <input type="text" name="q" value="{{ q }}" class="form-control" style="max-width:280px;" placeholder="Search by name or skill...">
+  <button type="submit" class="btn gp-btn-primary px-3">Search</button>
+</form>
+
+{% if pending_received %}
+<div class="gp-card mb-4">
+  <div class="gp-card-header"><h6 class="fw-bold mb-0 text-warning"><i class="fa fa-clock me-2"></i>Pending Requests ({{ pending_received.count }})</h6></div>
+  <div class="gp-card-body">
+    {% for conn in pending_received %}
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <div class="d-flex align-items-center gap-2">
+        <div class="gp-avatar-sm">{{ conn.from_user.display_name|first|upper }}</div>
+        <span class="small fw-500">{{ conn.from_user.display_name }}</span>
+      </div>
+      <a href="{% url 'accept_connection' conn.pk %}" class="btn gp-btn-primary btn-sm px-3">Accept</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="row g-3">
+  {% for student in students %}
+  <div class="col-md-6 col-lg-4">
+    <div class="gp-card">
+      <div class="gp-card-body d-flex gap-3">
+        {% if student.profile_photo %}
+          <img src="{{ student.profile_photo.url }}" width="52" height="52" class="rounded-circle" style="object-fit:cover;flex-shrink:0;">
+        {% else %}
+          <div class="gp-avatar-lg">{{ student.display_name|first|upper }}</div>
+        {% endif %}
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-bold small">{{ student.display_name }}</div>
+          <div class="text-muted" style="font-size:.75rem;">{{ student.institution|truncatechars:28 }}</div>
+          <div class="text-muted" style="font-size:.75rem;">{{ student.course|truncatechars:28 }}</div>
+          {% if student.open_to_work %}<span class="pill pill-hired mt-1" style="font-size:.7rem;"><i class="fa fa-circle me-1"></i>Open to Work</span>{% endif %}
+          <div class="mt-2 d-flex gap-1">
+            {% if student.connection_status == 'accepted' %}
+              <span class="btn btn-success btn-sm px-2 disabled"><i class="fa fa-check-circle"></i> Connected</span>
+            {% elif student.connection_status == 'pending' %}
+              {% if student.is_requester %}
+                <span class="btn btn-secondary btn-sm px-2 disabled">Pending...</span>
+              {% else %}
+                <a href="{% url 'accept_connection' student.connection_id %}" class="btn gp-btn-primary btn-sm px-2 text-nowrap">Accept Request</a>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'send_connection' student.pk %}" class="btn gp-btn-navy btn-sm px-2">Connect</a>
+            {% endif %}
+            <a href="{% url 'chat_detail' student.pk %}" class="btn gp-btn-outline btn-sm px-2"><i class="fa fa-envelope"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-5 text-muted">
+    <i class="fa fa-users fa-2x mb-3 d-block opacity-30"></i>
+    <p>No students found{% if q %} matching "{{ q }}"{% endif %}.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
