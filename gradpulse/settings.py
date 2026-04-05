@@ -294,7 +294,7 @@ JAZZMIN_SETTINGS = {
     "site_logo_classes": "",
     "site_icon": "images/chat_icon.png",
     "welcome_sign": "Welcome to GradPulse Control Center",
-    "copyright": "Ridge Technologies © 2026",
+    "copyright": "AKLIN TECHNOLOGIES © 2026",
     "search_model": ["accounts.CustomUser", "opportunities.Opportunity"],
     "user_avatar": "profile_photo",
 

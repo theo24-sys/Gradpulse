@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -16,6 +17,7 @@ urlpatterns = [
     path('networking/', include('networking.urls')),
     path('notifications/', include('notifications.urls')),
     path('library/', include('library.urls')),
+    path('privacy-policy/', TemplateView.as_view(template_name='privacy_policy.html'), name='privacy_policy'),
     # Support /scraping without trailing slash (some links omit it)
     path('scraping', include('scraping.urls')),
     path('scraping/', include('scraping.urls')),
