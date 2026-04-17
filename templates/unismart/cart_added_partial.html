@@ -1,0 +1,10 @@
+{% if error %}
+<div class="alert alert-danger py-1 px-2 mb-0 small">
+    <i class="fas fa-times me-1"></i> {{ error }}
+</div>
+{% else %}
+<div class="animate-fade-up d-flex align-items-center gap-2 py-1 px-2 bg-success text-white rounded-pill small">
+    <i class="fas fa-check"></i>
+    <span>Added to Cart</span>
+</div>
+{% endif %}

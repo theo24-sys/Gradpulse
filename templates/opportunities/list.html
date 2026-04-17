@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Opportunities — GradPulse{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">Browse Opportunities</h2>
+      <p class="text-muted small mb-0">{{ opportunities.count }} active listings</p>
+    </div>
+    {% if user.is_authenticated and user.is_employer %}
+    <a href="{% url 'post_opportunity' %}" class="btn gp-btn-primary px-4">+ Post Opportunity</a>
+    {% endif %}
+  </div>
+
+  <!-- Filters -->
+  <form method="get" class="gp-filter-bar mb-4">
+    <input type="text" name="q" value="{{ filters.q }}" class="form-control" style="max-width:220px;" placeholder="Search...">
+    <select name="type" class="form-select" style="max-width:160px;">
+      <option value="">All Types</option>
+      {% for val,label in types %}<option value="{{ val }}" {% if filters.type == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <select name="sector" class="form-select" style="max-width:160px;">
+      <option value="">All Sectors</option>
+      {% for val,label in sectors %}<option value="{{ val }}" {% if filters.sector == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <input type="text" name="location" value="{{ filters.location }}" class="form-control" style="max-width:160px;" placeholder="Location...">
+    <button type="submit" class="btn gp-btn-primary px-3">Filter</button>
+    <a href="{% url 'opportunity_list' %}" class="btn btn-outline-secondary px-3">Clear</a>
+  </form>
+
+  <div class="row g-3">
+    {% for opp in opportunities %}
+    <div class="col-md-6 col-lg-4">
+      <div class="opp-card">
+        {% if opp.poster %}
+        <a href="{% url 'opportunity_detail' opp.pk %}">
+          <div class="mb-3" style="margin: -1.5rem -1.5rem 1rem -1.5rem; overflow: hidden; border-radius: 12px 12px 0 0; background: #f8f9fa; text-align: center;">
+            <img src="{{ opp.poster.url }}" alt="Poster" class="img-fluid" style="max-height: 350px; width: auto; object-fit: contain;">
+          </div>
+        </a>
+        {% endif %}
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <span class="pill pill-pending opp-type-badge">{{ opp.get_type_display }}</span>
+          {% if opp.stipend_min %}<span class="text-muted small">KSh {{ opp.stipend_min|floatformat:0 }}+</span>{% endif %}
+        </div>
+        <h6 class="fw-bold mb-1">{{ opp.title }}</h6>
+        <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>{{ opp.display_company_name }}</div>
+        <div class="text-muted small mb-1"><i class="fa fa-map-marker-alt me-1"></i>{{ opp.location }}</div>
+        <div class="text-muted small mb-3"><i class="fa fa-tag me-1"></i>{{ opp.sector }}</div>
+        {% if opp.deadline %}<div class="text-muted" style="font-size:.75rem;" class="mb-2"><i class="fa fa-clock me-1"></i>Deadline: {{ opp.deadline|date:"M d, Y" }}</div>{% endif %}
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-navy btn-sm px-3 flex-grow-1">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 text-muted">
+      <i class="fa fa-briefcase fa-2x mb-3 d-block opacity-30"></i>
+      <p>No opportunities found matching your filters.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Live Discoveries (NEW) -->
+  {% if discoveries %}
+  <div class="mt-5 mb-5 p-4 bg-light rounded-4 border-dashed">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-0" style="color:var(--gp-navy);"><i class="fa fa-magic text-accent me-2"></i>Live Discoveries from the Web</h3>
+        <p class="text-muted small mb-0">AI-matched internships & opportunities found by our scrapers</p>
+      </div>
+      <span class="badge bg-soft-success text-success px-3">Live Updates</span>
+    </div>
+
+    <div class="row g-3">
+      {% for item in discoveries %}
+      <div class="col-md-6 col-lg-4">
+        <div class="opp-card h-100 border-accent-soft">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-soft-navy text-navy">{{ item.get_source_type_display }}</span>
+            <span class="text-muted" style="font-size: 0.75rem;">{{ item.scraped_at|timesince }} ago</span>
+          </div>
+          <h6 class="fw-bold mb-1">{{ item.title|truncatechars:60 }}</h6>
+          <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>{{ item.company|default:item.source_name }}</div>
+          <div class="text-muted small mb-2"><i class="fa fa-map-marker-alt me-1"></i>{{ item.location|default:"Kenya" }}</div>
+          <div class="mt-auto d-flex justify-content-between align-items-center">
+            <span class="text-muted" style="font-size: 0.75rem;">{{ item.source_name }}</span>
+            <a href="{{ item.url }}" target="_blank" class="btn gp-btn-outline-primary btn-sm px-3">View Info</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

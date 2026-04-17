@@ -1,0 +1,86 @@
+{% extends 'corporate/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="gp-content-header mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1 class="gp-title mb-0">AI Simulation Generator</h1>
+            <p class="text-muted mb-0">Describe a topic, and Google Gemini will design a full learning scenario for you.</p>
+        </div>
+        <a href="{% url 'manage_simulations' %}" class="btn gp-btn-outline">
+            <i class="fas fa-arrow-left me-2"></i>Back to Manage
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="gp-card">
+            <div class="gp-card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="gp-icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 2rem;">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>AI-Powered Scenario Creation</h4>
+                    <p class="text-muted">Enter a professional topic or workplace challenge.</p>
+                </div>
+
+                <form method="POST" class="gp-form" id="aiGenForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="topic" class="form-label fw-bold">Topic or Skill Area</label>
+                        <input type="text" name="topic" id="topic" class="form-control gp-input" 
+                               placeholder="e.g. Resolving a conflict between team members on a deadline" required>
+                        <div class="form-text mt-2">
+                             Be specific! For example: "Customer service for a frustrated client in a tech company".
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn gp-btn-primary btn-lg py-3" id="genBtn">
+                            <i class="fas fa-sparkles me-2"></i>Generate with Gemini 1.5 Flash
+                        </button>
+                    </div>
+                </form>
+
+                <div id="loadingOverlay" style="display: none;" class="mt-4 text-center">
+                    <div class="spinner-border text-info mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="mb-2">Gemini is designing the scenario...</h5>
+                    <p class="text-muted small">Generating situation, task, and interactive choices.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="gp-card">
+            <div class="gp-card-header">
+                <h5 class="mb-0">AI Magic Tips</h5>
+            </div>
+            <div class="gp-card-body">
+                <p class="small text-muted">For the best results, include:</p>
+                <ul class="small ps-3">
+                    <li>The <strong>Industry</strong> (e.g. Banking, Retail)</li>
+                    <li>The <strong>Job Role</strong> (e.g. Manager, Sales)</li>
+                    <li>The <strong>Specific Problem</strong> to solve</li>
+                </ul>
+                <div class="mt-4 text-center">
+                    <img src="https://lh3.googleusercontent.com/pw/AP1GczPrU_Z6-K5yM1A9UuM-k-k1-u-J-u-J" alt="Gemini AI" class="img-fluid opacity-25" style="max-height: 30px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('aiGenForm').addEventListener('submit', function() {
+        document.getElementById('genBtn').disabled = true;
+        document.getElementById('genBtn').innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Designing...';
+        document.getElementById('loadingOverlay').style.display = 'block';
+    });
+</script>
+{% endblock %}

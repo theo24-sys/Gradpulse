@@ -1,0 +1,33 @@
+{% extends 'campus/layout.html' %}
+
+{% block title %}Collaborations — GradPulse{% endblock %}
+
+{% block campus_content %}
+<h2 class="fw-bold mb-1" style="color:var(--gp-navy);">Collaborations</h2>
+<p class="text-muted small mb-4">Join or start a collaborative project</p>
+<div class="row g-3">
+  {% for collab in collabs %}
+  <div class="col-md-6 col-lg-4">
+    <div class="gp-card h-100">
+      <div class="gp-card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="pill pill-{% if collab.status == 'open' %}hired{% elif collab.status == 'in_progress' %}shortlisted{% else %}closed{% endif %}">{{ collab.get_status_display }}</span>
+          <span class="text-muted small">{{ collab.field }}</span>
+        </div>
+        <h6 class="fw-bold">{{ collab.title }}</h6>
+        <p class="text-muted small">{{ collab.description|truncatechars:100 }}</p>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <span class="text-muted small"><i class="fa fa-users me-1"></i>{{ collab.members.count }}/{{ collab.max_members }}</span>
+          <span class="text-muted small">{{ collab.created_at|date:"M d" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-5 text-muted">
+    <i class="fa fa-people-arrows fa-2x mb-3 d-block opacity-30"></i>
+    <p>No collaborations available yet.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

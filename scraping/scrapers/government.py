@@ -1,0 +1,264 @@
+from ..base_scraper import BaseScraper
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import logging
+
+logger = logging.getLogger(__name__)
+
+class PSCKenyaScraper(BaseScraper):
+    source_name = "Public Service Commission Kenya"
+    source_type = "opportunities"
+    sector = "government"
+    base_url = "https://psckjobs.go.ke/ActiveJobsAdverts.aspx"
+
+    def parse(self):
+        # PSC requires JS rendering and handles timeouts better on the cloud
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # Target the jobs table
+        table = soup.select_one('#DataGrid2')
+        if not table:
+            # Fallback for different versions of the portal
+            table = soup.select_one('table[id*="DataGrid"]') or soup.select_one('table')
+            
+        if table:
+            rows = table.find_all('tr')
+            for row in rows:
+                cols = row.find_all('td')
+                # Skip header, pagination, or small rows
+                if len(cols) < 5: continue
+                
+                # Based on inspection:
+                # td 2: Advert Number (Reference)
+                # td 3: Position (Title)
+                # td 10: Close Date (Deadline)
+                
+                title_node = cols[2]
+                title = title_node.get_text(strip=True)
+                
+                # Skip the header row
+                if title.lower() in ["position", "post", "position title"]:
+                    continue
+                    
+                ref = cols[1].get_text(strip=True)
+                deadline = cols[9].get_text(strip=True) if len(cols) > 9 else ""
+                
+                items.append({
+                    'title': title,
+                    'url': self.base_url,
+                    'company': self.source_name,
+                    'description': f"Reference: {ref} | Deadline: {deadline}",
+                    'location': "Kenya",
+                    'job_type': "Government Job",
+                    'raw_data': {
+                        'ref': ref,
+                        'deadline': deadline
+                    }
+                })
+        return items
+
+class KRAScraper(BaseScraper):
+    source_name = "Kenya Revenue Authority"
+    source_type = "opportunities"
+    sector = "government"
+    base_url = "https://www.kra.go.ke/careers"
+
+    def parse(self):
+        html = self.fetch_html(self.base_url)
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # KRA specific parsing
+        anchors = soup.find_all('a', href=True)
+        for a in anchors:
+            if "career" in a['href'].lower() or "vacancy" in a['href'].lower():
+                title = a.get_text(strip=True)
+                if title and len(title) > 10:
+                    items.append({
+                        'title': title,
+                        'url': urljoin(self.base_url, a['href']),
+                        'description': f"KRA Career Opportunity: {title}",
+                        'company': "Kenya Revenue Authority",
+                    })
+        return items
+
+class KPLCScraper(BaseScraper):
+    source_name = "Kenya Power"
+    source_type = "opportunities"
+    sector = "public"
+    base_url = "https://www.kplc.co.ke/careers"
+
+    def parse(self):
+        html = self.fetch_html(self.base_url)
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # KPLC specific parsing
+        links = soup.select('a[href*="career"]')
+        for link in links:
+            title = link.get_text(strip=True)
+            if title:
+                items.append({
+                    'title': title,
+                    'url': urljoin(self.base_url, link['href']),
+                    'description': f"Kenya Power Vacancy: {title}",
+                    'company': "Kenya Power",
+                })
+        return items
+
+class AjiraDigitalScraper(BaseScraper):
+    source_name = "Ajira Digital"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://ajiradigital.go.ke/find-work"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # Ajira Digital often lists platforms and opportunities
+        cards = soup.select('.card') or soup.find_all('div', class_='col-md-4')
+        
+        for card in cards:
+            title_node = card.select_one('h4') or card.find('h5')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            link = card.find('a').get('href') if card.find('a') else self.base_url
+            
+            items.append({
+                'title': title,
+                'url': urljoin(self.base_url, link),
+                'company': "Ajira Digital",
+                'description': "Digital work opportunity for youth.",
+                'location': "Online/Kenya",
+                'job_type': "Digital Work"
+            })
+            
+        return items
+
+class NYSScraper(BaseScraper):
+    source_name = "NYS Kenya"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://nys.go.ke/"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # NYS news/announcements often contain cohorts/recruitment info
+        news_items = soup.select('.news-item') or soup.select('.post')
+        
+        for news in news_items:
+            title_node = news.select_one('h3 a') or news.find('a')
+            if not title_node: continue
+            
+            title = title_node.get_text(strip=True)
+            if "recruitment" in title.lower() or "cohort" in title.lower() or "opportunity" in title.lower():
+                link = urljoin(self.base_url, title_node.get('href'))
+                items.append({
+                    'title': title,
+                    'url': link,
+                    'company': "NYS Kenya",
+                    'description': "National Youth Service cohort or recruitment announcement.",
+                    'location': "Kenya",
+                    'job_type': "Youth Program"
+                })
+                
+        return items
+
+class NYOTAProjectScraper(BaseScraper):
+    source_name = "NYOTA Project"
+    source_type = "youth_programs"
+    sector = "government"
+    # This scraper handles multiple targets for the same project
+    targets = [
+        "https://nyotaproject.go.ke/improving-youth-employability",
+        "https://nyotaproject.go.ke/expanding-employment-opportunities"
+    ]
+
+    def parse(self):
+        items = []
+        for url in self.targets:
+            result = self.fetch_apify(url)
+            if isinstance(result, list): 
+                items.extend(result)
+                continue
+            
+            html = result
+            if not html: continue
+            
+            soup = BeautifulSoup(html, 'lxml')
+            parts = soup.select('.elementor-widget-container') or soup.find_all('div', class_='wp-block-group')
+            
+            for part in parts:
+                title_node = part.find('h3') or part.find('h2')
+                if not title_node: continue
+                
+                title = title_node.get_text(strip=True)
+                items.append({
+                    'title': title,
+                    'url': url,
+                    'company': "NYOTA Project (GoK)",
+                    'description': "Government project for youth employability and employment.",
+                    'location': "Kenya",
+                    'job_type': "Youth Program"
+                })
+        return items
+
+class YouthEmpowermentCentresScraper(BaseScraper):
+    source_name = "Youth Empowerment Centres"
+    source_type = "youth_programs"
+    sector = "government"
+    base_url = "https://youth.go.ke/youth-empowerment-centres/"
+
+    def parse(self):
+        result = self.fetch_apify(self.base_url)
+        if isinstance(result, list): return result
+        
+        html = result
+        if not html: return []
+        
+        soup = BeautifulSoup(html, 'lxml')
+        items = []
+        
+        # Centers are usually listed in a table or list
+        centers = soup.select('tr') or soup.select('li')
+        
+        for center in centers:
+            text = center.get_text(strip=True)
+            if text and len(text) > 5:
+                items.append({
+                    'title': f"Empowerment Centre: {text[:50]}...",
+                    'url': self.base_url,
+                    'company': "Ministry of Youth Affairs",
+                    'description': f"Youth empowerment center information: {text}",
+                    'location': "Kenya (Various)",
+                    'job_type': "Resource Centre"
+                })
+                
+        return items

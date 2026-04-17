@@ -1,0 +1,114 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block campus_content %}
+<div class="gp-content-header mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1 class="gp-title mb-0">AI Transcript Analysis</h1>
+            <p class="text-muted mb-0">Upload your PDF transcript and let our AI automatically extract your grades.</p>
+        </div>
+        <a href="{% url 'campus_dashboard' %}" class="btn gp-btn-outline">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="gp-card">
+            <div class="gp-card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="gp-icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 2rem;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4>Upload Academic Transcript</h4>
+                    <p class="text-muted">Select a PDF file. Google Gemini AI will scan it for course names and grades.</p>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" class="gp-form" id="uploadForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="transcript" class="form-label fw-bold">Select PDF File</label>
+                        <div class="gp-input-group">
+                            <input type="file" name="transcript" id="transcript" class="form-control gp-input" accept=".pdf" required>
+                        </div>
+                        <div class="form-text mt-2">
+                             Note: Our AI currently supports PDF transcripts from Kenyan universities.
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn gp-btn-primary btn-lg py-3" id="submitBtn">
+                            <i class="fas fa-magic me-2"></i>Run AI Analysis
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loading State (Optional JS) -->
+                <div id="loadingOverlay" style="display: none;" class="mt-4 text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="mb-2">AI is analyzing your transcript...</h5>
+                    <p class="text-muted small">This usually takes 5-10 seconds depending on the document length.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="alert alert-info border-0 shadow-sm">
+                <div class="d-flex">
+                    <i class="fas fa-info-circle mt-1 me-3 fs-4"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold">How it works</h6>
+                        <p class="mb-0 small">When you upload a PDF, your transcript is securely sent to Google Gemini 1.5 Flash. The AI extracts course titles, codes, and grades, then automatically adds them to your academic profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="gp-card h-100">
+            <div class="gp-card-header">
+                <h5 class="mb-0">Supported Data</h5>
+            </div>
+            <div class="gp-card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span><strong>Course Codes</strong> (e.g. CSC 301)</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span><strong>Course Names</strong> (e.g. Operating Systems)</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span><strong>Letter Grades</strong> (A - E)</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span><strong>Semesters/Years</strong></span>
+                    </li>
+                </ul>
+                <hr>
+                <div class="text-center">
+                    <img src="https://lh3.googleusercontent.com/pw/AP1GczPrU_Z6-K5yM1A9UuM-k-k1-u-J-u-J" alt="Gemini AI" class="img-fluid opacity-50 mb-2" style="max-height: 40px;">
+                    <p class="text-muted xsmall">Powered by Google Gemini 1.5 Flash</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('submitBtn').innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+        document.getElementById('loadingOverlay').style.display = 'block';
+    });
+</script>
+{% endblock %}

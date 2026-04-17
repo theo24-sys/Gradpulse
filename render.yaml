@@ -1,0 +1,26 @@
+databases:
+  - name: gradpulse-db
+    databaseName: gradpulse
+    user: gradpulse
+    plan: free
+
+services:
+  - type: web
+    name: gradpulse-web
+    env: python
+    plan: free
+    buildCommand: "bash render_build.sh"
+    startCommand: "gunicorn gradpulse.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --log-file -"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gradpulse-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      # You can put your Railway Redis URL here if you want the Render web app to connect to it natively,
+      # but if you run Celery entirely on Railway, then Redis will reside there.

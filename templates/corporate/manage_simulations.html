@@ -1,0 +1,67 @@
+{% extends 'corporate/layout.html' %}
+{% load static %}
+
+{% block title %}Manage Simulations — Corporate{% endblock %}
+
+{% block corporate_content %}
+<div class="dash-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <div class="dash-greeting">Creator Studio</div>
+            <h1 class="dash-title">My Simulations</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'simulation_generate_ai' %}" class="btn gp-btn-outline">
+                <i class="fas fa-sparkles me-2 text-info"></i>Generate with AI
+            </a>
+            <a href="{% url 'simulation_create' %}" class="btn gp-btn-primary">
+                <i class="fa fa-plus me-2"></i>Create New Scenario
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="gp-card">
+    <div class="gp-card-body">
+        {% if simulations %}
+        <div class="table-responsive">
+            <table class="table gp-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Difficulty</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sim in simulations %}
+                    <tr>
+                        <td class="fw-bold">{{ sim.title }}</td>
+                        <td>{{ sim.category }}</td>
+                        <td><span class="badge bg-light text-dark">{{ sim.difficulty }}</span></td>
+                        <td>
+                            {% if sim.is_premium %}
+                            <span class="pill pill-shortlisted">Premium</span>
+                            {% else %}
+                            <span class="pill pill-active">Free</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ sim.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fa fa-brain fa-3x text-muted mb-3 opacity-20"></i>
+            <h3>No simulations yet</h3>
+            <p class="text-muted">Start by creating your first scenario-based learning module.</p>
+            <a href="{% url 'simulation_create' %}" class="btn gp-btn-outline mt-3">Create Simulation</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'campus/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Profile — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+    <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="72" height="72" style="object-fit:cover;border:3px solid var(--gp-green);">
+  <div>
+    <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">{{ user.display_name }}</h2>
+    <div class="text-muted small">{{ user.institution }} · {{ user.course }}</div>
+    {% if user.is_verified %}<span class="pill pill-hired mt-1"><i class="fa fa-check-circle me-1"></i>Verified</span>{% endif %}
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="gp-card">
+      <div class="gp-card-header"><h6 class="fw-bold mb-0">Edit Profile</h6></div>
+      <div class="gp-card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="mt-3">
+            <button type="submit" class="btn gp-btn-primary px-4"><i class="fa fa-save me-2"></i>Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="gp-card">
+      <div class="gp-card-body">
+        <h6 class="fw-bold mb-3">Profile Strength</h6>
+        {% with pct=0 %}
+        <div class="gp-progress mb-2"><div class="gp-progress-bar" style="width:{{ user.bio|length|add:0 }}%;max-width:100%;"></div></div>
+        {% endwith %}
+        <ul class="list-unstyled small text-muted">
+          <li class="mb-1">{% if user.profile_photo %}<i class="fa fa-check-circle text-success me-2"></i>{% else %}<i class="fa fa-circle text-muted me-2"></i>{% endif %}Profile photo</li>
+          <li class="mb-1">{% if user.bio %}<i class="fa fa-check-circle text-success me-2"></i>{% else %}<i class="fa fa-circle text-muted me-2"></i>{% endif %}Bio</li>
+          <li class="mb-1">{% if user.skills %}<i class="fa fa-check-circle text-success me-2"></i>{% else %}<i class="fa fa-circle text-muted me-2"></i>{% endif %}Skills</li>
+          <li class="mb-1">{% if user.linkedin_url %}<i class="fa fa-check-circle text-success me-2"></i>{% else %}<i class="fa fa-circle text-muted me-2"></i>{% endif %}LinkedIn</li>
+          <li class="mb-1">{% if user.github_url %}<i class="fa fa-check-circle text-success me-2"></i>{% else %}<i class="fa fa-circle text-muted me-2"></i>{% endif %}GitHub</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

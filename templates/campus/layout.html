@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Campus — GradPulse{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+  </style>
+  <link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpg' %}">
+</head>
+<body>
+<!-- Top Bar -->
+<nav class="gp-navbar navbar navbar-expand-lg navbar-light sticky-top">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand gp-brand" href="{% url 'home' %}">
+      <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" class="gp-logo-img">
+    </a>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <a class="nav-link text-dark position-relative d-flex align-items-center" href="{% url 'inbox' %}" title="Messages">
+        <img src="{% static 'images/chat_icon.png' %}" alt="Messages" style="height: 22px; width: 22px; object-fit: contain;">
+        {% if unread_messages_count > 0 %}
+        <span class="badge bg-primary rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_messages_count }}</span>
+        {% endif %}
+      </a>
+      <a class="nav-link text-dark position-relative" href="{% url 'notifications' %}">
+        <i class="fa fa-bell"></i>
+        {% if unread_notifications > 0 %}
+        <span class="badge bg-danger rounded-pill position-absolute" style="top:-4px;right:-4px;font-size:9px;">{{ unread_notifications }}</span>
+        {% endif %}
+      </a>
+      <div class="dropdown">
+        <a class="d-flex align-items-center gap-2 text-decoration-none" href="#" data-bs-toggle="dropdown">
+           <img src="{{ user.get_avatar_url }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;border:2px solid var(--gp-border);">
+          <span class="text-dark d-none d-md-inline small fw-500">{{ user.display_name }}</span>
+          <i class="fa fa-chevron-down text-dark small"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          {% if user.is_student %}
+          <li><a class="dropdown-item" href="{% url 'campus_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
+          {% else %}
+          <li><a class="dropdown-item" href="{% url 'corporate_dashboard' %}"><i class="fa fa-th-large me-2 text-muted"></i>Dashboard</a></li>
+          {% endif %}
+          <li><a class="dropdown-item" href="{% url 'campus_profile' %}"><i class="fa fa-user me-2 text-muted"></i>Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Flash Messages -->
+{% if messages %}
+<div class="px-3 mt-2">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible fade show gp-alert" role="alert">
+    {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="gp-sidebar-layout">
+  <!-- Sidebar -->
+  <aside class="gp-sidebar d-none d-lg-block">
+    <div class="gp-sidebar-brand">
+      <img src="{{ user.get_avatar_url }}" alt="Avatar" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;margin-right:12px;">
+      <div>
+        <div class="sb-name">{{ user.display_name }}</div>
+        <div class="sb-sub">{{ user.institution|truncatechars:22 }}</div>
+      </div>
+    </div>
+    {% if user.open_to_work %}
+    <div class="px-3 mb-3">
+      <span class="otw-badge" style="width:100%;justify-content:center;">
+        <span class="otw-dot active"></span> Open to Work
+      </span>
+    </div>
+    {% endif %}
+    <ul class="gp-sidebar-nav">
+      <li class="nav-section">MY SPACE</li>
+      <li><a href="{% url 'campus_dashboard' %}" class="{% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}"><i class="fa fa-home"></i> Dashboard</a></li>
+      <li><a href="{% url 'campus_profile' %}" class="{% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}"><i class="fa fa-user"></i> Profile & CV</a></li>
+      <li><a href="{% url 'grades' %}" class="{% if request.resolver_match.url_name == 'grades' %}active{% endif %}"><i class="fa fa-chart-line"></i> Grades Tracker</a></li>
+      <li><a href="{% url 'transcript_upload' %}" class="{% if request.resolver_match.url_name == 'transcript_upload' %}active{% endif %}"><i class="fa fa-magic"></i> AI Transcript Analysis</a></li>
+      
+      <li class="nav-section">OPPORTUNITIES</li>
+      <li><a href="{% url 'opportunity_list' %}" class="{% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}"><i class="fa fa-briefcase"></i> Internships & Jobs</a></li>
+      <li><a href="{% url 'external_opportunities' %}" class="{% if request.resolver_match.url_name == 'external_opportunities' %}active{% endif %}"><i class="fa fa-search-plus"></i> External Opportunities <span class="badge bg-success-subtle text-success ms-1 small">New</span></a></li>
+      <li>
+        <a href="{% url 'events_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'events_list' %}active{% endif %}">
+          <span><i class="fa fa-calendar-alt"></i> Events</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">{{ upcoming_events_count }}</span>
+        </a>
+      </li>
+      <li><a href="{% url 'external_events' %}" class="{% if request.resolver_match.url_name == 'external_events' %}active{% endif %}"><i class="fa fa-globe-africa"></i> Industry Events</a></li>
+      <li><a href="{% url 'youth_programs_list' %}"><i class="fa fa-seedling"></i> Youth Programs</a></li>
+      
+      <li class="nav-section">LEARNING</li>
+      <li><a href="{% url 'credentials_list' %}" class="{% if request.resolver_match.url_name == 'credentials_list' %}active{% endif %}"><i class="fa fa-medal"></i> Micro-Credentials</a></li>
+      <li><a href="{% url 'external_learning' %}" class="{% if request.resolver_match.url_name == 'external_learning' %}active{% endif %}"><i class="fa fa-graduation-cap"></i> External Learning</a></li>
+      <li><a href="{% url 'qualifications_list' %}"><i class="fa fa-file-contract"></i> Prof. Qualifications</a></li>
+      <li>
+        <a href="{% url 'simulations_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'simulations_list' %}active{% endif %}">
+          <span><i class="fa fa-brain"></i> Simulations</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">New</span>
+        </a>
+      </li>
+      <li><a href="{% url 'library_list' %}" class="{% if request.resolver_match.url_name == 'library_list' %}active{% endif %}"><i class="fa fa-book-reader"></i> Library & Resources</a></li>
+
+      <li class="nav-section">NETWORK</li>
+      <li><a href="{% url 'networking' %}" class="{% if request.resolver_match.url_name == 'networking' %}active{% endif %}"><i class="fa fa-globe"></i> Networking</a></li>
+      <li><a href="{% url 'collaborations' %}" class="{% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}"><i class="fa fa-handshake"></i> Collaborations</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="gp-content">
+    {% block campus_content %}{% endblock %}
+  </main>
+</div>
+
+<!-- Mobile Bottom Nav (Scrollable) -->
+<div class="gp-mobile-nav d-lg-none">
+  <div class="gp-mobile-nav-scroll">
+    <a href="{% url 'campus_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_dashboard' %}active{% endif %}">
+      <i class="fa fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="{% url 'campus_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'campus_profile' %}active{% endif %}">
+      <i class="fa fa-user"></i>
+      <span>Profile</span>
+    </a>
+    <a href="{% url 'grades' %}" class="nav-item {% if request.resolver_match.url_name == 'grades' %}active{% endif %}">
+      <i class="fa fa-chart-line"></i>
+      <span>Grades</span>
+    </a>
+    <a href="{% url 'transcript_upload' %}" class="nav-item {% if request.resolver_match.url_name == 'transcript_upload' %}active{% endif %}">
+      <i class="fa fa-magic"></i>
+      <span>AI Magic</span>
+    </a>
+    <a href="{% url 'opportunity_list' %}" class="nav-item {% if request.resolver_match.url_name == 'opportunity_list' %}active{% endif %}">
+      <i class="fa fa-briefcase"></i>
+      <span>Jobs</span>
+    </a>
+    <a href="{% url 'external_opportunities' %}" class="nav-item {% if request.resolver_match.url_name == 'external_opportunities' %}active{% endif %}">
+      <i class="fa fa-search-plus"></i>
+      <span>Discovery</span>
+    </a>
+    <a href="{% url 'events_list' %}" class="nav-item {% if request.resolver_match.url_name == 'events_list' %}active{% endif %}">
+      <i class="fa fa-calendar-alt"></i>
+      <span>Events</span>
+    </a>
+    <a href="{% url 'external_events' %}" class="nav-item {% if request.resolver_match.url_name == 'external_events' %}active{% endif %}">
+      <i class="fa fa-globe-africa"></i>
+      <span>Indust.</span>
+    </a>
+    <a href="{% url 'youth_programs_list' %}" class="nav-item {% if request.resolver_match.url_name == 'youth_programs_list' %}active{% endif %}">
+      <i class="fa fa-seedling"></i>
+      <span>Youth</span>
+    </a>
+    <a href="{% url 'credentials_list' %}" class="nav-item {% if request.resolver_match.url_name == 'credentials_list' %}active{% endif %}">
+      <i class="fa fa-medal"></i>
+      <span>Micro</span>
+    </a>
+    <a href="{% url 'external_learning' %}" class="nav-item {% if request.resolver_match.url_name == 'external_learning' %}active{% endif %}">
+      <i class="fa fa-graduation-cap"></i>
+      <span>Learn+</span>
+    </a>
+    <a href="{% url 'qualifications_list' %}" class="nav-item {% if request.resolver_match.url_name == 'qualifications_list' %}active{% endif %}">
+      <i class="fa fa-file-contract"></i>
+      <span>Pro. Qual</span>
+    </a>
+    <a href="{% url 'simulations_list' %}" class="nav-item {% if request.resolver_match.url_name == 'simulations_list' %}active{% endif %}">
+      <i class="fa fa-brain"></i>
+      <span>Simulate</span>
+    </a>
+    <a href="{% url 'library_list' %}" class="nav-item {% if request.resolver_match.url_name == 'library_list' %}active{% endif %}">
+      <i class="fa fa-book-reader"></i>
+      <span>Library</span>
+    </a>
+    <a href="{% url 'networking' %}" class="nav-item {% if request.resolver_match.url_name == 'networking' %}active{% endif %}">
+      <i class="fa fa-globe"></i>
+      <span>Network</span>
+    </a>
+    <a href="{% url 'collaborations' %}" class="nav-item {% if request.resolver_match.url_name == 'collaborations' %}active{% endif %}">
+      <i class="fa fa-handshake"></i>
+      <span>Collabs</span>
+    </a>
+    <a href="{% url 'inbox' %}" class="nav-item {% if 'networking/chat' in request.path or request.resolver_match.url_name == 'inbox' %}active{% endif %}">
+      <i class="fa fa-envelope"></i>
+      <span>Chat</span>
+      {% if unread_messages_count > 0 %}
+      <span class="badge bg-primary rounded-pill">{{ unread_messages_count }}</span>
+      {% endif %}
+    </a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
