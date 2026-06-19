@@ -1,0 +1,10 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "nixpacks",
+    "configFile": "nixpacks.toml"
+  },
+  "deploy": {
+    "startCommand": "/bin/sh -c \"for i in 1 2 3; do /opt/venv/bin/python manage.py migrate --noinput && break; sleep 5; done && /opt/venv/bin/python manage.py sync_apify --limit 10 && exec /opt/venv/bin/gunicorn gradpulse.wsgi:application --log-file -\""
+  }
+}

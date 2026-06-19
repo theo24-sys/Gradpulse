@@ -1,0 +1,82 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block title %}Youth Programs — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="px-4 py-4">
+  <div class="mb-5">
+    <h2 class="fw-bold mb-2">Youth & Empowerment Programs</h2>
+    <p class="text-muted">Discover government programs, NGO initiatives, and youth-led projects near you.</p>
+  </div>
+
+  <div class="row g-4">
+    {% for program in programs %}
+      <div class="col-md-6 col-xl-4">
+        <div class="gp-card h-100">
+          <div class="gp-card-body d-flex flex-column h-100">
+            <div class="mb-3">
+              <span class="pill pill-pending">{{ program.category|default:"General" }}</span>
+            </div>
+            <h5 class="fw-bold mb-2">{{ program.title }}</h5>
+            <div class="text-muted small mb-3">
+              <i class="fa fa-building me-1"></i> {{ program.organization }}
+            </div>
+            <p class="text-muted small flex-grow-1">{{ program.description|truncatewords:25 }}</p>
+            
+            <div class="mt-auto pt-3 border-top border-opacity-10">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="small text-muted"><i class="fa fa-location-dot me-1"></i> {{ program.location|default:"Across Kenya" }}</span>
+                {% if program.deadline %}
+                  <span class="small text-danger fw-bold"><i class="fa fa-clock me-1"></i> {{ program.deadline|date:"M d" }}</span>
+                {% endif %}
+              </div>
+              <a href="{{ program.link|default:'#' }}" target="_blank" class="btn gp-btn-navy w-100 btn-sm">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="mb-3 opacity-20">
+          <i class="fa fa-seedling fa-4x text-muted"></i>
+        </div>
+        <h5>More programs coming soon!</h5>
+        <p class="text-muted">We are currently scraping new opportunities for you.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if discoveries %}
+  <div class="mt-5 mb-5 p-4 bg-light rounded-4 border-dashed">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-0" style="color:var(--gp-navy);"><i class="fa fa-magic text-accent me-2"></i>Live Discoveries / Youth Focus</h3>
+        <p class="text-muted small mb-0">AI-matched youth empowerment programs found by our scrapers</p>
+      </div>
+      <span class="badge bg-soft-success text-success px-3">Live Updates</span>
+    </div>
+
+    <div class="row g-3">
+      {% for item in discoveries %}
+      <div class="col-md-6 col-lg-4">
+        <div class="gp-card h-100 border-accent-soft">
+          <div class="gp-card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-soft-navy text-navy">Scraped Discovery</span>
+              <span class="text-muted" style="font-size: 0.75rem;">{{ item.scraped_at|timesince }} ago</span>
+            </div>
+            <h6 class="fw-bold mb-1">{{ item.title|truncatechars:60 }}</h6>
+            <div class="text-muted small mb-1"><i class="fa fa-building me-1"></i>Source: {{ item.source_name }}</div>
+            <div class="mt-auto d-flex justify-content-end mt-3">
+              <a href="{{ item.url }}" target="_blank" class="btn gp-btn-outline-primary btn-sm px-3">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

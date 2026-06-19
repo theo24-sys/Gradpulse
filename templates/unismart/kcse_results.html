@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}UniSmart — KCSE Results Entry{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5 animate-fade-up">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light-orange text-orange mb-3">
+                    <i class="fas fa-file-invoice"></i>
+                    <span class="fw-bold small text-uppercase tracking-wider">Academics</span>
+                </div>
+                <h1 class="display-5 fw-800 text-navy mb-3">Enter Your KCSE Results</h1>
+                <p class="text-muted">Fill in your grades as they appear on your result slip for AI cluster calculation.</p>
+            </div>
+
+            <div class="gp-card p-4 p-md-5 animate-fade-up animate-delay-1">
+                <form method="POST" id="kcseForm" hx-post="{% url 'unismart_save_kcse' %}" hx-target="#results-analysis" hx-indicator="#loading">
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <!-- Core Subjects -->
+                        <div class="col-12">
+                            <h5 class="fw-bold border-bottom pb-2 mb-3">Core Subjects</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">English</label>
+                            <select name="ENG" class="form-select" required>
+                                <option value="">Select Grade</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Kiswahili</label>
+                            <select name="KISW" class="form-select" required>
+                                <option value="">Select Grade</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Mathematics</label>
+                            <select name="MATH" class="form-select" required>
+                                <option value="">Select Grade</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Sciences -->
+                        <div class="col-12 mt-4">
+                            <h5 class="fw-bold border-bottom pb-2 mb-3">Sciences (At least two)</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Biology</label>
+                            <select name="BIO" class="form-select">
+                                <option value="">N/A</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Physics</label>
+                            <select name="PHYS" class="form-select">
+                                <option value="">N/A</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-600">Chemistry</label>
+                            <select name="CHEM" class="form-select">
+                                <option value="">N/A</option>
+                                {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Humanities & Others -->
+                        <div class="col-12 mt-4">
+                            <h5 class="fw-bold border-bottom pb-2 mb-3">Humanities & Electives</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">History/Geo/CRE...</label>
+                            <div class="input-group">
+                                <input type="text" name="H1_KEY" class="form-control" placeholder="Subject Name" style="width: 60%;">
+                                <select name="H1_VAL" class="form-select">
+                                    <option value="">Grade</option>
+                                    {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Agri/HomeSci/Comp...</label>
+                            <div class="input-group">
+                                <input type="text" name="E1_KEY" class="form-control" placeholder="Subject Name" style="width: 60%;">
+                                <select name="E1_VAL" class="form-select">
+                                    <option value="">Grade</option>
+                                    {% for grade in grades_list %}<option value="{{ grade }}">{{ grade }}</option>{% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-5 text-center">
+                            <button type="submit" class="btn gp-btn-primary btn-lg px-5">
+                                <i class="fas fa-brain me-2"></i>Analyze & Calculate Clusters
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="loading" class="htmx-indicator text-center mt-4">
+                    <div class="spinner-border text-orange" role="status"></div>
+                    <p class="text-orange mt-2 fw-bold">Gemini is calculating your cluster points...</p>
+                </div>
+
+                <div id="results-analysis" class="mt-5">
+                    <!-- HTMX will load the results here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

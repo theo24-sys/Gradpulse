@@ -1,0 +1,49 @@
+{% if analysis %}
+<div class="animate-fade-up">
+    <div class="alert alert-success d-flex align-items-center mb-4">
+        <i class="fas fa-check-circle me-3 fa-2x"></i>
+        <div>
+            <h5 class="fw-bold mb-0">Analysis Complete!</h5>
+            <p class="mb-0">{{ analysis.summary }}</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for cluster, score in analysis.clusters.items %}
+        <div class="col-6 col-md-3">
+            <div class="p-3 border rounded-3 bg-light text-center">
+                <div class="small text-muted text-uppercase fw-bold mb-1">{{ cluster }}</div>
+                <div class="h3 fw-800 text-orange mb-0">{{ score }}</div>
+                <div class="small text-muted">Points</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h4 class="fw-bold mb-4">Recommended Courses for You</h4>
+    <div class="row g-3">
+        {% for course in analysis.recommendations %}
+        <div class="col-md-6">
+            <div class="gp-card p-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-1">{{ course.name }}</h6>
+                    <div class="small text-muted">
+                        <span class="badge bg-light text-dark border me-2">{{ course.code }}</span>
+                        {{ course.institution }}
+                    </div>
+                </div>
+                <form hx-post="{% url 'unismart_add_to_cart' %}" hx-swap="outerHTML">
+                    {% csrf_token %}
+                    <input type="hidden" name="course_name" value="{{ course.name }}">
+                    <input type="hidden" name="course_code" value="{{ course.code }}">
+                    <input type="hidden" name="institution" value="{{ course.institution }}">
+                    <button type="submit" class="btn btn-sm btn-outline-orange rounded-pill">
+                        <i class="fas fa-plus me-1"></i>Add
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

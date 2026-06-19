@@ -1,0 +1,281 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+from .models import Connection, Collaboration, CollaborationMember, Message
+from accounts.models import CustomUser
+from .agora_utils import generate_agora_token
+from notifications.models import Notification
+
+@login_required
+def student_profile_public(request, pk):
+    if not request.user.is_employer:
+        return redirect('campus_dashboard')
+    student = get_object_or_404(CustomUser, pk=pk, portal_type='student')
+    return render(request, 'corporate/student_profile_view.html', {'student': student})
+
+
+@login_required
+def get_agora_token(request):
+    channel_name = request.GET.get('channel')
+    if not channel_name:
+        return JsonResponse({'error': 'Channel name is required'}, status=400)
+    
+    # Simple security check: user must be part of a conversation that matches this channel naming convention
+    # Channel naming: chat_<min_id>_<max_id>
+    token = generate_agora_token(channel_name, uid=0)
+    if not token:
+        return JsonResponse({'error': 'Failed to generate token'}, status=500)
+        
+    return JsonResponse({
+        'token': token,
+        'appId': __import__('os').environ.get('AGORA_APP_ID')
+    })
+
+
+@login_required
+def networking_view(request):
+    q = request.GET.get('q', '')
+    students = CustomUser.objects.filter(portal_type='student', is_active=True).exclude(pk=request.user.pk)
+    if q:
+        students = students.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(skills__icontains=q))
+    
+    # Annotate students with connection status
+    for student in students:
+        conn = Connection.objects.filter(
+            Q(from_user=request.user, to_user=student) | Q(from_user=student, to_user=request.user)
+        ).first()
+        if conn:
+            student.connection_status = conn.status
+            student.connection_id = conn.pk
+            student.is_requester = (conn.from_user == request.user)
+        else:
+            student.connection_status = None
+
+    pending_received = Connection.objects.filter(to_user=request.user, status='pending')
+    return render(request, 'campus/networking.html', {
+        'students': students, 'q': q,
+        'pending_received': pending_received,
+    })
+
+
+@login_required
+def send_connection(request, pk):
+    to_user = get_object_or_404(CustomUser, pk=pk)
+    Connection.objects.get_or_create(from_user=request.user, to_user=to_user)
+    
+    # Create notification
+    Notification.objects.create(
+        user=to_user,
+        message=f"{request.user.display_name} sent you a connection request.",
+        link="/networking/"
+    )
+    
+    messages.success(request, f'Connection request sent to {to_user.display_name}.')
+    return redirect('networking')
+
+
+@login_required
+def accept_connection(request, pk):
+    conn = get_object_or_404(Connection, pk=pk, to_user=request.user)
+    conn.status = 'accepted'
+    conn.save()
+    
+    # Create notification for the requester
+    Notification.objects.create(
+        user=conn.from_user,
+        message=f"{request.user.display_name} accepted your connection request!",
+        link="/networking/"
+    )
+    
+    messages.success(request, f'Connected with {conn.from_user.display_name}!')
+    return redirect('networking')
+
+
+@login_required
+def collaborations_view(request):
+    collabs = Collaboration.objects.all().order_by('-created_at')
+    return render(request, 'campus/collaborations.html', {'collabs': collabs})
+
+
+def get_conversations(user):
+    # Get all users the current user has messaged or received messages from
+    sent_msgs = Message.objects.filter(sender=user).values_list('receiver', flat=True)
+    received_msgs = Message.objects.filter(receiver=user).values_list('sender', flat=True)
+    user_ids = set(list(sent_msgs) + list(received_msgs))
+    
+    conversations = []
+    for uid in user_ids:
+        other_user = CustomUser.objects.get(pk=uid)
+        last_msg = Message.objects.filter(
+            Q(sender=user, receiver=other_user) | Q(sender=other_user, receiver=user)
+        ).order_by('-timestamp').first()
+        
+        unread_count = Message.objects.filter(sender=other_user, receiver=user, is_read=False).count()
+        
+        conversations.append({
+            'user': other_user,
+            'last_message': last_msg,
+            'unread_count': unread_count,
+        })
+    
+    # Sort by last message timestamp
+    conversations.sort(key=lambda x: x['last_message'].timestamp if x['last_message'] else 0, reverse=True)
+    return conversations
+
+
+@login_required
+def inbox_view(request):
+    conversations = get_conversations(request.user)
+    return render(request, 'networking/chat_center.html', {'conversations': conversations})
+
+
+@login_required
+def chat_detail_view(request, pk):
+    from django.utils import timezone
+    request.user.last_seen = timezone.now()
+    request.user.save(update_fields=['last_seen'])
+    
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    messages = Message.objects.filter(
+        Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+    ).order_by('timestamp')
+    
+    # Mark as read
+    Message.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+    
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            msg = Message.objects.create(sender=request.user, receiver=other_user, content=content)
+            
+            # Create notification for new message
+            Notification.objects.create(
+                user=other_user,
+                message=f"New message from {request.user.display_name}: \"{content[:30]}...\"",
+                link=f"/networking/chat/{request.user.pk}/"
+            )
+            return redirect('chat_detail', pk=pk)
+            
+    is_connected = Connection.objects.filter(
+        (Q(from_user=request.user, to_user=other_user) | Q(from_user=other_user, to_user=request.user)),
+        status='accepted'
+    ).exists()
+
+    conversations = get_conversations(request.user)
+    return render(request, 'networking/chat_center.html', {
+        'conversations': conversations,
+        'other_user': other_user,
+        'chat_messages': messages,
+        'is_connected': is_connected,
+    })
+
+
+@login_required
+def delete_message_view(request, msg_pk):
+    message = get_object_or_404(Message, pk=msg_pk)
+    if message.sender == request.user:
+        message.deleted_by_sender = True
+        message.save()
+    elif message.receiver == request.user:
+        message.deleted_by_receiver = True
+        message.save()
+    
+    # If both deleted, actually delete if desired, or just keep flagged
+    return redirect('chat_detail', pk=message.receiver.pk if message.sender == request.user else message.sender.pk)
+
+
+@login_required
+def api_get_messages(request, pk):
+    """API endpoint for long-polling/updates of chat messages."""
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    last_id = request.GET.get('last_id', 0)
+    
+    new_messages = Message.objects.filter(
+        Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)
+    ).filter(id__gt=last_id).order_by('timestamp')
+    
+    # Mark as read if we are the receiver
+    Message.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+    
+    data = []
+    for m in new_messages:
+        content = m.content
+        is_signal = False
+        is_accepted = content.startswith('[CALL_ACCEPTED]')
+        
+        if content.startswith('[CALL_INVITE]') or is_accepted:
+            is_signal = True
+            type_str = content.split(':')[1] if ':' in content else 'voice'
+            if is_accepted:
+                content = f"{type_str.capitalize()} Call"
+            else:
+                content = f"Incoming {type_str} call..."
+            
+        data.append({
+            'id': m.id,
+            'content': content,
+            'is_me': m.sender == request.user,
+            'timestamp': m.timestamp.strftime('%g:%i %A'),
+            'sender_id': m.sender_id,
+            'is_signal': is_signal,
+            'is_accepted': is_accepted,
+            'raw_content': m.content if is_signal else None
+        })
+        
+    return JsonResponse({'messages': data})
+
+@login_required
+def api_accept_signal(request, pk):
+    """Mark a signaling message as accepted."""
+    msg = get_object_or_404(Message, pk=pk, receiver=request.user)
+    if msg.content.startswith('[CALL_INVITE]'):
+        type_str = msg.content.split(':')[1] if ':' in msg.content else 'voice'
+        msg.content = f'[CALL_ACCEPTED]:{type_str}'
+        msg.is_read = True
+        msg.save()
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+@login_required
+def api_check_signals(request):
+    """Global endpoint to check for any incoming call signals across all chats."""
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Check for signals in the last 30 seconds
+    thirty_seconds_ago = timezone.now() - timedelta(seconds=30)
+    
+    signal = Message.objects.filter(
+        receiver=request.user,
+        content__startswith='[CALL_INVITE]',
+        timestamp__gt=thirty_seconds_ago
+    ).order_by('-timestamp').first()
+    
+    if signal:
+        return JsonResponse({
+            'has_signal': True,
+            'sender_id': signal.sender.id,
+            'sender_name': signal.sender.display_name,
+            'sender_avatar': signal.sender.get_avatar_url() if not signal.sender.is_employer else signal.sender.get_logo_url(),
+            'content': signal.content,
+            'message_id': signal.id,
+            'timestamp_iso': signal.timestamp.isoformat()
+        })
+        
+    return JsonResponse({'has_signal': False})
+
+
+@login_required
+def api_send_signal(request, pk):
+    """API endpoint to send a hidden signaling message (e.g. [CALL_INVITE])."""
+    other_user = get_object_or_404(CustomUser, pk=pk)
+    content = request.POST.get('content')
+    
+    if content and content.startswith('[CALL_INVITE]'):
+        msg = Message.objects.create(sender=request.user, receiver=other_user, content=content)
+        return JsonResponse({'status': 'ok', 'message_id': msg.id})
+        
+    return JsonResponse({'status': 'error'}, status=400)

@@ -1,0 +1,29 @@
+{% extends 'corporate/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if editing %}Edit{% else %}Post{% endif %} Opportunity — GradPulse{% endblock %}
+
+{% block corporate_content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">{% if editing %}Edit{% else %}Post New{% endif %} Opportunity</h2>
+  <p class="text-muted small">{% if editing %}Update listing details{% else %}Find your next great hire{% endif %}</p>
+</div>
+<div class="row">
+  <div class="col-lg-9">
+    <div class="gp-card">
+      <div class="gp-card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn gp-btn-primary px-4">
+              <i class="fa fa-{% if editing %}save{% else %}paper-plane{% endif %} me-2"></i>{% if editing %}Save Changes{% else %}Post Opportunity{% endif %}
+            </button>
+            <a href="{% url 'corporate_dashboard' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,320 @@
+const clusters_part1 = [
+  {
+    id: 'c1', num: '1', name: 'Law, Commerce & Business', icon: '⚖️', color: '#3b82f6', group: 'business',
+    requirements: 'ENG/KIS – B (PLAIN) | MAT ALT A/B – C (PLAIN)',
+    subclusters: [
+      { id: '1A', name: 'Cluster 1A', courses: ['Bachelor of Laws (LL.B.)','Bachelor of Commerce','Bachelor of Entrepreneurship','Bachelor of Entrepreneurship & Small Business Management','Bachelor of Purchasing & Supplies Management','Bachelor of Supply Chain Management','Bachelor of Logistics and Supply Chain Management','Bachelor of Science (Entrepreneurship Studies)','Bachelor of Science in Entrepreneurship','Bachelor of Procurement and Contract Management','Bachelor of Procurement and Supply Chain Management'] }
+    ]
+  },
+  {
+    id: 'c2', num: '2', name: 'Business, IT & Management', icon: '💼', color: '#06b6d4', group: 'business',
+    requirements: 'ENG/KIS – B (PLAIN) | MAT ALT A/B – C (PLAIN)',
+    subclusters: [
+      { id: '2A', name: 'Cluster 2A — Business Administration & IT', courses: ['Bachelor in Business Administration','Bachelor in Business Administration With IT','Bachelor of Business and Office Management','Bachelor of Co-operative Business','Bachelor of Co-operative and Community Development','Bachelor of Secretarial Management and Administration','Bachelor of Business Management','Bachelor of Business Management (Marine Business Management)','Bachelor of Business Management (Civil Aviation Management)','Bachelor of Co-operative Management','Bachelor of Entrepreneurship and Small Business','Bachelor of Science (Records Management and Information Technology)','Bachelor of Science (Entrepreneurship and Small Enterprises Management)','Bachelor of Science (Entrepreneurship)','Bachelor of Library and Information Studies','Bachelor of Science in Information Sciences','Bachelor of Business Information and Management','Bachelor of Science (Information Sciences and Knowledge Management)','Bachelor of Science (Information Studies)','Bachelor of Science in Information Science','Bachelor of Science (Innovation Technology Management)','Bachelor of Business Information Technology','Bachelor of Science (Business Information Systems)','Bachelor of Science in Marketing With IT','Bachelor of Technology (Business Information Technology)','Bachelor of Technology (Office Administration and Technology)','Bachelor of Arts (Business Studies With IT)'] },
+      { id: '2B', name: 'Cluster 2B — Project, HR & Hospitality', courses: ['Bachelor of Science (Project Planning Management)','Bachelor of Science in Project Management','Bachelor of Human Resources Management','Bachelor of Catering & Hospitality Management','Bachelor of Science (Human Resource Management)','Bachelor of Human Resource Management','Bachelor of Science in Ecotourism','Bachelor of Project Planning and Management','Bachelor of Hotel & Hospitality Management','Bachelor of Hotel Management','Bachelor of Hotels and Hospitality Management','Bachelor of Science (Ecotourism & Hospitality Management)','Bachelor of Science in Human Resource Management With IT','Bachelor of Eco-tourism and Hospitality Management','Bachelor of Science (Eco-tourism Hotel and Institution Management With IT)','Bachelor of Science in Strategic Management','Bachelor of Science (Strategic Management)','Bachelor of Science In International Business Management','Bachelor of Science In Co-operative and Entreprenuership Management','Bachelor of Procurement and Logistics Management','Bachelor of Purchasing and Supplies Management','Bachelor of Science (Management Science)','Bachelor of Science in Travel and Tourism Management'] }
+    ]
+  },
+  {
+    id: 'c3', num: '3', name: 'Arts, Communication & Social Sciences', icon: '🎭', color: '#8b5cf6', group: 'arts',
+    requirements: 'ENG/KIS – C+ | Various subject combinations',
+    subclusters: [
+      { id: '3A', name: 'Cluster 3A — Communication & Media', courses: ['Bachelor of Applied Communication','Bachelor of Arts (Applied Linguistics)','Bachelor of Arts (Communication & Media)','Bachelor of Arts in Government and International Relations','Bachelor of Arts (Language and Communication With IT)','Bachelor of Arts (Linguistics Media and Communication)','Bachelor of Arts (Linguistic)','Bachelor of Arts (Drama and Theatre Studies With IT)','Bachelor of Arts (International Relations and Diplomacy With IT)','Bachelor of Arts (International Relations and Diplomacy)','Bachelor of Science (Communication and Public Relations)','Bachelor of Science (Communication & Journalism)','Bachelor of Journalism','Bachelor of Journalism and Mass Communication','Bachelor of Communication & Public Relations','Bachelor of Communication and Public Relations','Bachelor of Science (Communication and Journalism)','Bachelor of Science in Mass Communication','Bachelor of Mass Communication','Bachelor of Arts (Communication & Media Technology With IT)','Bachelor of Arts in International Relations','Bachelor of Arts (Communication and Media)','Bachelor of Broadcast Journalism','Bachelor of Corporate Communication and Management','Bachelor of Science (Corporate Communication and Management)','Bachelor of Science (Media Science)','Bachelor of Arts (Theatre Arts & Film Technology)','Bachelor of Arts (Translation and Interpretation)','Bachelor of Communication & Journalism','Bachelor of Communication and Media Studies','Bachelor of Arts in Mass Communication','Bachelor of Journalism & Mass Communication','Bachelor of Arts in Communication and Journalism','Bachelor of Arts in Communication Studies'] },
+      { id: '3B', name: 'Cluster 3B — English & Literature', courses: ['Bachelor of Arts (English & Communication)','Bachelor of Arts (Kiswahili and Communication)','Bachelor of Arts (Literature With IT)','Bachelor of Arts (Literature)','Bachelor of Arts in Linguistics and Literature','Bachelor of Technology (Journalism and Mass Communication)'] },
+      { id: '3C', name: 'Cluster 3C — Hospitality & Food Service', courses: ['Bachelor of Science (Food Service and Hospitality Management)','Bachelor of Science (Food Operations Management)','Bachelor of Science in Hospitality Management','Bachelor of Technology (Institutional Catering and Accommodation)','Bachelor of Technology in Hotel & Hospitality Management','Bachelor of Science in Food Service and Hospitality Management','Bachelor of Travel & Tours Operations Management','Bachelor of Catering & Hotel Management','Bachelor of Hotel and Hospitality Management','Bachelor of Tourism Management','Bachelor of Travel and Tours Operations Management','Bachelor of Science (Hospitality & Tourism Management)','Bachelor of Science (Hospitality Management)','Bachelor of Sustainable Tourism & Hospitality Management','Bachelor of Tourism & Hotel Management','Bachelor of International Tourism Management','Bachelor of Science (Hospitality and Tourism Management)','Bachelor of Science (Tourism Management)','Bachelor of Film Animation','Bachelor of Film Production and Animation'] },
+      { id: '3D', name: 'Cluster 3D — Psychology & Social Work', courses: ['Bachelor of Arts in Counselling Psychology','Bachelor of Psychology','Bachelor of Arts (Sociology and Social Work)','Bachelor of Arts (Social Work)','Bachelor of Social Work','Bachelor of Arts (Philosophy With IT)','Bachelor of Science (Event and Convention Management)','Bachelor of Arts (Political Science With IT)','Bachelor of Arts in Sociology','Bachelor of Arts (Criminology & Security Studies)','Bachelor of Arts in Criminology and Security Studies','Bachelor of Arts (With IT)','Bachelor of Psychology (With IT)','Bachelor of Arts','Bachelor of Science (Counselling Psychology)','Bachelor of Arts (Anthropology)','Bachelor of Arts (Counselling Psychology)','Bachelor of Arts (Philosophy)','Bachelor of Arts (Psychology)','Bachelor of Arts in Philosophy'] },
+      { id: '3E', name: 'Cluster 3E — Fine Art & Criminology', courses: ['Bachelor of Arts (Fine Art With IT)','Bachelor of Science (Graphic Communication and Advertising)','Bachelor of Arts (Fine Arts)','Bachelor of Science (Graphic Comm. & Advertising)','Bachelor of Science in Gaming and Animation Technology','Bachelor of Criminology','Bachelor of Science (Criminology and Security Studies)','Bachelor of Arts (Development Studies)','Bachelor of Arts (Development Studies With IT)','Bachelor of Arts (Gender and Development Studies)','Bachelor of Arts (Gender Studies With IT)','Bachelor of Arts (Criminology and Security Studies)','Bachelor of Arts (Penology Correction and Administration)','Bachelor of Arts in Criminology Criminal Justice and Public Safety','Bachelor of Arts (Criminology and Penology)','Bachelor of Arts (Criminology With IT)','Bachelor of Arts (Peace Education)'] }
+    ]
+  },
+  {
+    id: 'c4', num: '4', name: 'Geospatial & Earth Sciences', icon: '🌍', color: '#10b981', group: 'science',
+    requirements: 'MAT ALT A – C+ | PHY – C+ | GEO – C (PLAIN)',
+    subclusters: [
+      { id: '4A', name: 'Cluster 4A — Geomatic & Geospatial', courses: ['Bachelor of Science (Geomatic & Geospatial Information Systems)','Bachelor of Applied Science (Geo-informatics)','Bachelor of Science (Geospatial Information Science and Remote Sensing)','Bachelor of Science (Geomatic Engineering and Geospatial Information Systems)','Bachelor of Arts (Gender and Development)','Bachelor of Science in Community Resource Management','Bachelor of Arts (Political Science)','Bachelor of Arts in Child Care and Protection'] },
+      { id: '4B', name: 'Cluster 4B — Geophysics & Geospatial Engineering', courses: ['Bachelor of Science (Geospatial Engineering)','Bachelor of Science (Geophysical and Mineralogy)','Bachelor of Science (Meteorology)','Bachelor of Science (Astronomy and Astrophysics)','Bachelor of Science (Geospatial Information Science With IT)','Bachelor of Technology (Geoinformation Technology)','Bachelor of Engineering (Geospatial Engineering)','Bachelor of Science in Geomatic Engineering and Geospatial Information Systems','Bachelor of Science in Mining Physics (Geophysics)','Bachelor of Science in Geophysics','Bachelor of Science (Hydrology and Water Resources Management)','Bachelor of Science (Civil and Structural Engineering)','Bachelor of Science in Civil Engineering','Bachelor of Science (Civil Engineering)','Bachelor of Science (Earth Science With IT)','Bachelor of Science (Geology)','Bachelor of Science (Geophysics)','Bachelor of Technology (Geospatial Engineering Technology)','Bachelor of Science (Geospatial Information Science)','Bachelor of Science in Geospatial Information Science','Bachelor of Science (Spatial Management)'] }
+    ]
+  },
+  {
+    id: 'c5', num: '5', name: 'Engineering & Technology', icon: '⚙️', color: '#f59e0b', group: 'engineering',
+    requirements: 'MAT ALT A – C+ | PHY – C+ | CHE – C+',
+    subclusters: [
+      { id: '5A', name: 'Cluster 5A — Civil & Structural Engineering', courses: ['Bachelor of Engineering (Aeronautical Engineering)','Bachelor of Engineering (Chemical and Process Engineering)','Bachelor of Engineering (Civil & Structural Engineering)','Bachelor of Engineering (Civil Engineering)','Bachelor of Engineering (Electrical and Electronics Engineering)','Bachelor of Engineering (Electrical and Electronic Engineering)','Bachelor of Engineering (Electrical and Telecommunication Engineering)','Bachelor of Engineering (Mechanical & Production Engineering)','Bachelor of Engineering (Mechanical and Production Engineering)','Bachelor of Engineering (Mechanical Engineering)','Bachelor of Engineering (Industrial and Textile Engineering)','Bachelor of Science (Mechatronic Engineering)','Bachelor of Science (Agricultural Engineering)','Bachelor of Science (Telecommunication and Information Engineering)','Bachelor of Science in Telecommunication and Information Engineering'] },
+      { id: '5B', name: 'Cluster 5B — Chemistry & Industrial Sciences', courses: ['Bachelor of Science (Analytical Chemistry With Management)','Bachelor of Science (Industrial Chemistry With Management)','Bachelor of Science in Analytical Chemistry','Bachelor of Science (Analytical Chemistry)','Bachelor of Science (Industrial Chemistry With IT)','Bachelor of Science in Industrial Chemistry','Bachelor of Science (Electrical and Electronic Engineering)','Bachelor of Science (Aerospace Engineering)','Bachelor of Science Chemistry','Bachelor of Science (Petroleum Chemistry)','Bachelor of Technology in Applied Chemistry','Bachelor of Technology (Industrial and Applied Chemistry)','Bachelor of Science in Analytical Chemistry With Computing','Bachelor of Science (Industrial Chemistry)','Bachelor of Science (Mechanical and Industrial Engineering)','Bachelor of Science in Mechanical Engineering','Bachelor of Science (Mechanical Engineering)','Bachelor of Science in Electrical and Electronics Engineering','Bachelor of Engineering (Chemical Engineering)','Bachelor of Science (Electrical & Electronics Engineering)','Bachelor of Science (Marine Engineering)','Bachelor of Science in Water and Environmental Engineering','Bachelor of Science in Marine Engineering','Bachelor of Science (Mechanical & Manufacturing Engineering)','Bachelor of Science (Electrical and Communication Engineering)','Bachelor of Science (Electronic and Computer Engineering)','Bachelor of Science in Electronic and Computer Engineering','Bachelor of Science (Petroleum Engineering)','Bachelor of Science in Mining and Mineral Process Engineering'] },
+      { id: '5C', name: 'Cluster 5C — Renewable Energy & Control', courses: ['Bachelor of Science (Control and Instrumentation)','Bachelor of Science Instrumentation & Control','Bachelor of Science in Control and Instrumentation','Bachelor of Science (Microprocessor Technology and Instrumentation)','Bachelor of Science (Instrumentation & Control Engineering)','Bachelor of Science (Manufacturing Engineering & Technology)','Bachelor of Science (Applied Optics and Lasers)','Bachelor of Science (Electronics)','Bachelor of Science (Telecommunication & Information Technology)','Bachelor of Science (Renewable Energy and Technology)','Bachelor of Science in Renewable Energy and Technology','Bachelor of Technology in Renewable Energy & Environmental Physics','Bachelor of Technology (Chemical Engineering)','Bachelor of Science (Renewable Energy and Bio-fuels Technology)','Bachelor of Science (Renewable Energy and Biofuels Technology)','Bachelor of Science (Renewable Energy and Environmental Physics)','Bachelor of Science in Renewable Energy and Environmental Physics','Bachelor of Science (Renewable Energy)','Bachelor of Science (Renewable Energy Technology and Management)','Bachelor of Science (Energy Technology)'] },
+      { id: '5D', name: 'Cluster 5D — Agricultural & Biosystems Engineering', courses: ['Bachelor of Science (Agricultural and Biosystems Engineering)','Bachelor of Engineering (Agricultural & Bio-systems Engineering)','Bachelor of Science (Agricultural & Bio-systems Engineering)','Bachelor of Science in Agricultural and Biosystems Engineering'] },
+      { id: '5E', name: 'Cluster 5E — Technology & Applied Sciences', courses: ['Bachelor of Technology (Civil Engineering Technology)','Bachelor of Technology in Electrical and Electronic Engineering','Bachelor of Technology in Medical Engineering','Bachelor of Industrial Technology','Bachelor of Science Engineering Physics','Bachelor of Science in Engineering Physics','Bachelor of Science (Applied Bioengineering)','Bachelor of Science in Applied Bioengineering','Bachelor of Science (Biomedical Engineering)'] },
+      { id: '5F', name: 'Cluster 5F — Technology Education', courses: ['Bachelor of Education in Technology (Mechanical Engineering)','Bachelor of Education in Technology (Electrical & Electronics Engineering)','Bachelor of Education in Technology (Civil Engineering)','Bachelor of Education Technical and Vocational Education','Bachelor of Education (Technology)'] }
+    ]
+  },
+  {
+    id: 'c6', num: '6', name: 'Architecture, Planning & Built Environment', icon: '🏛️', color: '#ec4899', group: 'science',
+    requirements: 'MAT ALT A – C+ | PHY – C+',
+    subclusters: [
+      { id: '6A', name: 'Cluster 6A — Architecture & Quantity Surveying', courses: ['Bachelor of Architectural Studies','Bachelor of Architecture','Bachelor of Architectural Technology','Bachelor of Landscape Architecture','Bachelor of Quantity Surveying','Bachelor of Science (Quantity Surveying)'] },
+      { id: '6B', name: 'Cluster 6B — Planning & Construction', courses: ['Bachelor of Arts (Planning)','Bachelor of Arts (Spatial Planning)','Bachelor of Arts (Design)','Bachelor of Technology (Design)','Bachelor of Technology (Building Construction)','Bachelor of Construction Management','Bachelor of Science (Construction Management)','Bachelor of The Built Environment (Construction Management)','Bachelor of The Built Environment (Urban and Regional Planning)','Bachelor of Arts (Urban and Regional Planning With IT)','Bachelor of Science (Urban Design and Development)','Bachelor of Education (Technology Education)'] },
+      { id: '6C', name: 'Cluster 6C — Real Estate & Land', courses: ['Bachelor of Real Estate','Bachelor of Science (Real Estate)','Bachelor of Technology (Real Estate and Property Management)','Bachelor of Science (Land Administration)'] }
+    ]
+  },
+  {
+    id: 'c7', num: '7', name: 'Computer Science & IT', icon: '💻', color: '#3b82f6', group: 'science',
+    requirements: 'MAT ALT A – C+ | PHY – C+',
+    subclusters: [
+      { id: '7A', name: 'Cluster 7A — Computer Science', courses: ['Bachelor of Science (Computer Science)','Bachelor of Science in Computer Science','Bachelor of Science (Applied Computer Science)','Bachelor of Science in Applied Computer Science','Bachelor of Technology (Computer Technology)','Bachelor of Science in Computer Information Systems','Bachelor of Science in Software Engineering','Bachelor of Science (Computer Technology)','Bachelor of Science (Mathematics & Computer Science)','Bachelor of Science (Mathematics and Computer Science)','Bachelor of Science in Mathematics & Computer Science','Bachelor of Science (Maths and Computer Science)','Bachelor of Science in Applied Physics and Computer Science','Bachelor of Science (Computer Security and Forensics)','Bachelor of Science in Computer Security and Forensics','Bachelor of Science in Mathematics and Computer Science'] },
+      { id: '7B', name: 'Cluster 7B — Statistics & Applied Mathematics', courses: ['Bachelor of Science (Applied Statistics With Computing)','Bachelor of Science in Applied Statistics With Computing','Bachelor of Science (Mathematics and Computing)','Bachelor of Science (Statistics & Programming)','Bachelor of Science (Informatics)','Bachelor of Science (Biometry and Informatics)','Bachelor of Science (Applied Statistics With Programming)','Bachelor of Science in Statistics and Programming','Bachelor of Science (Informatics and Mathematics)','Bachelor of Science in Informatics','Bachelor of Science Statistics and Information Technology'] },
+      { id: '7C', name: 'Cluster 7C — Information Technology', courses: ['Bachelor of Information Technology','Bachelor of Science (Information Technology)','Bachelor of Science (Business Computing)','Bachelor of Science in Business Computing','Bachelor of Applied Computer Science','Bachelor of Science in Computer Technology','Bachelor of Science in Information Technology','Bachelor of Technology (Information Technology)','Bachelor of Technology in Information Technology','Bachelor of Science (Information and Communication Technology)','Bachelor of Technology in Information & Communication Technology','Bachelor of Technology (Communication and Computer Networks)'] }
+    ]
+  },
+  {
+    id: 'c8', num: '8', name: 'Agriculture & Agribusiness', icon: '🌾', color: '#10b981', group: 'science',
+    requirements: 'MAT ALT A – C (PLAIN) | BIO – C (PLAIN)',
+    subclusters: [
+      { id: '8A', name: 'Cluster 8A — Agricultural Economics', courses: ['Bachelor of Science (Agribusiness)','Bachelor of Agribusiness Management','Bachelor of Science (Agribusiness Management)','Bachelor of Science Agribusiness Management','Bachelor of Science in Agricultural Economics','Bachelor of Science in Agricultural Resource Management','Bachelor of Science (Agribusiness Management With IT)','Bachelor of Science (Agricultural Economics and Rural Development)','Bachelor of Science in Agricultural Economics and Rural Development','Bachelor of Science (Agricultural Economics and Resource Management)','Bachelor of Science (Agricultural Economics)','Bachelor of Science (Agriculture Economics & Resource Management)','Bachelor of Science (Agricultural Resource Management)','Bachelor of Science in Agribusiness Management and Marketing','Bachelor of Science in Agribusiness Management','Bachelor of Science in Agricultural Resource Economics and Management','Bachelor of Science Agribusiness Management and Enterprise Development','Bachelor of Science (Agribusiness Management)','Bachelor of Science (Agri Business Management)','Bachelor of Science (Agribusiness Management & Trade)','Bachelor of Science in Agribusiness Management and Trade','Bachelor of Science (Agricultural Economics & Resource Management)','Bachelor of Science (Agricultural Economics With IT)','Bachelor of Science (Agribusiness Economics and Food Industry Management)'] }
+    ]
+  },
+  {
+    id: 'c9', num: '9', name: 'Pure & Applied Sciences', icon: '🔬', color: '#8b5cf6', group: 'science',
+    requirements: 'MAT ALT A – C (PLAIN) | Various science subjects',
+    subclusters: [
+      { id: '9A', name: 'Cluster 9A — General Sciences', courses: ['Bachelor of Science','Bachelor of Science (Basic Science With IT)','Bachelor of Science (B.sc)'] },
+      { id: '9B', name: 'Cluster 9B — Biological Sciences', courses: ['Bachelor of Science in Biology','Bachelor of Science (Biological Sciences)','Bachelor of Science (Microbiology and Biotechnology)','Bachelor of Science in Microbiology and Biotechnology','Bachelor of Science in Microbiology','Bachelor of Science (Applied Biology)','Bachelor of Science in Applied Biology','Bachelor of Technology (Applied Biology)','Bachelor of Technology in Industrial Microbiology & Biotechnology','Bachelor of Science (Biochemistry and Molecular Biology)','Bachelor of Science in Biochemistry','Bachelor of Science (Medical Biochemistry)','Bachelor of Science in Medical Biochemistry','Bachelor of Science in Biosciences','Bachelor of Science (Biochemistry)','Bachelor of Science (Microbiology)','Bachelor of Science in Genomic Science','Bachelor of Science in Biology (Botany or Zoology Option)','Bachelor of Science (Zoology)','Bachelor of Science in Zoology','Bachelor of Science in Molecular Biology and Forensic Technology','Bachelor of Science (Cellular and Molecular Biology)','Bachelor of Science (Molecular & Cellular Biology)','Bachelor of Science (Conservation Biology)','Bachelor of Science (Genomic Sciences)','Bachelor of Science (Forensic Biology)','Bachelor of Science in Entomology and Parasitology','Bachelor of Science in Biotechnology','Bachelor of Science (Biotechnology)','Bachelor of Science (Botany)','Bachelor of Science in Medical Microbiology','Bachelor of Science in Biochemistry and Molecular Biology'] },
+      { id: '9C', name: 'Cluster 9C — Physics', courses: ['Bachelor of Science (Physics)','Bachelor of Science in Physics','Bachelor of Science (Physics With IT)','Bachelor of Technology (Technical and Applied Physics)','Bachelor of Technology in Applied Physics (Electronics & Instrumentation)'] },
+      { id: '9D', name: 'Cluster 9D — Chemistry', courses: ['Bachelor of Science (Chemistry)','Bachelor of Science in Chemistry','Bachelor of Science (Environmental Chemistry)','Bachelor of Science Industrial Biotechnology','Bachelor of Technology (Biotechnology)','Bachelor of Science in Biotechnology and Biosafety','Bachelor of Science (Forensic Science)'] }
+    ]
+  },
+  {
+    id: 'c10', num: '10', name: 'Economics, Finance & Mathematics', icon: '📊', color: '#f97316', group: 'business',
+    requirements: 'MAT ALT A – C+',
+    subclusters: [
+      { id: '10A', name: 'Cluster 10A — Accountancy', courses: ['Bachelor of Science (Accountancy)'] },
+      { id: '10B', name: 'Cluster 10B — Economics & Finance', courses: ['Bachelor of Economics','Bachelor of Science in Finance','Bachelor of Science (Finance)','Bachelor of Science (Mathematics and Economics)','Bachelor of Arts (History and Economics)','Bachelor of Science in Mathematics and Economics','Bachelor of Science (Mathematics & Business Studies With IT)','Bachelor of Economics & Finance','Bachelor of Economics and Statistics','Bachelor of Science (Economics and Statistics)','Bachelor of Science (Economics & Statistics)','Bachelor of Science in Economics','Bachelor of Science in Economics & Statistics','Bachelor of Economics & Statistics','Bachelor of Economics (Economics & Finance With IT)','Bachelor of Economics and Finance','Bachelor of Arts (Economics With IT)','Bachelor of Arts (History & Economics)','Bachelor of Arts (Economics and Sociology)','Bachelor of Arts in Economics and Sociology','Bachelor of Arts (Economics)','Bachelor of Arts in Economics','Bachelor of Science (Financial Engineering)','Bachelor of Science in Financial Economics','Bachelor of Science (Mathematics & Economics With IT)','Bachelor of Science (Operations Research)'] },
+      { id: '10C', name: 'Cluster 10C — Actuarial & Mathematical Sciences', courses: ['Bachelor of Actuarial Science','Bachelor of Science in Actuarial Science','Bachelor of Science (Actuarial Science)','Bachelor of Science (Actuarial Science With IT)','Bachelor of Science (Financial Engineering)','Bachelor of Science in Mathematics and Finance','Bachelor of Science (Mathematics)','Bachelor of Technology (Applied Statistics)','Bachelor of Science in Mathematics','Bachelor of Science (Statistics)','Bachelor of Science (Applied Statistics With IT)','Bachelor of Science (Applied Statistics)','Bachelor of Science in Applied Statistics','Bachelor of Science (Industrial Mathematics)','Bachelor of Science (Mathematical Sciences With IT)','Bachelor of Science in Mathematics and Finance and Statistics)','Bachelor of Science in Mathematics (Pure Mathematics Applied Mathematics)'] }
+    ]
+  }
+];
+const clusters_part2 = [
+  {
+    id: 'c11', num: '11', name: 'Fashion, Design & Sports', icon: '👗', color: '#ec4899', group: 'arts',
+    requirements: 'CHE – C (PLAIN) | Various combinations',
+    subclusters: [
+      { id: '11A', name: 'Cluster 11A — Fashion & Design', courses: ['Bachelor of Arts (Interior Design With IT)','Bachelor of Arts (Textiles Apparel Design and Fashion Merchandising With IT)','Bachelor of Science (Apparel & Fashion Technology)','Bachelor of Science (Clothing Textile & Interior Design)','Bachelor of Science (Fashion Design & Marketing)','Bachelor of Science (Fashion Design and Textile Technology)','Bachelor of Science in Fashion Design and Marketing'] },
+      { id: '12A', name: 'Cluster 12A — Sports Science', courses: ['Bachelor of Science (Health Promotion and Sports Science)','Bachelor of Science (Exercise & Sport Science)','Bachelor of Science (Recreation and Sports Management)','Bachelor of Sports Science & Management','Bachelor of Sports Management'] }
+    ]
+  },
+  {
+    id: 'c13', num: '13', name: 'Medicine, Health & Nursing', icon: '🏥', color: '#10b981', group: 'health',
+    requirements: 'BIO – B (PLAIN) | CHE – B (PLAIN) | MAT ALT A/PHY – B (PLAIN)',
+    subclusters: [
+      { id: '13A', name: 'Cluster 13A — Medicine & Dentistry', courses: ['Bachelor of Dental Surgery','Bachelor of Medicine & Bachelor of Surgery','Bachelor of Medicine & Bachelor of Surgery (M.B.Ch.B)','Bachelor of Medicine and Bachelor of Surgery','Bachelor of Medicine and Bachelor of Surgery (M.B.Ch.B)','Bachelor of Medicine and Bachelor of Surgery (With IT)'] },
+      { id: '13B', name: 'Cluster 13B — Pharmacy & Nursing', courses: ['Bachelor of Pharmacy','Bachelor of Science (Pharmaceutical Sciences With IT)','Bachelor of Science (Nursing With IT)','Bachelor of Science (Nursing)','Bachelor of Science in Nursing','Bachelor of Science (Nursing Science)','Bachelor of Science (Medical Laboratory Science & Technology)','Bachelor of Science (Medical Laboratory Sciences)','Bachelor of Science (Medical Laboratory)'] },
+      { id: '13C', name: 'Cluster 13C — Clinical Medicine & Public Health', courses: ['Bachelor of Technology (Community and Public Health)','Bachelor of Science (Occupational Health & Safety)','Bachelor of Science in Medical Laboratory Sciences','Bachelor of Technology (Medical Laboratory Science)','Bachelor of Science in Clinical Medicine and Community Health','Bachelor of Science Clinical Medicine','Bachelor of Science in Clinical Medicine Surgery and Community Health','Bachelor of Science in Public Health','Bachelor of Science in Midwifery with Reproductive Health','Bachelor of Science (Environmental Health)','Bachelor of Science in Environmental Health','Bachelor of Science in Environmental Health Sciences (Public Health)','Bachelor of Science (Optometry and Vision Sciences)','Bachelor of Science (Physical Therapy)','Bachelor of Physiotherapy','Bachelor of Science in Physiotherapy','Bachelor of Science (Public Health With IT)','Bachelor of Science in Public Health','Bachelor of Science (Public Health)'] },
+      { id: '13D', name: 'Cluster 13D — Veterinary Medicine', courses: ['Bachelor of Veterinary Medicine'] },
+      { id: '13E', name: 'Cluster 13E — Community & Population Health', courses: ['Bachelor of Science (Biostatistics)','Bachelor of Science in Biostatistics','Bachelor of Science in Epidemiology and Biostatistics','Bachelor of Science in Community Health','Bachelor of Science in Global Health and Emporiatrics','Bachelor of Science in Health Systems Management','Bachelor of Health Services Management','Bachelor of Science in Occupational Therapy','Bachelor of Population Health','Bachelor of Science (Community Health and Development)','Bachelor of Science in Community Health and Development','Bachelor of Science in Community Health Education','Bachelor of Science (Population Health)','Bachelor of Science (Community Health & Development)','Bachelor of Science (Health Records and Informatics)','Bachelor of Science in Health Records and Information Management','Bachelor of Science (Health Records & Information Management)','Bachelor of Science (Health Records and Information Management with IT)','Bachelor of Science in Health Records Management & Informatics','Bachelor of Science (Medical Psychology)'] },
+      { id: '13F', name: 'Cluster 13F — Biomedical Sciences', courses: ['Bachelor of Science (Biomedical Science and Technology)','Bachelor of Science in Biomedical Science and Technology','Bachelor of Science (Biomedical Science & Technology)','Bachelor of Science (Laboratory Sciences)','Bachelor of Technology (Science Laboratory Technology)'] },
+      { id: '13G', name: 'Cluster 13G — Nutrition & Dietetics', courses: ['Bachelor of Science (Food Nutrition and Dietetics)','Bachelor of Science in Food Nutrition and Dietetics','Bachelor of Science (Food Science and Nutrition)','Bachelor of Science in Food Science and Nutrition','Bachelor of Science (Nutrition and Dietetics With IT)','Bachelor of Science in Human Nutrition and Dietetics','Bachelor of Science (Food Nutrition & Dietetics)','Bachelor of Technology (Nutrition and Dietetics)','Bachelor of Science (Food Science & Nutrition)','Bachelor of Science (Human Nutrition and Dietetics)','Bachelor of Science (Food, Nutrition & Dietetics)'] }
+    ]
+  },
+  {
+    id: 'c14', num: '14', name: 'History & Social Development', icon: '📜', color: '#64748b', group: 'arts',
+    requirements: 'HAG – C+ | ENG/KIS',
+    subclusters: [
+      { id: '14A', name: 'Cluster 14A — History & Social Sciences', courses: ['Bachelor of Arts History and Archaeology)','Bachelor of Arts (History)','Bachelor of Arts (History and Archaeology With IT)','Bachelor of Arts in History & International Studies','Bachelor of Arts (Social Work)','Bachelor of Social Work and Administration','Bachelor of Arts (Sociology and Anthropology With IT)','Bachelor of Conflict Resolution and Humanitarian Assistance','Bachelor of Arts (Sociology)','Bachelor of Science in Sociology','Bachelor of Science in Public Administration and Leadership','Bachelor of Science (Disaster Mitigation and Sustainable Development)','Bachelor of Science in Medical Social Work','Bachelor of Science (Disaster Risk Management and Sustainable Development)','Bachelor of Arts (Disaster Management With IT)','Bachelor of Disaster Management & International Diplomacy','Bachelor of Arts in Community Development','Bachelor of Science (Disaster Preparedness and Environment Technology)','Bachelor of Arts (Peace and Conflict Studies)','Bachelor of Arts Community Development','Bachelor of Community Development','Bachelor of Development Studies','Bachelor of Arts in Development Studies','Bachelor of Arts (Gender)','Bachelor of Science (Community Development)','Bachelor of Science in Community Development','Bachelor of Science (Public Management and Development)','Bachelor of Public Management and Development','Bachelor of Science in Development Studies','Bachelor of Arts (Developmental and Policy Studies)','Bachelor of Arts in Management','Bachelor of Arts in Leadership and Philosophy','Bachelor of Science (Community Development and Environment)','Bachelor of Community Development and Environment','Bachelor of Science (Community Resource Management)'] }
+    ]
+  },
+  {
+    id: 'c15', num: '15', name: 'Agriculture, Environment & Natural Resources', icon: '🌿', color: '#10b981', group: 'science',
+    requirements: 'BIO – C+ | Various combinations',
+    subclusters: [
+      { id: '15A', name: 'Cluster 15A — Animal Health & Production', courses: ['Bachelor of Science (Animal Health & Production)','Bachelor of Science (Animal Health and Production)','Bachelor of Science (Animal Health Production & Processing)','Bachelor of Science (Animal Production & Health Management)','Bachelor of Science in Animal Health Management','Bachelor of Science in Animal Production','Bachelor of Science in Applied Animal Laboratory Science'] },
+      { id: '15B', name: 'Cluster 15B — Animal Science', courses: ['Bachelor of Science (Animal Science & Management)','Bachelor of Science (Animal Science With IT)','Bachelor of Science in Animal Science','Bachelor of Science in Animal Science & Technology','Bachelor of Science in Animal Products Technology'] },
+      { id: '15E', name: 'Cluster 15E — Food Science & Technology', courses: ['Bachelor of Science (Food Processing Technology)','Bachelor of Science in Food Science & Technology','Bachelor of Science (Food Science & Technology)','Bachelor of Science (Food Science and Management)','Bachelor of Science (Food Science and Technology)','Bachelor of Science (Food Security)','Bachelor of Science in Food Technology & Quality Assurance','Bachelor of Science in Maritime Management (Commercial)','Bachelor of Science (Applied Aquatic Science)','Bachelor of Science (Fisheries & Aquatic Sciences)','Bachelor of Science in Aquaculture and Fisheries Technology','Bachelor of Science in Fisheries and Oceanography','Bachelor of Science in Marine Resource Management','Bachelor of Science (Coastal & Marine Resource Management)','Bachelor of Science (Marine Biology & Fisheries)','Bachelor of Science (Fisheries and Aquaculture Management)','Bachelor of Science (Fisheries and Aquaculture With IT)','Bachelor of Science Fisheries Management and Aquaculture Technology','Bachelor of Science in Fisheries and Aquaculture'] },
+      { id: '15F', name: 'Cluster 15F — Environmental Science', courses: ['Bachelor of Technology (Environmental Resource Management)','Bachelor of Science (Environmental Management)','Bachelor of Science (Environmental Science With IT)','Bachelor of Science (Environmental Science)','Bachelor of Science in Environmental Science and Technology','Bachelor of Science (Environmental Sciences)','Bachelor of Environmental Studies (Community Development)','Bachelor of Science (Agriculture and Biotechnology)','Bachelor of Science (Bio-resources Management and Conservation)','Bachelor of Environmental Planning & Development Management','Bachelor of Environmental Studies and Community Development','Bachelor of Science in Environment Lands and Sustainable Development','Bachelor of Science in Natural Resources','Bachelor of Science (Natural Resource Management)','Bachelor of Science in Natural Resources Management','Bachelor of Environmental (Environmental Resource Conservation)','Bachelor of Environmental Science','Bachelor of Environmental Studies','Bachelor of Science in Environmental Studies','Bachelor of Environmental Studies (Arts)','Bachelor of Environmental Studies (Science)','Bachelor of Science in Environmental Science','Bachelor of Environmental Education'] },
+      { id: '15G', name: 'Cluster 15G — Agriculture & Forestry', courses: ['Bachelor of Science (Natural Resources Management)','Bachelor of Science (Environmental Horticulture & Landscaping Technology)','Bachelor of Science (Forestry)','Bachelor of Science (Horticulture)','Bachelor of Science in Horticulture','Bachelor of Science in Horticultural Science & Management','Bachelor of Science Horticulture','Bachelor of Science (Wildlife Enterprises & Management)','Bachelor of Science in Wildlife Enterprise & Management','Bachelor of Science (Dryland Agriculture & Enterprise Development)','Bachelor of Science in Natural Resource Management','Bachelor of Science (Dryland Animal Science)','Bachelor of Science in Soil Environment & Land Use Management)','Bachelor of Science (Seed Science & Technology)','Bachelor of Science (Nutraceutical Science and Technology)','Bachelor of Science (Agroforestry & Rural Development)','Bachelor of Science in Nutraceutical Science and Technology','Bachelor of Science (Aquatic Resources Conservation and Development With IT)','Bachelor of Science (Utilization & Sustainability of Arid Lands (Usal))','Bachelor of Science in Agriculture','Bachelor of Science (Wildlife Management)','Bachelor of Science (Agricultural Biotechnology)','Bachelor of Science (Horticultural Science & Management)','Bachelor of Science (Horticulture With IT)','Bachelor of Science (Range Management)','Bachelor of Science (Bio-resources Management and Conservation)','Bachelor of Science (Integrated Forest Resources Management)','Bachelor of Science (Natural Products)','Bachelor of Science (Climate Change and Development With IT)','Bachelor of Science (Crop Improvement & Protection)','Bachelor of Science (Waste Management)','Bachelor of Science (Water Resource Management)','Bachelor of Science in Ethno botany','Bachelor of Science (Agriculture & Human Ecology Extension)','Bachelor of Science (Agriculture and Enterprise Development)','Bachelor of Science (Dairy Technology & Management)','Bachelor of Science (Leather Technology)','Bachelor of Science (Soil Science)','Bachelor of Science (Soils & Land Use Management)','Bachelor of Science (Water and Environment Management)','Bachelor of Science (Wood Science and Industrial Processes)','Bachelor of Science in Water and Environment Management','Bachelor of Science (Land Resource Management)','Bachelor of Science (Dryland Agriculture)','Bachelor of Science (Wildlife Management)'] }
+    ]
+  },
+  {
+    id: 'c16', num: '16', name: 'Geography & Natural Resources', icon: '🗺️', color: '#06b6d4', group: 'science',
+    requirements: 'GEO – C+ | MAT ALT A/B',
+    subclusters: [
+      { id: '16A', name: 'Cluster 16A — Geography', courses: ['Bachelor of Arts (Geography)','Bachelor of Science (Geography)','Bachelor of Arts (Geography and Economics)','Bachelor of Arts (Kiswahili and Geography)','Bachelor of Science (Geography and Natural Resource Management With IT)','Bachelor of Science (Environmental Conservation and Natural Resources Management)','Bachelor of Science (Land Resource Planning & Management)','Bachelor of Science (Agronomy With IT)','Bachelor of Science in Land Resource Planning & Management','Bachelor of Arts (Planning)'] }
+    ]
+  },
+  {
+    id: 'c17', num: '17', name: 'French & German', icon: '🌐', color: '#8b5cf6', group: 'arts',
+    requirements: 'FRE/GER – C+ | ENG/KIS',
+    subclusters: [
+      { id: '17A', name: 'Cluster 17A — Foreign Languages', courses: ['Bachelor of Arts (French)','Bachelor of Arts (French With IT)','Bachelor of Arts (German)'] }
+    ]
+  },
+  {
+    id: 'c18', num: '18', name: 'Music', icon: '🎵', color: '#f59e0b', group: 'arts',
+    requirements: 'MUS – C+ | ENG/KIS',
+    subclusters: [
+      { id: '18A', name: 'Cluster 18A — Music', courses: ['Bachelor of Arts (Music)','Bachelor of Arts (Music With IT)','Bachelor of Music','Bachelor of Music (Technology)'] }
+    ]
+  },
+  {
+    id: 'c19', num: '19', name: 'Education', icon: '🎓', color: '#3b82f6', group: 'education',
+    requirements: 'Various combinations – C+',
+    subclusters: [
+      { id: '19A', name: 'Cluster 19A — Science Education', courses: ['Bachelor of Science with Education','Bachelor of Education (Science)','Bachelor of Education (Science With IT)','Bachelor of Education (Science with IT)'] },
+      { id: '19B', name: 'Cluster 19B — Arts Education', courses: ['Bachelor of Education (Arts)','Bachelor of Education (Early Childhood Development Education)','Bachelor of Education (Early Childhood Development)','Bachelor of Education (Early Childhood Education)','Bachelor of Education (Early Childhood Education With IT)','Bachelor of Education (Early Childhood)','Bachelor of Education in Early Childhood Education','Bachelor of Education (Library Science)','Bachelor of Education Arts','Bachelor of Education (Early Childhood and Primary Education)','Bachelor of Arts (With Education)','Bachelor of Education (Arts) With Guidance and Counselling','Bachelor of Education (Arts With IT)','Bachelor of Education (Home Science and Technology)','Bachelor of Education (Guidance and Counselling)','Bachelor of Education Arts (Home Economics)'] },
+      { id: '19D', name: 'Cluster 19D — Physical Education', courses: ['Bachelor of Education (Physical Education and Sports)','Bachelor of Education (Physical Education)'] },
+      { id: '19E', name: 'Cluster 19E — Special Needs & Visual Arts', courses: ['Bachelor of Education (Special Needs Education - Secondary Option)','Bachelor of Education (Special Needs Education)','Bachelor of Education (Visual and Performing Arts)'] },
+      { id: '19F', name: 'Cluster 19F — French Education', courses: ['Bachelor of Education (French)','Bachelor of Education (French With IT)'] },
+      { id: '19G', name: 'Cluster 19G — Business Studies Education', courses: ['Bachelor of Education Arts(Business Studies)'] },
+      { id: '19H', name: 'Cluster 19H — Fine Arts Education', courses: ['Bachelor of Education (Arts) Fine Art'] },
+      { id: '19I', name: 'Cluster 19I — Music Education', courses: ['Bachelor of Education (Music)','Bachelor of Education (Music With IT)','Bachelor of Education (German)','Bachelor of Education (Arts) German'] },
+      { id: '19J', name: 'Cluster 19J — Agricultural Education', courses: ['Bachelor of Agricultural Education & Extension','Bachelor of Agricultural Education and Extension','Bachelor of Science in Agricultural Extension','Bachelor of Science (Agriculture Education and Extension)','Bachelor of Science Agricultural Extension and Education','Bachelor of Science (Agricultural Extension Education)','Bachelor of Science (Agricultural Education & Extension)','Bachelor of Science (Agricultural Extension and Education)','Bachelor of Science (Agriculture Education & Extension)','Bachelor of Science (Agriculture Education and Extension With IT)'] },
+      { id: '19K', name: 'Cluster 19K — Computer Studies Education', courses: ['Bachelor of Education (Computer Studies)','Bachelor of Education (ICT)','Bachelor of Education (Agriculture)'] }
+    ]
+  },
+  {
+    id: 'c20', num: '20', name: 'Religious Studies & Theology', icon: '✝️', color: '#64748b', group: 'arts',
+    requirements: 'CRE/IRE/HRE – C+ | ENG/KIS – C (PLAIN)',
+    subclusters: [
+      { id: '20A', name: 'Cluster 20A — Religion & Theology', courses: ['Bachelor of Arts (Religion With IT)','Bachelor of Arts in Sociology and Religious Studies','Bachelor of Arts (Religious Studies)','Bachelor of Arts (Theology With IT)','Bachelor of Arts (Sociology & Religion)','Bachelor of Theology','Bachelor of Arts in Intercultural Studies','Bachelor of Arts in Biblical Studies','Bachelor of Arts in Islamic Studies','Bachelor of Arts in Church Education Ministries','Bachelor of Arts in Islamic Sharia','Bachelor of Arts in Christian Ministries'] }
+    ]
+  }
+];
+
+const clusters = [...clusters_part1, ...clusters_part2];
+
+let activeGroup = 'all';
+let searchQuery = '';
+
+function highlight(text, query) {
+  if (!query) return text;
+  const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re, '<mark>$1</mark>');
+}
+
+function countAllCourses() {
+  let total = 0;
+  clusters.forEach(c => c.subclusters.forEach(s => total += s.courses.length));
+  return total;
+}
+
+function buildSidebar() {
+  const nav = document.getElementById('clusterNav');
+  nav.innerHTML = clusters.map(c => `
+    <div class="cluster-item" id="nav-${c.id}" onclick="scrollToCluster('${c.id}')">
+      <span class="cluster-dot" style="background:${c.color}"></span>
+      <span class="cluster-name">${c.num}. ${c.name}</span>
+      <span class="cluster-count">${c.subclusters.reduce((a,s)=>a+s.courses.length,0)}</span>
+    </div>
+  `).join('');
+}
+
+function scrollToCluster(id) {
+  const el = document.getElementById(`section-${id}`);
+  if (el) { el.scrollIntoView({behavior:'smooth', block:'start'}); }
+  document.querySelectorAll('.cluster-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(`nav-${id}`)?.classList.add('active');
+}
+
+function render() {
+  const content = document.getElementById('content');
+  const csrfToken = document.querySelector('#csrf-form input[name="csrfmiddlewaretoken"]').value;
+  let totalVisible = 0;
+
+  const html = clusters.map(c => {
+    if (activeGroup !== 'all' && c.group !== activeGroup) return '';
+
+    const subclustersHtml = c.subclusters.map((s, sIndex) => {
+      const filtered = s.courses.filter(course =>
+        !searchQuery || course.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      if (filtered.length === 0) return '';
+      totalVisible += filtered.length;
+
+      return `
+        <div class="subcluster">
+          <div class="subcluster-header">
+            <span class="subcluster-title">${s.id} — ${s.name.replace(/^Cluster \\w+ — /,'')}</span>
+            <div class="subcluster-line"></div>
+            <span style="font-size:11px;color:var(--muted)">${filtered.length} programmes</span>
+          </div>
+          <div class="course-grid">
+            ${filtered.map((course, cIndex) => {
+              const safeCourseName = course.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+              const safeInstName = c.name.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+              return `
+                <div class="course-card">
+                  <div class="course-name">${highlight(course, searchQuery)}</div>
+                  <div id="add-btn-${c.id}-${sIndex}-${cIndex}" class="mt-2 text-center">
+                    <form hx-post="/unismart/add-to-cart/"
+                          hx-target="#add-btn-${c.id}-${sIndex}-${cIndex}"
+                          hx-swap="innerHTML"
+                          onsubmit="event.stopPropagation();">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                        <input type="hidden" name="course_name" value="${safeCourseName}">
+                        <input type="hidden" name="institution" value="${safeInstName}">
+                        <input type="hidden" name="course_code" value="">
+                        <button class="add-btn w-100 m-0" type="submit">
+                            <i class="fas fa-plus me-1"></i> Add to Selection
+                        </button>
+                    </form>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (!subclustersHtml.trim()) return '';
+
+    return `
+      <div class="cluster-section" id="section-${c.id}">
+        <div class="cluster-header">
+          <div class="cluster-icon" style="background:${c.color}22;border:1px solid ${c.color}33">${c.icon}</div>
+          <div class="cluster-header-text">
+            <h2>Cluster ${c.num}: ${c.name}</h2>
+            <p>${c.subclusters.reduce((a,s)=>a+s.courses.length,0)} programmes in this cluster</p>
+          </div>
+        </div>
+        <div class="req-badge">
+          📋 ${c.requirements}
+        </div>
+        ${subclustersHtml}
+      </div>
+    `;
+  }).join('');
+
+  content.innerHTML = html || `
+    <div class="empty">
+      <h3>No programmes found</h3>
+      <p>Try a different search term or filter</p>
+    </div>
+  `;
+
+  document.getElementById('resultsCount').textContent = `${totalVisible} programmes`;
+  
+  if (window.htmx) {
+      window.htmx.process(content);
+  }
+}
+
+function filterAll(btn) {
+  activeGroup = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function filterGroup(group, btn) {
+  activeGroup = group;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  searchQuery = this.value.trim();
+  render();
+});
+
+// Init
+document.getElementById('totalCourses').textContent = countAllCourses();
+buildSidebar();
+render();

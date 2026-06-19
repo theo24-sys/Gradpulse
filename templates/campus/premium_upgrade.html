@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  body {
+    background: #f8f9fa;
+  }
+  .upgrade-container {
+    max-width: 800px;
+    margin: 60px auto;
+  }
+  .premium-card {
+    background: linear-gradient(135deg, #112a20 0%, #1a4233 100%);
+    border-radius: 24px;
+    color: white;
+    box-shadow: 0 20px 40px rgba(17,42,32,0.15);
+    overflow: hidden;
+  }
+  .feature-list li {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+  .feature-list li i {
+    color: #ffd700;
+    margin-right: 12px;
+    font-size: 18px;
+  }
+  .mock-payment-btn {
+    background: #ffd700;
+    color: #111;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 30px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .mock-payment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container upgrade-container">
+  <div class="text-center mb-5">
+    <a href="{% url 'simulations_list' %}" class="text-muted text-decoration-none d-inline-block mb-3">
+      <i class="fa fa-arrow-left me-2"></i> Back to simulations
+    </a>
+    <h2 class="display-5 fw-bold" style="font-family: 'DM Serif Display', serif;">Upgrade to GradPulse Premium</h2>
+    <p class="text-muted lead">Unlock full access to interactive scenarios, early job placements, and AI insights.</p>
+  </div>
+
+  <div class="row g-0 premium-card">
+    <div class="col-md-6 p-5 border-end border-white border-opacity-10 d-flex flex-column justify-content-center">
+      <h3 class="fw-bold mb-4" style="font-family: 'DM Serif Display', serif;">Premium Features</h3>
+      <ul class="list-unstyled feature-list mb-0">
+        <li><i class="fa fa-check-circle"></i> Unlimited Scenario Simulations</li>
+        <li><i class="fa fa-check-circle"></i> AI Transcript Auto-Extraction</li>
+        <li><i class="fa fa-check-circle"></i> Priority application routing to top employers</li>
+        <li><i class="fa fa-check-circle"></i> Exclusive VIP Networking Events</li>
+        <li><i class="fa fa-check-circle"></i> Premium profile badge <i class="fa fa-certificate ms-2 text-warning"></i></li>
+      </ul>
+    </div>
+    <div class="col-md-6 p-5 bg-white bg-opacity-10 d-flex flex-column justify-content-center align-items-center text-center">
+      <div class="mb-4">
+        <span class="display-3 fw-bold">KSh 1,200</span>
+        <span class="text-white-50 fs-5">/ year</span>
+      </div>
+      <p class="text-white-50">Cancel anytime. Billed annually.</p>
+      
+      <form method="POST" action="{% url 'premium_upgrade' %}" class="w-100">
+        {% csrf_token %}
+        <button type="submit" class="mock-payment-btn">
+          Pay with M-Pesa or Card
+        </button>
+      </form>
+      
+      <p class="text-white-50 small mt-4 mb-0"><i class="fa fa-lock me-1"></i> Secure payment processed by Stripe & Daraja SDK.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

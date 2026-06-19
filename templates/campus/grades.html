@@ -1,0 +1,79 @@
+{% extends 'campus/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Grades — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold mb-0" style="color:var(--gp-navy);">My Grades</h2>
+    <p class="text-muted small mb-0">Track your academic performance</p>
+  </div>
+  <div class="text-center p-3 rounded-3" style="background:var(--gp-navy);color:white;min-width:100px;">
+    <div style="font-size:1.8rem;font-weight:800;">{{ gpa }}</div>
+    <div style="font-size:.75rem;opacity:.75;">Current GPA</div>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <!-- AI Transcript Autofill Card -->
+    <div class="gp-card mb-4" style="background: linear-gradient(135deg, rgba(25,135,84,0.1), rgba(25,135,84,0.02)); border: 1px solid rgba(25,135,84,0.2);">
+      <div class="gp-card-header bg-transparent border-0 pb-0 pt-3">
+        <h6 class="fw-bold mb-0 text-success"><i class="fa fa-magic me-2"></i>AI Transcript Autofill</h6>
+      </div>
+      <div class="gp-card-body">
+        <p class="small text-muted mb-3">Upload your university transcript (PDF) and our AI will automatically extract and record your grades.</p>
+        <form action="{% url 'upload_transcript' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="input-group input-group-sm">
+            <input type="file" class="form-control" name="transcript" accept="application/pdf" required>
+            <button class="btn btn-success fw-bold" type="submit">Extract</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="gp-card">
+      <div class="gp-card-header"><h6 class="fw-bold mb-0">Add Grade</h6></div>
+      <div class="gp-card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn gp-btn-primary px-4 mt-2"><i class="fa fa-plus me-2"></i>Add Grade</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="gp-card">
+      <div class="gp-card-header"><h6 class="fw-bold mb-0">Grade Records</h6></div>
+      <div class="p-0">
+        {% if grades %}
+        <div class="table-responsive">
+          <table class="table gp-table mb-0">
+            <thead><tr><th>Unit</th><th>Grade</th><th>Points</th><th>Credits</th><th>Semester</th><th>Year</th></tr></thead>
+            <tbody>
+              {% for g in grades %}
+              <tr>
+                <td class="fw-500 small">{{ g.unit_name }}</td>
+                <td><span class="pill {% if g.grade_points >= 3.5 %}pill-hired{% elif g.grade_points >= 2.5 %}pill-shortlisted{% else %}pill-pending{% endif %}">{{ g.grade }}</span></td>
+                <td class="fw-bold">{{ g.grade_points }}</td>
+                <td>{{ g.credit_hours }}</td>
+                <td class="small text-muted">{{ g.semester }}</td>
+                <td class="small text-muted">{{ g.year }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="fa fa-chart-line fa-2x mb-3 d-block opacity-30"></i>
+          <p class="small">No grades recorded yet. Add your first unit above.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

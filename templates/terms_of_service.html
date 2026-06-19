@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service — GradPulse{% endblock %}
+{% block meta_description %}Terms of Service for GradPulse by AKLIN TECHNOLOGIES. Understand your rights, responsibilities, and our commitments.{% endblock %}
+
+{% block content %}
+<div class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 bg-white p-5 rounded-4 shadow-sm">
+                <div class="mb-5 text-center">
+                    <h1 class="display-6 fw-bold text-dark">Terms of Service</h1>
+                    <p class="text-muted mb-0">Effective Date: June 2026</p>
+                </div>
+
+                <div class="text-secondary" style="line-height: 1.8;">
+                    <p class="lead text-dark">Welcome to <strong>GradPulse</strong>, a product of <strong>AKLIN TECHNOLOGIES</strong>.</p>
+                    <p>By registering for, accessing, or using the GradPulse platform ("Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not create an account or use the Platform.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">1. Acceptance of Terms</h4>
+                    <p>By creating an account, clicking "I Agree," or otherwise accessing GradPulse, you acknowledge that you have read, understood, and agree to be bound by these Terms, our <a href="{% url 'privacy_policy' %}" class="text-decoration-none">Privacy Policy</a>, and any additional guidelines or rules applicable to specific features of the Platform.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">2. Eligibility</h4>
+                    <p>GradPulse is available to:</p>
+                    <ul>
+                        <li><strong>Students:</strong> Currently enrolled or recently graduated from a recognized university, TVET institution, or secondary school in Kenya.</li>
+                        <li><strong>Employers:</strong> Registered businesses, organizations, or institutions operating legally within Kenya or with Kenyan partnerships.</li>
+                        <li><strong>UniSmart Users:</strong> Junior and Senior Secondary students and KCSE graduates seeking career and academic guidance.</li>
+                    </ul>
+                    <p>Users under the age of 13 are not permitted to create accounts. Users aged 13–17 should use the Platform under parental/guardian awareness.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">3. Account Responsibilities</h4>
+                    <ul>
+                        <li>You are responsible for maintaining the confidentiality of your login credentials.</li>
+                        <li>You must provide accurate, truthful, and up-to-date information during registration and throughout your use of the Platform.</li>
+                        <li>You must not share, sell, or transfer your account to another person.</li>
+                        <li>You must immediately notify us of any unauthorized access to your account at <a href="mailto:ict.support@gradpulse.co.ke" class="text-decoration-none">ict.support@gradpulse.co.ke</a>.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">4. Acceptable Use Policy</h4>
+                    <p>You agree <strong>not</strong> to:</p>
+                    <ul>
+                        <li>Upload false, misleading, defamatory, or fraudulent content (e.g., fake CVs, fake company profiles).</li>
+                        <li>Harass, bully, threaten, or discriminate against any user on the Platform.</li>
+                        <li>Attempt to gain unauthorized access to other user accounts, our servers, or proprietary data.</li>
+                        <li>Use bots, scrapers, or automated tools to extract data from the Platform without express written consent from AKLIN TECHNOLOGIES.</li>
+                        <li>Post opportunities that are misleading, exploitative, or violate Kenyan employment laws.</li>
+                        <li>Use the Platform for any purpose that violates applicable local or international laws.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">5. Artificial Intelligence (AI) Disclosure & Terms</h4>
+                    <div class="bg-light p-4 rounded-3 border mb-3">
+                        <p class="mb-2"><strong><i class="fa fa-robot me-2 text-primary"></i>GradPulse uses AI-powered features</strong> including but not limited to:</p>
+                        <ul class="mb-0">
+                            <li>Transcript parsing and grade extraction (powered by Google Gemini)</li>
+                            <li>Career guidance chatbot and academic recommendations</li>
+                            <li>KCSE cluster point calculations and course matching</li>
+                            <li>Mentor matching and discovery recommendations</li>
+                        </ul>
+                    </div>
+                    <p>By using these features, you acknowledge and agree that:</p>
+                    <ul>
+                        <li><strong>AI outputs are advisory, not definitive.</strong> All AI-generated recommendations, analyses, and results should be independently verified and should not be the sole basis for academic, career, or employment decisions.</li>
+                        <li><strong>Your data may be processed by third-party AI services</strong> (e.g., Google Gemini API) solely for the purpose of providing you with personalized platform features. We do not use your data to train external AI models.</li>
+                        <li><strong>AI-generated content may contain inaccuracies.</strong> AKLIN TECHNOLOGIES is not liable for decisions made based on AI output.</li>
+                        <li><strong>You consent to AI processing</strong> of your uploaded documents (transcripts, CVs, academic records) for the purpose of extracting and organizing information within the Platform.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">6. Data Protection & Safeguarding</h4>
+                    <div class="bg-light p-4 rounded-3 border mb-3">
+                        <p class="mb-2"><strong><i class="fa fa-shield-alt me-2 text-success"></i>Our Commitment to Data Safety</strong></p>
+                        <p class="mb-0">AKLIN TECHNOLOGIES is committed to protecting your personal data in accordance with the <strong>Kenya Data Protection Act, 2019</strong> and relevant international standards. We implement appropriate technical and organizational measures to safeguard your information.</p>
+                    </div>
+                    <ul>
+                        <li><strong>Data Minimization:</strong> We only collect data that is necessary for the functioning of the Platform.</li>
+                        <li><strong>Encryption:</strong> All data in transit is encrypted using TLS/HTTPS protocols. Passwords are securely hashed and never stored in plain text.</li>
+                        <li><strong>Access Controls:</strong> Only authorized personnel and systems can access user data, subject to strict internal policies.</li>
+                        <li><strong>Breach Notification:</strong> In the unlikely event of a data breach, we will notify affected users within <strong>72 hours</strong> of discovery and report to the Office of the Data Protection Commissioner (ODPC) as required by Kenyan law.</li>
+                        <li><strong>Data Subject Rights:</strong> You have the right to access, correct, delete, or port your personal data. Contact us at <a href="mailto:ict.support@gradpulse.co.ke" class="text-decoration-none">ict.support@gradpulse.co.ke</a> to exercise these rights.</li>
+                        <li><strong>Third-Party Safeguards:</strong> All third-party services we use (hosting, AI APIs, email) are vetted and bound by data processing agreements to ensure your data remains protected.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">7. Intellectual Property</h4>
+                    <ul>
+                        <li>All content, design, branding, and software on GradPulse are the intellectual property of AKLIN TECHNOLOGIES.</li>
+                        <li>Content you upload (CVs, transcripts, profile information) remains your property, but you grant GradPulse a limited, non-exclusive license to display, process, and share it as necessary for Platform functionality.</li>
+                        <li>Employers may only use applicant data for legitimate recruitment purposes and must not redistribute, sell, or misuse it.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">8. Employer Obligations</h4>
+                    <ul>
+                        <li>Employers must post only genuine, lawful opportunities.</li>
+                        <li>Employers must not request financial payments from applicants as a condition of employment.</li>
+                        <li>Employers are responsible for their own compliance with Kenyan labor and employment laws.</li>
+                        <li>AKLIN TECHNOLOGIES reserves the right to remove fraudulent or misleading listings without notice.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">9. Limitation of Liability</h4>
+                    <p>GradPulse is provided <strong>"as is"</strong> without warranties of any kind. AKLIN TECHNOLOGIES shall not be liable for:</p>
+                    <ul>
+                        <li>Any direct, indirect, or consequential damages arising from use of the Platform.</li>
+                        <li>Employment outcomes, interview results, or career decisions made using the Platform.</li>
+                        <li>Actions of third-party users (employers, students, or external services).</li>
+                        <li>Temporary service interruptions due to maintenance, upgrades, or unforeseen technical issues.</li>
+                    </ul>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">10. Account Termination</h4>
+                    <p>AKLIN TECHNOLOGIES reserves the right to suspend or terminate your account if you:</p>
+                    <ul>
+                        <li>Violate these Terms of Service.</li>
+                        <li>Engage in fraudulent, abusive, or illegal activity on the Platform.</li>
+                        <li>Repeatedly post misleading or harmful content.</li>
+                    </ul>
+                    <p>You may also voluntarily delete your account at any time by contacting our support team.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">11. Governing Law</h4>
+                    <p>These Terms shall be governed by and interpreted in accordance with the <strong>laws of the Republic of Kenya</strong>. Any disputes arising from these Terms shall be resolved through arbitration or in the courts of Kenya.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">12. Modifications to Terms</h4>
+                    <p>AKLIN TECHNOLOGIES reserves the right to update these Terms at any time. Users will be notified of material changes through the Platform or via email. Continued use of GradPulse after changes are posted constitutes acceptance of the updated Terms.</p>
+
+                    <h4 class="mt-5 mb-3 text-dark fw-bold">13. Contact Us</h4>
+                    <p>For questions, concerns, or requests related to these Terms, please contact us:</p>
+                    <p>
+                        <strong>AKLIN TECHNOLOGIES Support</strong><br>
+                        Email: <a href="mailto:ict.support@gradpulse.co.ke" class="text-decoration-none">ict.support@gradpulse.co.ke</a>
+                    </p>
+
+                    <hr class="mt-5 mb-4">
+                    <p class="small text-muted text-center">By creating an account on GradPulse, you confirm that you have read, understood, and agreed to these Terms of Service and our Privacy Policy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

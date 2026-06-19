@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}UniSmart Dashboard — {{ user.display_name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4 animate-fade-up">
+        <div class="col-md-8">
+            <h1 class="fw-bold" style="color: var(--gp-blue); font-family: 'Outfit', sans-serif;">Hello, {{ user.first_name }}! 👋</h1>
+            <p class="text-muted">Welcome to your UniSmart Workspace. Let's plan your future today.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-inline-flex align-items-center p-2 px-3 bg-white rounded-pill shadow-sm border">
+                <span class="badge rounded-pill me-2" style="background: var(--gp-blue);">{{ user.get_student_category_display }}</span>
+                <span class="small fw-bold text-muted">{{ user.grade_level }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats/Progress Row -->
+    <div class="row g-4 mb-5 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="p-2 bg-light-blue rounded shadow-sm me-3">
+                        <i class="fa fa-map-marker-alt text-primary"></i>
+                    </div>
+                    <div class="small fw-bold text-muted">Current Goal</div>
+                </div>
+                <div class="h5 fw-bold mb-0" id="goal-container">
+                    {% if user.target_career %}
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="h5 fw-bold mb-0 text-navy" style="font-size: 1.1rem;">{{ user.target_career }}</div>
+                        <button class="btn btn-sm btn-light rounded-circle" hx-get="{% url 'unismart_set_goal' %}" hx-target="#goal-container" title="Edit Goal">
+                            <i class="fas fa-pencil-alt text-muted small"></i>
+                        </button>
+                    </div>
+                    {% else %}
+                    <button class="btn btn-sm btn-orange w-100 fw-bold" hx-get="{% url 'unismart_set_goal' %}" hx-target="#goal-container">
+                        Set Career Goal
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="p-2 bg-light-orange rounded shadow-sm me-3">
+                        <i class="fa fa-star text-warning"></i>
+                    </div>
+                    <div class="small fw-bold text-muted">Points</div>
+                </div>
+                <div class="h5 fw-bold mb-0" id="xp-counter" hx-get="/unismart/dashboard/" hx-trigger="cartUpdated from:body" hx-select="#xp-counter" hx-swap="outerHTML">
+                    {% if user.target_career %}{{ user.course_basket.count|add:5 }}0{% else %}{{ user.course_basket.count }}0{% endif %} XP
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3 h-100" style="border-radius: 15px;">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="p-2 bg-light-green rounded shadow-sm me-3">
+                        <i class="fa fa-tasks text-success"></i>
+                    </div>
+                    <div class="small fw-bold text-muted">Tasks Done</div>
+                </div>
+                <div class="h5 fw-bold mb-0">{% if user.target_career %}1{% else %}0{% endif %} / 5</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Nav -->
+    <div class="d-block d-lg-none mb-4 animate-fade-up" style="animation-delay: 0.15s;">
+        <div class="d-flex overflow-auto pb-2 gap-2" style="white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            <a href="{% url 'unismart_dashboard' %}" class="btn btn-sm btn-orange rounded-pill px-3 shadow-sm"><i class="fas fa-th-large me-2"></i>Dashboard</a>
+            <a href="{% url 'unismart_course_browser' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-search me-2"></i>Programmes</a>
+            <a href="{% url 'unismart_manage_cart' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-shopping-basket me-2"></i>Cart</a>
+            <a href="{% url 'unismart_resources' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-folder-open me-2"></i>Resources</a>
+            <a href="{% url 'unismart_mentorship' %}" class="btn btn-sm btn-light border text-navy rounded-pill px-3 shadow-sm"><i class="fas fa-book-reader me-2"></i>Mentorship</a>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    {% if user.student_category == 'graduate' %}
+    <div class="row g-4 animate-fade-up" style="animation-delay: 0.2s;">
+        <!-- Side Navigation -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="gp-card p-4 sticky-top" style="top: 100px;">
+                <nav class="nav flex-column gap-2">
+                    <a href="{% url 'unismart_dashboard' %}" class="nav-link active rounded-pill px-4">
+                        <i class="fas fa-th-large me-2"></i>Dashboard
+                    </a>
+                    <a href="{% url 'unismart_course_browser' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-search me-2"></i>Browse Programmes
+                    </a>
+                    <a href="{% url 'unismart_kcse_entry' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-file-invoice me-2"></i>KCSE Analysis
+                    </a>
+                    <a href="{% url 'unismart_manage_cart' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-shopping-basket me-2"></i>Course Cart
+                    </a>
+                    <a href="{% url 'unismart_helb_guide' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-hand-holding-usd me-2"></i>HELB Guide
+                    </a>
+                    <a href="{% url 'unismart_resources' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-folder-open me-2"></i>Resource Center
+                    </a>
+                    <a href="{% url 'unismart_mentorship' %}" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-book-reader me-2"></i>Mentorship & Reading
+                    </a>
+                    <hr class="my-3">
+                    <a href="#" class="nav-link rounded-pill px-4 text-muted hover-light">
+                        <i class="fas fa-user-circle me-2"></i>My Profile
+                    </a>
+                    <a href="mailto:ict.support@gradpulse.co.ke" class="nav-link rounded-pill px-4 text-info hover-light mt-3">
+                        <i class="fas fa-headset me-2"></i>Technical Help (ICT)
+                    </a>
+                </nav>
+
+                <div class="mt-5 p-3 bg-light-orange rounded-4 text-center">
+                    <h6 class="fw-bold text-orange mb-2">Academic Roadmap</h6>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-orange" style="width: {% if user.target_career and user.course_basket.count > 0 %}85{% elif user.target_career %}45{% elif user.course_basket.count > 0 %}35{% else %}10{% endif %}%"></div>
+                    </div>
+                    <p class="small text-muted mb-0">{% if user.target_career and user.course_basket.count > 0 %}85{% elif user.target_career %}45{% elif user.course_basket.count > 0 %}35{% else %}10{% endif %}% Path Discovered</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-9">
+            <!-- Top Actions Bar -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_kcse_entry' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up border-orange border-dashed bg-light-orange">
+                        <div class="rounded-circle bg-orange text-white p-3">
+                            <i class="fas fa-calculator fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-orange">Cluster Points</h6>
+                            <p class="small text-muted mb-0">Calculate & Qualify</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_manage_cart' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up">
+                        <div class="rounded-circle bg-primary text-white p-3">
+                            <i class="fas fa-list-ul fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-navy">My Course Cart</h6>
+                            <p class="small text-muted mb-0">{{ user.course_basket.count }} Saved Courses</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'unismart_helb_guide' %}" class="gp-card p-3 d-flex align-items-center gap-3 text-decoration-none hover-up">
+                        <div class="rounded-circle bg-success text-white p-3">
+                            <i class="fas fa-money-check-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-success">HELB Funding</h6>
+                            <p class="small text-muted mb-0">Application Guide</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- UniSmart Career AI -->
+                <div class="col-md-8">
+                    <div class="gp-card p-0" style="height: 600px; display: flex; flex-direction: column;">
+                        <div class="gp-card-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-orange text-white p-2" style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-navy">UniSmart Career AI</h5>
+                            </div>
+                            <span class="badge rounded-pill bg-light-orange text-orange px-3 py-1 fw-600 small pulse">Live Advisor</span>
+                        </div>
+                        
+                        <!-- Chat Area -->
+                        <div id="chat-window" class="gp-card-body chat-container p-4 overflow-auto flex-grow-1" style="background-image: radial-gradient(rgba(217, 126, 27, 0.03) 1px, transparent 1px); background-size: 20px 20px;">
+                            <div class="chat-message ai mb-4 d-flex gap-3">
+                                <div class="rounded-circle bg-orange text-white flex-shrink-0" style="width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">
+                                    <i class="fas fa-robot small"></i>
+                                </div>
+                                <div class="p-3 bg-light rounded-4 border-0" style="max-width: 85%;">
+                                    <p class="mb-0">Hello! I'm your UniSmart AI. Ask me anything about university courses, KUCCPS clusters, or career paths in Kenya. I can even recommend a mentorship link with a university senior!</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Input -->
+                        <div class="p-3 border-top bg-white">
+                            <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-indicator="#chat-loading">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="message" class="form-control border-light-orange rounded-pill-start ps-4" placeholder="Ask about cluster points, courses, etc..." style="border-right: none;">
+                                    <button class="btn btn-orange rounded-pill-end px-4" type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                                <div id="chat-loading" class="htmx-indicator mt-2 small text-muted text-center">
+                                    <span class="spinner-border spinner-border-sm me-1"></span> UniSmart AI is thinking...
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Widgets -->
+                <div class="col-md-4">
+                    <!-- Mentor Spotlight -->
+                        <div class="gp-card p-4 border-orange border-dashed bg-light-orange mb-4">
+                            <h6 class="fw-bold mb-3 text-orange">Mentorship & Books</h6>
+                            {% if mentor %}
+                            <div class="text-center mb-3">
+                                <img src="{{ mentor.get_avatar_url }}" class="rounded-circle mb-3 border border-3 border-white shadow-sm" width="80" height="80" style="object-fit:cover;">
+                                <h6 class="fw-bold mb-1">{{ mentor.display_name }}</h6>
+                                <p class="small text-muted mb-2">{{ mentor.course }}</p>
+                            </div>
+                            <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold mb-2">
+                                Request Mentorship
+                            </a>
+                            {% else %}
+                            <div class="text-center mb-3">
+                                <div class="rounded-circle bg-white d-inline-flex justify-content-center align-items-center shadow-sm mb-3" style="width:60px; height:60px;">
+                                    <i class="fas fa-user-graduate text-muted fa-lg"></i>
+                                </div>
+                                {% if user.target_career %}
+                                <p class="small text-muted mb-0">No mentors are currently available for your career goal. Check back soon!</p>
+                                {% else %}
+                                <p class="small text-muted mb-0">Set your career goal to match with a mentor!</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'unismart_mentorship' %}" class="btn btn-light border-orange text-orange w-100 rounded-pill btn-sm fw-bold">
+                                <i class="fas fa-book-open me-1"></i> Full Reading List
+                            </a>
+                        </div>
+
+                        <!-- KUCCPS Guided Mode -->
+                        <div class="gp-card p-4 bg-navy text-white rounded-4 border-0 mb-4">
+                            <h6 class="fw-bold mb-2"><i class="fas fa-magic me-2"></i>Guided KUCCPS Mode</h6>
+                            <p class="small opacity-75 mb-3">Login to KUCCPS and our AI will guide you through field filling with your saved codes.</p>
+                            <a href="https://students.kuccps.net/login/" target="_blank" class="btn btn-light btn-sm w-100 rounded-pill fw-bold text-navy">
+                                Launch Guided Portal
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- JSS / Continuing Student Layout -->
+    <div class="row g-4 animate-fade-up" style="animation-delay: 0.2s;">
+        <!-- Left Column: Guidance & Chat -->
+        <div class="col-lg-8">
+            <!-- AI Career Chat -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px; border-top: 5px solid var(--gp-orange) !important;">
+                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-orange"><i class="fa fa-robot me-2"></i>UniSmart Career AI</h5>
+                    <span class="badge bg-light text-orange border">Live Advisor</span>
+                </div>
+                <div class="card-body p-4">
+                    <div id="chat-window-jss" class="chat-container mb-3 p-3 bg-light rounded-3" style="height: 50vh; min-height: 300px; max-height: 400px; overflow-y: auto;">
+                        <div class="ai-message mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width:40px;height:40px;">
+                                    <i class="fa fa-robot"></i>
+                                </div>
+                                <div class="bg-white p-3 rounded-3 shadow-sm">
+                                    <p class="mb-0 small">Hello! I'm your UniSmart AI. Ask me anything about university courses, KUCCPS clusters, or career paths in Kenya. I can even recommend a mentorship link with a university senior!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window-jss" hx-swap="beforeend" hx-on::after-request="this.reset(); document.getElementById('chat-window-jss').scrollTop = document.getElementById('chat-window-jss').scrollHeight;">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="message" class="form-control border-orange py-2" placeholder="Ask about Law, Engineering, Medicine..." required>
+                            <button class="btn btn-warning text-white px-4" type="submit">
+                                <i class="fa fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Academic Roadmap -->
+            <div class="card border-0 shadow-sm" style="border-radius: 20px; overflow: hidden;">
+                <div class="card-header bg-white border-0 p-4 pb-0">
+                    <h5 class="fw-bold mb-0">Academic Roadmap</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="roadmap-item d-flex mb-4">
+                        <div class="roadmap-icon me-3">
+                            <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">1</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Subject Selection</h6>
+                            <p class="small text-muted mb-0">Identify the best subjects for your target career using our AI guide.</p>
+                        </div>
+                    </div>
+                    <div class="roadmap-item d-flex mb-4">
+                        <div class="roadmap-icon me-3">
+                            <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">2</div>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Career Research</h6>
+                            <p class="small text-muted mb-0">Explore what professionals in your interest areas actually do.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Tools & Resources -->
+        <div class="col-lg-4">
+             <!-- Resource Center -->
+             <div class="gp-card p-4 mb-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fas fa-folder-open text-orange"></i>Resources
+                </h5>
+                <div class="resource-list">
+                    {% for res in resources %}
+                    <div class="resource-item d-flex align-items-center gap-3 p-2 mb-2 rounded-3 hover-light border border-light">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem;">{{ res.title }}</h6>
+                        </div>
+                        <a href="{% if res.file %}{{ res.file.url }}{% else %}{{ res.url }}{% endif %}" class="btn btn-sm btn-light border rounded-circle" target="_blank">
+                            <i class="fas fa-download small"></i>
+                        </a>
+                    </div>
+                    {% empty %}
+                    <p class="small text-muted">No resources yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Mentorship & Books -->
+            <div class="gp-card p-4 border-orange border-dashed bg-light-orange mb-4">
+                <h6 class="fw-bold mb-3 text-orange">Mentorship & Books</h6>
+                {% if mentor %}
+                <div class="text-center mb-3">
+                    <img src="{{ mentor.get_avatar_url }}" class="rounded-circle mb-3 shadow-sm" width="60" height="60" style="object-fit:cover;">
+                    <h6 class="fw-bold mb-1 small">{{ mentor.display_name }}</h6>
+                </div>
+                <a href="{% url 'networking_chat' mentor.username %}" class="btn btn-orange w-100 rounded-pill btn-sm fw-bold mb-2">
+                    Chat Now
+                </a>
+                {% else %}
+                <div class="text-center mb-3">
+                    <div class="rounded-circle bg-white d-inline-flex justify-content-center align-items-center shadow-sm mb-3" style="width:60px; height:60px;">
+                        <i class="fas fa-user-graduate text-muted fa-lg"></i>
+                    </div>
+                    {% if user.target_career %}
+                    <p class="small text-muted mb-0">No mentors are currently available for your career goal. Check back soon!</p>
+                    {% else %}
+                    <p class="small text-muted mb-0">Set your career goal to match with a mentor!</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <a href="{% url 'unismart_mentorship' %}" class="btn btn-light border-orange text-orange w-100 rounded-pill btn-sm fw-bold">
+                    <i class="fas fa-book-open me-1"></i> Full Reading List
+                </a>
+            </div>
+
+            <!-- ICT Support -->
+            <div class="gp-card p-4 bg-light-blue border-0">
+                <h6 class="fw-bold mb-2 text-primary"><i class="fas fa-headset me-2"></i>ICT Support</h6>
+                <p class="small text-muted mb-3">Need technical help with the portal?</p>
+                <a href="mailto:ict.support@gradpulse.co.ke" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold">
+                    Email ICT
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .bg-light-blue { background: rgba(13, 110, 253, 0.1); }
+    .bg-light-orange { background: rgba(253, 126, 20, 0.1); }
+    .bg-light-green { background: rgba(25, 135, 84, 0.1); }
+    .bg-light-purple { background: rgba(111, 66, 193, 0.1); }
+    .border-dashed { border-style: dashed !important; border-width: 2px !important; }
+    .x-small { font-size: 0.75rem; }
+    .hover-light:hover { background: var(--gp-light); }
+    .rounded-pill-start { border-top-left-radius: 50px !important; border-bottom-left-radius: 50px !important; }
+    .rounded-pill-end { border-top-right-radius: 50px !important; border-bottom-right-radius: 50px !important; }
+    .text-orange { color: var(--gp-orange) !important; }
+    .border-orange { border-color: var(--gp-orange) !important; }
+    .bg-orange { background-color: var(--gp-orange) !important; }
+    .bg-light-orange { background-color: rgba(253, 126, 20, 0.1) !important; }
+    .btn-orange { background-color: var(--gp-orange); color: white; border: none; }
+    .btn-orange:hover { background-color: #e86400; color: white; }
+</style>
+{% endblock %}

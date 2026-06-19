@@ -1,0 +1,60 @@
+{% extends 'corporate/layout.html' %}
+
+{% block title %}Talent Search — GradPulse{% endblock %}
+
+{% block corporate_content %}
+<h2 class="fw-bold mb-1" style="color:var(--gp-navy);">Talent Search</h2>
+<p class="text-muted small mb-4">Find your next great hire from Kenya's top institutions</p>
+
+<form method="get" class="gp-filter-bar mb-4">
+  <input type="text" name="institution" value="{{ filters.institution }}" class="form-control" style="max-width:180px;" placeholder="Institution...">
+  <input type="text" name="course" value="{{ filters.course }}" class="form-control" style="max-width:180px;" placeholder="Course...">
+  <input type="text" name="skills" value="{{ filters.skills }}" class="form-control" style="max-width:180px;" placeholder="Skills...">
+  <div class="form-check d-flex align-items-center gap-2">
+    <input class="form-check-input" type="checkbox" name="open_to_work" id="otw" value="1" {% if filters.open_to_work %}checked{% endif %}>
+    <label class="form-check-label small" for="otw">Open to Work</label>
+  </div>
+  <button type="submit" class="btn gp-btn-primary px-3">Search</button>
+  <a href="{% url 'talent_search' %}" class="btn btn-outline-secondary px-3">Clear</a>
+</form>
+
+<div class="row g-3">
+  {% for student in students %}
+  <div class="col-md-6 col-lg-4">
+    <div class="gp-card">
+      <div class="gp-card-body">
+        <div class="d-flex gap-3 align-items-start">
+          {% if student.profile_photo %}
+            <img src="{{ student.get_avatar_url }}" width="52" height="52" class="rounded-circle" style="object-fit:cover;flex-shrink:0;">
+          {% else %}
+            <div class="gp-avatar-sm" style="width:52px;height:52px;font-size:1.2rem;background:var(--gp-navy);">{{ student.display_name|first|upper }}</div>
+          {% endif %}
+          <div class="flex-grow-1">
+            <div class="fw-bold">{{ student.display_name }}</div>
+            <div class="text-muted small">{{ student.course }}</div>
+            <div class="text-muted small">{{ student.institution }}</div>
+            {% if student.gpa %}<div class="small">GPA: <strong>{{ student.gpa }}</strong></div>{% endif %}
+            {% if student.open_to_work %}<span class="pill pill-hired mt-1" style="font-size:.7rem;"><i class="fa fa-circle me-1"></i>Open to Work</span>{% endif %}
+            {% if student.skills %}
+            <div class="mt-2 d-flex flex-wrap gap-1">
+              {% for skill in student.get_skills_list|slice:":4" %}
+              <span class="badge bg-light text-dark border" style="font-size:.7rem;">{{ skill }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <div class="mt-3 pt-2 border-top">
+              <a href="{% url 'student_profile_public' student.pk %}" class="btn gp-btn-outline w-100 py-2" style="font-size:.8rem;">View Full Profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-5 text-muted">
+    <i class="fa fa-users fa-2x mb-3 d-block opacity-30"></i>
+    <p>No students found matching your filters.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

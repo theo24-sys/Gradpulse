@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}UniSmart — Select Your Path{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light" style="min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="text-center mb-5 animate-fade-up">
+            <h1 class="display-4 fw-bold" style="color: var(--gp-blue); font-family: 'Outfit', sans-serif;">Welcome to <span class="accent">UniSmart</span></h1>
+            <p class="lead text-muted">Empowering the next generation of Kenyan scholars and professionals.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- JSS Role -->
+            <div class="col-md-4 animate-fade-up" style="animation-delay: 0.1s;">
+                <div class="portal-card h-100 text-center p-4" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                    <div class="mb-3">
+                        <i class="fa fa-school fa-3x" style="color: var(--gp-orange);"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Junior Secondary</h3>
+                    <p class="text-muted mb-4">Grade 7 – Grade 9 students looking for early academic guidance and career awareness.</p>
+                    <a href="{% url 'register' %}?portal=unismart&category=jss" class="btn gp-btn-outline w-100">Get Started</a>
+                </div>
+            </div>
+
+            <!-- SSS Role -->
+            <div class="col-md-4 animate-fade-up" style="animation-delay: 0.2s;">
+                <div class="portal-card h-100 text-center p-4" style="background: white; border-radius: 20px; box-shadow: 0 15px 40px rgba(41,90,131,0.1); border: 2px solid var(--gp-blue);">
+                    <div class="mb-3">
+                        <i class="fa fa-book-reader fa-3x" style="color: var(--gp-blue);"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Senior Secondary</h3>
+                    <p class="text-muted mb-4">Form 1 – Form 4 students preparing for KCSE and exploring university pathways.</p>
+                    <a href="{% url 'register' %}?portal=unismart&category=sss" class="btn gp-btn-primary w-100">Get Started</a>
+                </div>
+            </div>
+
+            <!-- Graduate Role -->
+            <div class="col-md-4 animate-fade-up" style="animation-delay: 0.3s;">
+                <div class="portal-card h-100 text-center p-4" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                    <div class="mb-3">
+                        <i class="fa fa-user-graduate fa-3x" style="color: var(--gp-navy);"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">KCSE Graduate</h3>
+                    <p class="text-muted mb-4">Graduates awaiting university placement, KUCCPS guidance, and HELB support.</p>
+                    <a href="{% url 'register' %}?portal=unismart&category=graduate" class="btn gp-btn-outline w-100">Get Started</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 animate-fade-up" style="animation-delay: 0.4s;">
+            <p class="text-muted">Already have an account? <a href="{% url 'login' %}" class="fw-bold text-decoration-none" style="color: var(--gp-blue);">Sign In</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
