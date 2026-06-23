@@ -1,124 +1,538 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}GradPulse Campus — Launch Your Career{% endblock %}
+{% block title %}GradPulse — Skill-First Capacity Building Platform | Classroom to Marketplace{% endblock %}
+
+{% block meta_description %}GradPulse is a skill-first capacity building platform resolving the gap between academic credentials and market-ready competencies. UniSmart for high schoolers, Campus for university students, Corporate for employers. Where the market defines skills.{% endblock %}
+
+{% block extra_seo %}
+<!-- Open Graph / Social -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="GradPulse — Where Skills Meet the Market">
+<meta property="og:description" content="A skill-first capacity building platform creating a direct linkage between students in higher institutions of learning and market practitioners. Accelerating the journey from classroom to marketplace.">
+<meta property="og:image" content="{% static 'images/logo.jpg' %}">
+<meta property="og:url" content="https://gradpulse.co.ke">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GradPulse — Where Skills Meet the Market">
+<meta name="twitter:description" content="Skill-first capacity building platform resolving the mismatch between academic credentials and market-ready competencies across Africa.">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "GradPulse",
+  "description": "A skill-first capacity building platform that creates a direct linkage between students in higher institutions of learning and market practitioners, accelerating the journey from classroom to marketplace.",
+  "url": "https://gradpulse.co.ke",
+  "foundingDate": "2024",
+  "sameAs": [],
+  "areaServed": "Africa",
+  "slogan": "Where the market defines skills",
+  "knowsAbout": ["Upskilling", "Reskilling", "Scenario-Based Learning", "Workforce Development", "Talent Pipeline"]
+}
+</script>
+
+<!-- Additional SEO -->
+<meta name="keywords" content="GradPulse, skill-first platform, upskilling, reskilling, university transition, market-ready skills, scenario-based learning, talent pipeline, Africa workforce, graduate employability, career readiness, KCSE, KUCCPS, Kenya education">
+<meta name="robots" content="index, follow">
+<meta name="author" content="GradPulse - AKLIN Technologies">
+<link rel="canonical" href="https://gradpulse.co.ke/">
+{% endblock %}
 
 {% block content %}
 
-<!-- Hero Section -->
-<section class="gp-hero">
+<!-- ══════════════════════════════════════════════════════════
+     HERO SECTION
+     ══════════════════════════════════════════════════════════ -->
+<section class="gp-hero gp-hero-landing" id="home">
+  <div class="hero-particles" aria-hidden="true">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+  </div>
   <div class="container animate-fade-up">
     <div class="row align-items-center">
-      <div class="col-lg-8">
-        
-        <div class="hero-badge animate-fade-up animate-delay-1" style="border-radius:100px; border:1px solid rgba(41,90,131,0.2); background:rgba(41,90,131,0.05); padding:6px 16px; display:inline-flex; align-items:center; gap:8px; margin-bottom:2rem; font-size:0.75rem; color:var(--gp-blue); text-transform:uppercase; letter-spacing:1px; font-weight:700;">
-          Unlock Your Future <i class="fa fa-unlock-alt ms-1 text-warning"></i>
+      <div class="col-lg-7">
+
+        <div class="hero-badge animate-fade-up animate-delay-1" style="border-radius:100px; border:1px solid rgba(0,206,209,0.25); background:rgba(0,206,209,0.08); padding:6px 18px; display:inline-flex; align-items:center; gap:8px; margin-bottom:2rem; font-size:0.72rem; color:var(--gp-navy); text-transform:uppercase; letter-spacing:1.5px; font-weight:700;">
+          Skill-First Capacity Building <i class="fa fa-bolt ms-1" style="color:var(--gp-orange);"></i>
         </div>
-        
+
         <h1 class="hero-title animate-fade-up animate-delay-2">
-          Your career<br>
-          starts <span class="accent">before</span><br>
-          you graduate.
+          Where <span class="accent">skills</span><br>
+          meet the<br>
+          market.
         </h1>
-        
+
         <p class="hero-subtitle animate-fade-up animate-delay-3">
-          GradPulse connects university and TVET students with top employers. 
-          Credentials, internships, professional networking, institutional 
-          collaborations, and youth development programmes — all matched 
-          to your interests.
+          GradPulse creates a direct linkage between students in higher institutions 
+          of learning and market practitioners — accelerating the journey from 
+          <strong>classroom to marketplace</strong> by embedding real-world skill 
+          acquisition directly into the learning experience.
         </p>
-        
+
         <div class="d-flex flex-wrap gap-3 animate-fade-up animate-delay-4">
-          <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary">
-            I am a student <i class="fa fa-arrow-right ms-2 small"></i>
+          <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary" id="hero-cta-student">
+            I am a Student <i class="fa fa-arrow-right ms-2 small"></i>
           </a>
-          <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline" style="background:white;">
-            I am an employer
+          <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline" style="background:white;" id="hero-cta-employer">
+            I am a Corporation
           </a>
         </div>
-        
+
       </div>
-      <div class="col-lg-4 d-none d-lg-block animate-fade-up animate-delay-3">
-        <!-- Optional illustrative graphic could go here -->
-        <div class="animate-float" style="width: 100%; max-width: 400px; height: 350px; background: url('{% static 'images/logo.jpg' %}') center/contain no-repeat; opacity: 0.8; filter: drop-shadow(0 20px 30px rgba(41,90,131,0.15));"></div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center animate-fade-up animate-delay-3">
+        <div class="hero-visual">
+          <div class="hero-visual-ring ring-1"></div>
+          <div class="hero-visual-ring ring-2"></div>
+          <div class="hero-visual-ring ring-3"></div>
+          <div class="animate-float" style="width:100%; max-width:340px; height:340px; background:url('{% static 'images/logo.jpg' %}') center/contain no-repeat; opacity:0.9; filter:drop-shadow(0 20px 40px rgba(0,139,139,0.2)); position:relative; z-index:2;"></div>
+        </div>
       </div>
     </div>
-    
+
     <div class="hero-stats animate-fade-up animate-delay-4">
       <div>
-        <div class="hs-num">900+</div>
+        <div class="hs-num" data-count="900">0+</div>
         <div class="hs-label">Opportunities Listed</div>
       </div>
       <div>
-        <div class="hs-num">40+</div>
+        <div class="hs-num" data-count="40">0+</div>
         <div class="hs-label">Corporate Partners</div>
       </div>
       <div>
-        <div class="hs-num">30+</div>
+        <div class="hs-num" data-count="30">0+</div>
         <div class="hs-label">Universities & TVETs</div>
       </div>
       <div>
-        <div class="hs-num">12K+</div>
+        <div class="hs-num" data-count="12000">0+</div>
         <div class="hs-label">Student Profiles</div>
       </div>
     </div>
-    
+
   </div>
 </section>
 
-<!-- Portal Cards -->
-<section class="py-5" style="background: white;">
+
+<!-- ══════════════════════════════════════════════════════════
+     PROBLEM STATEMENT / ABOUT SECTION
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section" id="about" style="background:white;">
   <div class="container">
-    <div class="row g-4 align-items-stretch">
-      <!-- High School & Graduates (UniSmart) -->
-      <div class="col-lg-4 animate-fade-up">
+    <div class="section-header text-center animate-on-scroll">
+      <span class="section-tag">The Challenge</span>
+      <h2 class="section-title">A Structural Transformation in the World of Work</h2>
+      <p class="section-subtitle">
+        The World Economic Forum projects that by 2025, technological advancements will require 
+        <strong>50% of the global workforce</strong> to reskill — while <strong>85 million jobs</strong> 
+        are redefined or displaced, yet <strong>97 million new roles</strong> emerge for those equipped 
+        with the right capabilities.
+      </p>
+    </div>
+
+    <div class="row g-4 mt-4">
+      <div class="col-lg-4 animate-on-scroll">
+        <div class="challenge-card">
+          <div class="challenge-icon" style="background:rgba(229,90,64,0.1); color:var(--gp-orange);">
+            <i class="fa fa-exclamation-triangle"></i>
+          </div>
+          <h3>The Skill Mismatch</h3>
+          <p>In Africa, graduates exit institutions carrying theoretical credentials but not the market-ready competencies employers demand. The result: qualified on paper, unadaptable in practice.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.15s;">
+        <div class="challenge-card">
+          <div class="challenge-icon" style="background:rgba(0,139,139,0.1); color:var(--gp-navy);">
+            <i class="fa fa-arrow-up"></i>
+          </div>
+          <h3>Upskilling</h3>
+          <p>The enhancement of existing competencies to meet evolving role demands. A strategic imperative that GradPulse industrialises at the point of learning, not post-graduation.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.3s;">
+        <div class="challenge-card">
+          <div class="challenge-icon" style="background:rgba(0,206,209,0.12); color:var(--gp-blue);">
+            <i class="fa fa-sync-alt"></i>
+          </div>
+          <h3>Reskilling</h3>
+          <p>The acquisition of entirely new skills to transition into new functions. GradPulse makes this accessible, affordable, and structural — not episodic — for every student.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     VISION · MISSION · CHANGE THEORY
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section vmc-section" id="vision">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4 animate-on-scroll">
+        <div class="vmc-card vmc-vision">
+          <div class="vmc-icon"><i class="fa fa-eye"></i></div>
+          <h3>Vision</h3>
+          <p>To ensure that the educational curriculum meets market standards and needs, by providing practical simulations on real market demands.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.15s;">
+        <div class="vmc-card vmc-mission">
+          <div class="vmc-icon"><i class="fa fa-bullseye"></i></div>
+          <h3>Mission</h3>
+          <p>To enable a <strong>100% transition rate</strong> from classroom to marketplace.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.3s;">
+        <div class="vmc-card vmc-theory">
+          <div class="vmc-icon"><i class="fa fa-lightbulb"></i></div>
+          <h3>Change Theory</h3>
+          <p>If students develop market-ready skills, then they will find or create jobs that <strong>industrialise Africa affordably</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="values-bar animate-on-scroll mt-5">
+      <div class="value-item">
+        <i class="fa fa-gem"></i>
+        <div>
+          <strong>Quality</strong>
+          <span>We hold our skill outputs to market standards, not institutional averages.</span>
+        </div>
+      </div>
+      <div class="value-item">
+        <i class="fa fa-shield-alt"></i>
+        <div>
+          <strong>Reliability</strong>
+          <span>Students, universities, and corporations depend on us for consistent, evidence-based outcomes.</span>
+        </div>
+      </div>
+      <div class="value-item">
+        <i class="fa fa-rocket"></i>
+        <div>
+          <strong>Innovation</strong>
+          <span>We apply the latest in scenario-based learning design and adaptive technology.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW IT WORKS – ECOSYSTEM OVERVIEW
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section" id="how-it-works" style="background:white;">
+  <div class="container">
+    <div class="section-header text-center animate-on-scroll">
+      <span class="section-tag">The Ecosystem</span>
+      <h2 class="section-title">One Continuous Motion</h2>
+      <p class="section-subtitle">
+        GradPulse connects two sides of the same economy: <strong>skill learners</strong> (students and graduates) 
+        and <strong>skill users</strong> (corporate companies and individual project owners) — creating a marketplace 
+        where human capital is built, matched, and deployed in one continuous motion.
+      </p>
+    </div>
+
+    <div class="ecosystem-flow animate-on-scroll mt-5">
+      <div class="eco-step">
+        <div class="eco-step-num">1</div>
+        <div class="eco-step-icon"><i class="fa fa-school"></i></div>
+        <h4>UniSmart</h4>
+        <p>Students enter university already aligned with market demand</p>
+      </div>
+      <div class="eco-arrow"><i class="fa fa-long-arrow-alt-right"></i></div>
+      <div class="eco-step">
+        <div class="eco-step-num">2</div>
+        <div class="eco-step-icon" style="background:var(--gp-navy);"><i class="fa fa-laptop-code"></i></div>
+        <h4>Campus</h4>
+        <p>Build and demonstrate market-ready skills throughout their degree</p>
+      </div>
+      <div class="eco-arrow"><i class="fa fa-long-arrow-alt-right"></i></div>
+      <div class="eco-step">
+        <div class="eco-step-num">3</div>
+        <div class="eco-step-icon" style="background:var(--gp-blue);"><i class="fa fa-building"></i></div>
+        <h4>Corporate</h4>
+        <p>Skills are validated by the very organisations that will hire them</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     COMPONENT 1 — UNISMART
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section component-section" id="unismart">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 animate-on-scroll">
+        <span class="component-badge" style="background:rgba(229,90,64,0.1); color:var(--gp-orange);">
+          <i class="fa fa-graduation-cap me-2"></i> Component 1
+        </span>
+        <h2 class="component-title">GradPulse UniSmart</h2>
+        <p class="component-tagline">High School to University Transition Platform</p>
+        <p class="component-desc">
+          Every year, thousands of high school students make university and programme choices based on prestige, 
+          parental influence, or peer pressure — with little visibility into where the labour market is heading. 
+          <strong>UniSmart resolves this by placing a market-facing lens on the most consequential academic decision 
+          a young person will make.</strong>
+        </p>
+        <p class="component-desc">
+          Grounded in Human Capital Theory (Becker & Schultz, 1962), UniSmart transforms university selection 
+          from a guesswork process into an evidence-led decision.
+        </p>
+        <div class="component-target">
+          <i class="fa fa-users"></i>
+          <span><strong>Target Users:</strong> High school students (Grades 10–12), parents, school career counsellors, and high school institutions.</span>
+        </div>
+        <a href="{% url 'unismart_role_selection' %}" class="btn gp-btn-primary mt-3" id="cta-unismart" style="background:var(--gp-orange);">
+          Explore UniSmart <i class="fa fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6 animate-on-scroll" style="animation-delay:0.2s;">
+        <div class="feature-grid">
+          <div class="feature-item fi-orange">
+            <i class="fa fa-search-dollar"></i>
+            <h5>Market-Demand Programme Explorer</h5>
+            <p>Searchable database of university programmes mapped against current and projected labour market demand.</p>
+          </div>
+          <div class="feature-item fi-orange">
+            <i class="fa fa-route"></i>
+            <h5>Career Pathway Mapping</h5>
+            <p>Realistic career trajectories with skill requirements and gap analysis for any programme.</p>
+          </div>
+          <div class="feature-item fi-orange">
+            <i class="fa fa-chart-line"></i>
+            <h5>Skills-Demand Forecasting</h5>
+            <p>Real-time corporate challenge data showing which skills employers request right now.</p>
+          </div>
+          <div class="feature-item fi-orange">
+            <i class="fa fa-columns"></i>
+            <h5>University Comparison Dashboard</h5>
+            <p>Compare universities on market-outcome indicators: employability rates, alignment scores, and experiential learning.</p>
+          </div>
+          <div class="feature-item fi-orange">
+            <i class="fa fa-clipboard-check"></i>
+            <h5>Transition Readiness Assessment</h5>
+            <p>Self-assessment tool to understand your skill profile relative to target programme and career path demands.</p>
+          </div>
+          <div class="feature-item fi-orange">
+            <i class="fa fa-user-tie"></i>
+            <h5>Practitioner Insight Feed</h5>
+            <p>Curated perspectives from market practitioners across sectors — a ground-level view of what careers look like in practice.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     COMPONENT 2 — CAMPUS
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section component-section" id="campus" style="background:white;">
+  <div class="container">
+    <div class="row align-items-center g-5 flex-lg-row-reverse">
+      <div class="col-lg-6 animate-on-scroll">
+        <span class="component-badge" style="background:rgba(0,139,139,0.1); color:var(--gp-navy);">
+          <i class="fa fa-laptop-code me-2"></i> Component 2 — Core Platform
+        </span>
+        <h2 class="component-title">GradPulse Campus</h2>
+        <p class="component-tagline">University to Marketplace — Scenario-Based Learning Model</p>
+        <p class="component-desc">
+          A university degree is no longer sufficient proof of workforce readiness. GradPulse Campus is 
+          a <strong>skill-first, scenario-based learning environment</strong> designed for university students 
+          that directly intersects the academic curriculum with real-time market problems submitted by corporations.
+        </p>
+        <p class="component-desc">
+          Students do not study about industry challenges in textbooks — they <strong>solve actual ones, 
+          submitted by actual companies, in real time</strong>. The platform operationalises Structural 
+          Learning Theory (Scandura, 1973) and Expectancy Theory (Vroom, 1964).
+        </p>
+        <div class="component-target">
+          <i class="fa fa-users"></i>
+          <span><strong>Target Users:</strong> Undergraduate and postgraduate students, university faculties, and graduates seeking to close skill gaps.</span>
+        </div>
+        <a href="{% url 'register' %}?portal=student" class="btn gp-btn-navy mt-3" id="cta-campus">
+          Join Campus <i class="fa fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6 animate-on-scroll" style="animation-delay:0.2s;">
+        <div class="feature-grid">
+          <div class="feature-item fi-teal">
+            <i class="fa fa-puzzle-piece"></i>
+            <h5>Scenario-Based Challenge Library</h5>
+            <p>Continuously updated real market problems spanning technology, business, health, engineering, and finance.</p>
+          </div>
+          <div class="feature-item fi-teal">
+            <i class="fa fa-star"></i>
+            <h5>Solvability Points System</h5>
+            <p>Earn points weighted by complexity, solution quality, and speed — a continuous incentive throughout your degree.</p>
+          </div>
+          <div class="feature-item fi-teal">
+            <i class="fa fa-trophy"></i>
+            <h5>Market-Ready Index</h5>
+            <p>Leaderboard ranking students by cumulative points and corporate satisfaction ratings — a portable, verifiable credential.</p>
+          </div>
+          <div class="feature-item fi-teal">
+            <i class="fa fa-university"></i>
+            <h5>Curriculum Integration Module</h5>
+            <p>University-facing tool to embed challenges into formal curriculum, making scenario learning a credited academic activity.</p>
+          </div>
+          <div class="feature-item fi-teal">
+            <i class="fa fa-id-card"></i>
+            <h5>Real-Time Skill Portfolio</h5>
+            <p>Dynamic portfolio auto-updated as you complete challenges — a living CV grounded in evidence, not self-description.</p>
+          </div>
+          <div class="feature-item fi-teal">
+            <i class="fa fa-comments"></i>
+            <h5>Practitioner Feedback Loop</h5>
+            <p>Corporations provide written, role-specific feedback directly on the platform, accelerating professional competency development.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     COMPONENT 3 — CORPORATE
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section component-section" id="corporate">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 animate-on-scroll">
+        <span class="component-badge" style="background:rgba(0,206,209,0.1); color:var(--gp-blue);">
+          <i class="fa fa-building me-2"></i> Component 3
+        </span>
+        <h2 class="component-title">GradPulse Corporate</h2>
+        <p class="component-tagline">Corporate Partnership & Talent Customisation Platform</p>
+        <p class="component-desc">
+          The cost of upskilling and reskilling in the corporate sector is significant and growing. 
+          GradPulse Corporate gives organisations a direct, structured channel into the student talent pool — 
+          allowing them to <strong>submit real business challenges, engage with verified problem-solvers, 
+          customise their future workforce</strong>, and reduce internal upskilling costs.
+        </p>
+        <p class="component-desc">
+          Rather than hiring graduates and then investing in their development, organisations invest in 
+          development <strong>before</strong> hiring. Grounded in Sociotechnical Systems Theory (Eric & Ken, 1950).
+        </p>
+        <div class="component-target">
+          <i class="fa fa-users"></i>
+          <span><strong>Target Users:</strong> Corporates, early-stage companies, lean teams, individual project owners, and industry associations.</span>
+        </div>
+        <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline mt-3" id="cta-corporate" style="background:white;">
+          Partner With Us <i class="fa fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+      <div class="col-lg-6 animate-on-scroll" style="animation-delay:0.2s;">
+        <div class="feature-grid">
+          <div class="feature-item fi-blue">
+            <i class="fa fa-upload"></i>
+            <h5>Challenge Submission Portal</h5>
+            <p>Submit real business challenges scoped by sector, skill type, complexity, and academic discipline.</p>
+          </div>
+          <div class="feature-item fi-blue">
+            <i class="fa fa-tachometer-alt"></i>
+            <h5>Talent Pipeline Dashboard</h5>
+            <p>Track submissions, review solutions, and monitor Market-Ready Index rankings of engaged students.</p>
+          </div>
+          <div class="feature-item fi-blue">
+            <i class="fa fa-star-half-alt"></i>
+            <h5>Student Rating & Review</h5>
+            <p>Provide satisfaction ratings and written feedback that directly determine student rankings.</p>
+          </div>
+          <div class="feature-item fi-blue">
+            <i class="fa fa-user-cog"></i>
+            <h5>Custom Workforce Profiling</h5>
+            <p>Specify exact skill profiles for your future workforce — GradPulse surfaces matching students and challenges.</p>
+          </div>
+          <div class="feature-item fi-blue">
+            <i class="fa fa-coins"></i>
+            <h5>Credits System</h5>
+            <p>Access platform through credits — proportional to value extracted, accessible to organisations of all sizes.</p>
+          </div>
+          <div class="feature-item fi-blue">
+            <i class="fa fa-expand-arrows-alt"></i>
+            <h5>Lean Team Capacity Extension</h5>
+            <p>Utilise students as active contributors to current challenges without employment overhead.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PORTAL CARDS — GET STARTED
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section" id="features" style="background:white;">
+  <div class="container">
+    <div class="section-header text-center animate-on-scroll">
+      <span class="section-tag">Get Started</span>
+      <h2 class="section-title">Choose Your Portal</h2>
+      <p class="section-subtitle">
+        Whether you're a high school student making your first big decision, a university student building 
+        real-world skills, or a corporation shaping the future workforce — GradPulse has a portal for you.
+      </p>
+    </div>
+
+    <div class="row g-4 mt-3 align-items-stretch">
+      <!-- UniSmart Portal -->
+      <div class="col-lg-4 animate-on-scroll">
         <div class="portal-card h-100" style="border-top: 5px solid var(--gp-orange);">
-          <div class="portal-tag">For High Schoolers & Graduates</div>
+          <div class="portal-tag" style="color:var(--gp-orange); background:rgba(229,90,64,0.08);">For High Schoolers & Graduates</div>
           <h2 class="portal-title">UniSmart</h2>
-          <p class="portal-desc">Academic and career guidance for JSS, Form 1-4, and KCSE graduates. Specialized pathways for university transition.</p>
+          <p class="portal-desc">Evidence-based university transition platform. Make programme choices anchored in where labour market demand is heading, not where it has been.</p>
           <ul class="pc-list">
-            <li><i class="fa fa-check-circle text-warning"></i> AI-powered course matching</li>
-            <li><i class="fa fa-check-circle text-warning"></i> KCSE & KUCCPS application help</li>
-            <li><i class="fa fa-check-circle text-warning"></i> HELB financing & grant guides</li>
-            <li><i class="fa fa-check-circle text-warning"></i> Early career awareness modules</li>
+            <li><i class="fa fa-check-circle text-warning"></i> Market-demand programme explorer</li>
+            <li><i class="fa fa-check-circle text-warning"></i> Career pathway mapping</li>
+            <li><i class="fa fa-check-circle text-warning"></i> Skills-demand forecasting</li>
+            <li><i class="fa fa-check-circle text-warning"></i> Transition readiness assessment</li>
           </ul>
-          <a href="{% url 'unismart_role_selection' %}" class="portal-btn text-decoration-none" style="background: var(--gp-orange); color: white; border: none;">
+          <a href="{% url 'unismart_role_selection' %}" class="portal-btn text-decoration-none" style="background: var(--gp-orange); color: white; border: none;" id="portal-unismart">
             Enter UniSmart Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
       </div>
 
-      <!-- University & TVET (Campus) -->
-      <div class="col-lg-4 animate-fade-up animate-delay-1">
-        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-blue);">
-          <div class="portal-tag">For University & TVET Students</div>
+      <!-- Campus Portal -->
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.15s;">
+        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-navy);">
+          <div class="portal-tag" style="color:var(--gp-navy); background:rgba(0,139,139,0.08);">For University & TVET Students</div>
           <h2 class="portal-title">GradPulse Campus</h2>
-          <p class="portal-desc">The ultimate workspace for current higher-ed students. Track grades, earn credentials, and join project collaborations.</p>
+          <p class="portal-desc">Skill-first scenario-based learning. Solve real corporate challenges, earn solvability points, and build your Market-Ready Index ranking.</p>
           <ul class="pc-list">
-            <li><i class="fa fa-check-circle text-primary"></i> Grade tracking & GPA Calculator</li>
-            <li><i class="fa fa-check-circle text-primary"></i> Integrated verified credentials</li>
-            <li><i class="fa fa-check-circle text-primary"></i> RSVP to fairs, hackathons & events</li>
-            <li><i class="fa fa-check-circle text-primary"></i> Peer networking & mentorship</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Scenario-based challenge library</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Solvability points & Market-Ready Index</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Real-time skill portfolio builder</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Practitioner feedback loop</li>
           </ul>
-          <a href="{% url 'register' %}?portal=student" class="portal-btn text-decoration-none">
+          <a href="{% url 'register' %}?portal=student" class="portal-btn text-decoration-none" style="background:var(--gp-navy); color:white;" id="portal-campus">
             Enter Campus Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
       </div>
 
-      <!-- Corporates & Organizations (Corporate) -->
-      <div class="col-lg-4 animate-fade-up animate-delay-2">
-        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-navy);">
-          <div class="portal-tag">For Corporates & Organizations</div>
+      <!-- Corporate Portal -->
+      <div class="col-lg-4 animate-on-scroll" style="animation-delay:0.3s;">
+        <div class="portal-card h-100" style="border-top: 5px solid var(--gp-blue);">
+          <div class="portal-tag" style="color:var(--gp-blue); background:rgba(0,206,209,0.08);">For Corporates & Organizations</div>
           <h2 class="portal-title">GradPulse Corporate</h2>
-          <p class="portal-desc">Source exceptional graduate talent instantly. Filter candidates by exact skills and build your early-career pipeline.</p>
+          <p class="portal-desc">Customise your future workforce from within the active student population. Interact with real-time problem-solvers while they're still in university.</p>
           <ul class="pc-list">
-            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Instant talent matching & ranking</li>
-            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Access to verified student data</li>
-            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Post internships & graduate roles</li>
-            <li><i class="fa fa-check-circle" style="color:var(--gp-navy);"></i> Applicant pipeline management</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-blue);"></i> Challenge submission portal</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-blue);"></i> Talent pipeline dashboard</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-blue);"></i> Custom workforce profiling</li>
+            <li><i class="fa fa-check-circle" style="color:var(--gp-blue);"></i> Pre-hire assessment via challenges</li>
           </ul>
-          <a href="{% url 'register' %}?portal=employer" class="portal-btn text-decoration-none" style="background: var(--gp-navy);">
+          <a href="{% url 'register' %}?portal=employer" class="portal-btn text-decoration-none" style="background: var(--gp-blue); color:white;" id="portal-corporate">
             Enter Corporate Portal <i class="fa fa-arrow-right ms-1"></i>
           </a>
         </div>
@@ -127,40 +541,172 @@
   </div>
 </section>
 
-<!-- Recent Opportunities -->
-{% if recent_opportunities %}
-<section class="py-5 bg-light">
-  <div class="container animate-fade-up text-center mb-5">
-    <h2 class="portal-title mb-2">Latest Opportunities</h2>
-    <p class="text-muted" style="font-size: 1.1rem;">Fresh listings from our corporate partners, matched with your skills.</p>
-  </div>
+
+<!-- ══════════════════════════════════════════════════════════
+     RESEARCH FOUNDATION
+     ══════════════════════════════════════════════════════════ -->
+<section class="landing-section" id="research">
   <div class="container">
-    <div class="row g-4">
+    <div class="section-header text-center animate-on-scroll">
+      <span class="section-tag">Evidence-Based</span>
+      <h2 class="section-title">Built on Research, Not Assumptions</h2>
+      <p class="section-subtitle">
+        GradPulse's approach is grounded in peer-reviewed research and established theoretical frameworks, 
+        ensuring every feature delivers measurable impact.
+      </p>
+    </div>
+
+    <div class="row g-4 mt-3">
+      <div class="col-md-6 col-lg-3 animate-on-scroll">
+        <div class="research-card">
+          <div class="research-icon"><i class="fa fa-brain"></i></div>
+          <h5>Structural Learning Theory</h5>
+          <p class="small">Scandura (1973) — Learners who engage with real underlying problems build transferable, adaptive competencies.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 animate-on-scroll" style="animation-delay:0.1s;">
+        <div class="research-card">
+          <div class="research-icon" style="background:rgba(0,139,139,0.1); color:var(--gp-navy);"><i class="fa fa-chart-bar"></i></div>
+          <h5>Human Capital Theory</h5>
+          <p class="small">Becker & Schultz (1962) — Investment in skills at the right stage produces compounding returns in productivity and employability.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 animate-on-scroll" style="animation-delay:0.2s;">
+        <div class="research-card">
+          <div class="research-icon" style="background:rgba(0,206,209,0.1); color:var(--gp-blue);"><i class="fa fa-bullhorn"></i></div>
+          <h5>Expectancy Theory</h5>
+          <p class="small">Vroom (1964) — Students see a direct link between effort, solvability points, and ranking, creating tangible rewards.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 animate-on-scroll" style="animation-delay:0.3s;">
+        <div class="research-card">
+          <div class="research-icon" style="background:rgba(46,204,113,0.1); color:var(--gp-green);"><i class="fa fa-cogs"></i></div>
+          <h5>Sociotechnical Systems</h5>
+          <p class="small">Eric & Ken (1950) — Optimal performance requires joint optimisation of people and technology.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     RECENT OPPORTUNITIES
+     ══════════════════════════════════════════════════════════ -->
+{% if recent_opportunities %}
+<section class="landing-section" id="opportunities" style="background:white;">
+  <div class="container">
+    <div class="section-header text-center animate-on-scroll">
+      <span class="section-tag">Live Now</span>
+      <h2 class="section-title">Latest Opportunities</h2>
+      <p class="section-subtitle">Fresh listings from our corporate partners, matched to real market needs.</p>
+    </div>
+
+    <div class="row g-4 mt-3">
       {% for opp in recent_opportunities %}
-      <div class="col-md-6 col-lg-3 animate-fade-up" style="animation-delay: 0.{{ forloop.counter }}s;">
+      <div class="col-md-6 col-lg-3 animate-on-scroll" style="animation-delay: 0.{{ forloop.counter }}s;">
         <div class="opp-card">
           <div class="d-flex justify-content-between align-items-start mb-3">
             <span class="pill pill-{{ opp.type }}">{{ opp.get_type_display }}</span>
             <span class="pill pill-active"><i class="fa fa-fire text-warning me-1"></i>Active</span>
           </div>
-          <h6 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; color:var(--gp-blue);">{{ opp.title }}</h6>
+          <h6 class="fw-bold mb-2" style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; color:var(--gp-navy);">{{ opp.title }}</h6>
           <div class="text-muted small mb-2 d-flex align-items-center">
             <i class="fa fa-building me-2 text-warning"></i>{{ opp.company.company_name }}
           </div>
           <div class="text-muted small mb-4 d-flex align-items-center">
             <i class="fa fa-map-marker-alt me-2" style="color:var(--gp-orange);"></i>{{ opp.location }}
           </div>
-          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-outline w-100 btn-sm">View Details</a>
+          <a href="{% url 'opportunity_detail' opp.pk %}" class="btn gp-btn-outline w-100 btn-sm" id="opp-{{ opp.pk }}">View Details</a>
         </div>
       </div>
       {% endfor %}
     </div>
-    
-    <div class="text-center mt-5 mb-3 animate-fade-up animate-delay-4">
-      <a href="{% url 'opportunity_list' %}" class="btn gp-btn-navy">Explore All Opportunities <i class="fa fa-arrow-right ms-2"></i></a>
+
+    <div class="text-center mt-5 animate-on-scroll">
+      <a href="{% url 'opportunity_list' %}" class="btn gp-btn-navy" id="cta-all-opportunities">Explore All Opportunities <i class="fa fa-arrow-right ms-2"></i></a>
     </div>
   </div>
 </section>
 {% endif %}
 
+
+<!-- ══════════════════════════════════════════════════════════
+     FINAL CTA
+     ══════════════════════════════════════════════════════════ -->
+<section class="cta-section" id="join">
+  <div class="container text-center animate-on-scroll">
+    <h2 class="cta-title">Ready to Bridge the Gap?</h2>
+    <p class="cta-subtitle">
+      Join the GradPulse ecosystem and be part of the movement that operationalises a 100% transition 
+      rate from classroom to marketplace.
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+      <a href="{% url 'register' %}?portal=student" class="btn gp-btn-primary btn-lg" id="cta-final-student">
+        <i class="fa fa-user-graduate me-2"></i> Join as Student
+      </a>
+      <a href="{% url 'register' %}?portal=employer" class="btn gp-btn-outline btn-lg" style="background:rgba(255,255,255,0.15); color:white; border-color:rgba(255,255,255,0.3);" id="cta-final-employer">
+        <i class="fa fa-building me-2"></i> Join as Corporation
+      </a>
+    </div>
+    <p class="mt-4" style="color:rgba(255,255,255,0.7); font-size:0.95rem; font-style:italic;">
+      GradPulse: Where the market defines skills.
+    </p>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Scroll-triggered animations ──
+document.addEventListener('DOMContentLoaded', function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+  // ── Counter animation ──
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-count'));
+        if (!target) return;
+        let current = 0;
+        const increment = Math.ceil(target / 60);
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          el.textContent = (current >= 1000 ? (current/1000).toFixed(current >= target ? 0 : 0) + 'K' : current) + '+';
+          if (target === 12000) el.textContent = (current/1000).toFixed(current >= target ? 0 : 1) + 'K+';
+        }, 30);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.hs-num[data-count]').forEach(el => counterObserver.observe(el));
+
+  // ── Smooth scroll for anchor links ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

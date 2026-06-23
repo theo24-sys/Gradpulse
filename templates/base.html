@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; img-src * 'self' data: https:; font-src * 'self' data: https:;">
   <title>{% block title %}GradPulse — Career Launchpad{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}GradPulse connects university and TVET students with top employers across Kenya.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}GradPulse is a skill-first capacity building platform resolving the gap between academic credentials and market-ready competencies. Where the market defines skills.{% endblock %}">
+  {% block extra_seo %}{% endblock %}
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,7 +104,7 @@
         <div class="gp-brand mb-3">
           <img src="{% static 'images/logo.jpg' %}" alt="GradPulse Logo" style="height: 48px; object-fit: contain;">
         </div>
-        <p class="text-muted small">Kenya's premier career launchpad connecting university and TVET students with top employers.</p>
+        <p class="text-muted small">A skill-first capacity building platform creating a direct linkage between students and market practitioners. Where the market defines skills.</p>
         <p class="text-muted small mb-0">Powered by <strong>AKLIN TECHNOLOGIES</strong></p>
       </div>
       <div class="col-md-2">
