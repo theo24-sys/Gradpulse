@@ -642,6 +642,10 @@ def campus_dashboard(request):
     # AI Academic Guidance (sample or cached)
     academic_tip = get_academic_guidance(user.course or "General Studies")
     
+    from simulations.models import StudentSimulation
+    completed_simulations_count = StudentSimulation.objects.filter(student=user, status='completed').count()
+    matched_scenarios = StudentSimulation.objects.filter(student=user).select_related('challenge').order_by('-matched_at')[:3]
+    
     return render(request, 'campus/dashboard.html', {
         'user': user,
         'my_applications': my_applications,
@@ -651,6 +655,8 @@ def campus_dashboard(request):
         'connections_count': connections_count,
         'applications_count': my_applications.count(),
         'academic_tip': academic_tip,
+        'completed_simulations_count': completed_simulations_count,
+        'matched_scenarios': matched_scenarios,
     })
 
 

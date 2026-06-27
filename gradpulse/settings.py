@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'scraping',
     'django_recaptcha',
     'library',
+    'simulations',
 ]
 
 MIDDLEWARE = [

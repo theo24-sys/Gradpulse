@@ -1,0 +1,174 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block title %}{{ simulation.challenge.title }} — Workspace{% endblock %}
+
+{% block extra_css %}
+<style>
+  .workspace-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 70px);
+    margin: -20px;
+    background-color: #f7f9fa;
+  }
+  .workspace-header {
+    background: #fff;
+    border-bottom: 1px solid var(--gp-border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .adapt-iframe-wrapper {
+    flex-grow: 1;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .adapt-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+  }
+  .btn-back-to-list {
+    color: var(--gp-navy);
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+  }
+  .btn-back-to-list:hover {
+    transform: translateX(-3px);
+    color: var(--gp-orange);
+  }
+</style>
+{% endblock %}
+
+{% block campus_content %}
+<div class="workspace-container">
+  <!-- Workspace Header Bar -->
+  <div class="workspace-header">
+    <div class="d-flex align-items-center gap-3">
+      <a href="{% url 'market_simulations_list' %}" class="btn-back-to-list">
+        <i class="fa fa-arrow-left"></i>
+        <span class="d-none d-md-inline">Back to Simulations</span>
+      </a>
+      <div class="vr d-none d-md-block" style="height: 24px;"></div>
+      <div>
+        <h5 class="fw-bold text-navy mb-0">{{ simulation.challenge.title }}</h5>
+        <div class="d-flex align-items-center gap-2 mt-0.5">
+          <span class="badge bg-soft-navy text-navy" style="font-size: 0.7rem;">{{ simulation.challenge.company_name }}</span>
+          <span id="status-badge" class="badge {% if simulation.status == 'completed' %}bg-success{% elif simulation.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}" style="font-size: 0.7rem; text-transform: capitalize;">
+            {{ simulation.get_status_display }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <!-- Live Score Indicator -->
+      <div class="text-end">
+        <div class="text-muted small fw-600">Earned Score</div>
+        <div id="score-value" class="h6 fw-bold mb-0 text-navy">
+          {% if simulation.score_earned is not None %}{{ simulation.score_earned|floatformat:0 }}%{% else %}0%{% endif %}
+        </div>
+      </div>
+      
+      <!-- Developer/Test Fallback trigger for demo courses -->
+      <button class="btn btn-sm btn-outline-secondary rounded-pill" id="btn-simulate-complete" title="Simulate passing grade (Test sandbox)">
+        <i class="fa fa-vial me-1"></i>Test Pass
+      </button>
+    </div>
+  </div>
+
+  <!-- Adapt Iframe Display -->
+  <div class="adapt-iframe-wrapper">
+    {% if simulation.challenge.adapt_build_url %}
+    <iframe class="adapt-iframe" id="adapt-course-frame" src="{{ simulation.challenge.adapt_build_url }}" allow="autoplay; encrypted-media; fullscreen"></iframe>
+    {% else %}
+    <div class="d-flex flex-column align-items-center justify-content-center h-100 p-4 text-center">
+      <div class="p-4 bg-light rounded-circle text-muted mb-3">
+        <i class="fa fa-unlink fa-3x opacity-40"></i>
+      </div>
+      <h5 class="fw-bold text-navy">No Course Package Uploaded</h5>
+      <p class="text-muted mx-auto" style="max-width: 450px;">
+        There is no HTML5 bundle or external URL attached to this Market Challenge. Please contact the business or administrator.
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 1. postMessage listener to receive assessment results from the Adapt Framework build
+    window.addEventListener('message', function(event) {
+      console.log("Adapt workspace received message event:", event.data);
+      
+      let data = event.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch(e) {
+          // Message was not JSON, ignore
+          return;
+        }
+      }
+      
+      // Look for standard assessment keys (Adapt / xAPI / Custom trackers)
+      if (data && (data.event === 'assessment' || data.type === 'adapt-progress' || data.score !== undefined)) {
+        updateProgress(data.score, data.status || 'in_progress');
+      }
+    });
+
+    // 2. AJAX Progress Updater Function
+    function updateProgress(score, status) {
+      fetch("{% url 'simulation_progress_update' simulation.pk %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          score: score,
+          status: status
+        })
+      })
+      .then(response => response.json())
+      .then(res => {
+        if (res.status === 'success') {
+          // Update score and status badge in UI dynamically
+          document.getElementById('score-value').innerText = score + '%';
+          const badge = document.getElementById('status-badge');
+          if (status === 'completed') {
+            badge.className = "badge bg-success";
+            badge.innerText = "Completed";
+          } else if (status === 'in_progress') {
+            badge.className = "badge bg-warning";
+            badge.innerText = "In Progress";
+          }
+        }
+      })
+      .catch(err => console.error("Error updating simulation progress:", err));
+    }
+
+    // 3. Test Simulation Handler (simulates postMessage event for verification)
+    document.getElementById('btn-simulate-complete').addEventListener('click', function() {
+      // Simulate scoring 85% and completing the exercise
+      updateProgress(85, 'completed');
+      alert("Simulated scoring 85% and completing. Check your progress and dashboard badges!");
+    });
+  });
+</script>
+{% endblock %}

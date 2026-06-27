@@ -47,8 +47,8 @@
   <div class="col-6 col-lg-3">
     <div class="metric-card mc-purple">
       <div class="metric-icon ic-purple"><i class="fa fa-certificate"></i></div>
-      <div class="metric-value">{{ user.enrollments.count }}</div>
-      <div class="metric-label">Credentials</div>
+      <div class="metric-value">{{ user.enrollments.count|add:completed_simulations_count }}</div>
+      <div class="metric-label">Credentials & Badges</div>
     </div>
   </div>
 </div>
@@ -61,6 +61,25 @@
   </div>
   <div class="gp-card-body">
     <div class="row g-3">
+      {% for item in matched_scenarios %}
+      <div class="col-md-4">
+        <div class="p-3 border border-accent rounded-3 h-100 bg-accent-soft-hover transition-base position-relative" style="background: rgba(253, 126, 20, 0.05); display: flex; flex-direction: column;">
+          <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-accent" style="font-size: 0.65rem; transform: translate(-20%, 50%) !important;">
+            AI Match
+          </span>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-accent-soft text-accent small">Market Simulation</span>
+            <span class="text-muted" style="font-size: 0.7rem;">{{ item.matched_at|timesince }} ago</span>
+          </div>
+          <h6 class="fw-bold small mb-1">{{ item.challenge.title|truncatechars:50 }}</h6>
+          <div class="text-muted small mb-2"><i class="fa fa-building me-1"></i>{{ item.challenge.company_name }}</div>
+          <div class="d-flex justify-content-between align-items-center mt-auto">
+            <span class="text-muted" style="font-size: 0.7rem;"><i class="fa fa-industry me-1"></i>{{ item.challenge.sector|default:"Industry" }}</span>
+            <a href="{% url 'market_simulation_workspace' item.pk %}" class="btn btn-sm gp-btn-outline-accent py-0 px-2" style="font-size: 0.7rem;">Launch</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
       {% for item in discovered_items %}
       <div class="col-md-4">
         <div class="p-3 border rounded-3 h-100 bg-light-hover transition-base">
@@ -76,11 +95,12 @@
           </div>
         </div>
       </div>
-      {% empty %}
+      {% endfor %}
+      {% if not discovered_items and not matched_scenarios %}
       <div class="col-12 text-center py-3 text-muted">
         <p class="small mb-0">No raw discoveries yet. Run the scrapers to see them here!</p>
       </div>
-      {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>

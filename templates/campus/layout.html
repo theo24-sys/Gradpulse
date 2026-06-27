@@ -112,6 +112,12 @@
           <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">New</span>
         </a>
       </li>
+      <li>
+        <a href="{% url 'market_simulations_list' %}" class="d-flex justify-content-between align-items-center {% if request.resolver_match.url_name == 'market_simulations_list' or request.resolver_match.url_name == 'market_simulation_workspace' %}active{% endif %}">
+          <span><i class="fa fa-industry"></i> Market Simulations</span>
+          <span class="badge rounded-pill" style="background:#e55a40; font-size:10px;">New</span>
+        </a>
+      </li>
       <li><a href="{% url 'library_list' %}" class="{% if request.resolver_match.url_name == 'library_list' %}active{% endif %}"><i class="fa fa-book-reader"></i> Library & Resources</a></li>
 
       <li class="nav-section">NETWORK</li>
@@ -180,6 +186,10 @@
     <a href="{% url 'simulations_list' %}" class="nav-item {% if request.resolver_match.url_name == 'simulations_list' %}active{% endif %}">
       <i class="fa fa-brain"></i>
       <span>Simulate</span>
+    </a>
+    <a href="{% url 'market_simulations_list' %}" class="nav-item {% if request.resolver_match.url_name == 'market_simulations_list' or request.resolver_match.url_name == 'market_simulation_workspace' %}active{% endif %}">
+      <i class="fa fa-industry"></i>
+      <span>Market Sim</span>
     </a>
     <a href="{% url 'library_list' %}" class="nav-item {% if request.resolver_match.url_name == 'library_list' %}active{% endif %}">
       <i class="fa fa-book-reader"></i>

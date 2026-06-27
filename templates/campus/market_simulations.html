@@ -1,0 +1,175 @@
+{% extends 'campus/layout.html' %}
+{% load static %}
+
+{% block title %}Market Simulations — GradPulse{% endblock %}
+
+{% block campus_content %}
+<div class="dash-header mb-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <div>
+      <div class="dash-greeting"><i class="fa fa-industry text-accent me-2"></i>Scenario-Based Learning</div>
+      <h1 class="dash-title">Market Simulations</h1>
+      <p class="text-muted mb-0">Bridge your academic courses with real-world market challenges from local businesses.</p>
+    </div>
+    
+    {% if has_grades %}
+    <form action="{% url 'trigger_matching' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn gp-btn-accent px-4 py-2 shadow-sm rounded-pill hover-scale">
+        <i class="fa fa-magic me-2"></i>AI Match My Courses
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Stats Indicators -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3 d-flex align-items-center justify-content-between shadow-sm">
+      <div>
+        <div class="text-muted small fw-600">Assigned Exercises</div>
+        <div class="h3 fw-bold mb-0 text-navy mt-1">{{ assigned_count }}</div>
+      </div>
+      <div class="p-3 bg-light-primary rounded-circle text-primary">
+        <i class="fa fa-clipboard-list fa-lg"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3 d-flex align-items-center justify-content-between shadow-sm">
+      <div>
+        <div class="text-muted small fw-600">In Progress</div>
+        <div class="h3 fw-bold mb-0 text-orange mt-1">{{ in_progress_count }}</div>
+      </div>
+      <div class="p-3 bg-light-warning rounded-circle text-orange">
+        <i class="fa fa-spinner fa-spin fa-lg"></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 bg-white border rounded-3 d-flex align-items-center justify-content-between shadow-sm">
+      <div>
+        <div class="text-muted small fw-600">Completed</div>
+        <div class="h3 fw-bold mb-0 text-success mt-1">{{ completed_count }}</div>
+      </div>
+      <div class="p-3 bg-light-success rounded-circle text-success">
+        <i class="fa fa-check-circle fa-lg"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Simulations Grid -->
+<div class="gp-card">
+  <div class="gp-card-header d-flex justify-content-between align-items-center">
+    <h6 class="fw-bold mb-0"><i class="fa fa-tasks text-muted me-2"></i>Your Matched Simulations</h6>
+    <span class="badge bg-secondary-soft text-secondary">Total: {{ simulations.count }}</span>
+  </div>
+  <div class="gp-card-body">
+    {% if simulations %}
+    <div class="row g-4">
+      {% for sim in simulations %}
+      <div class="col-md-6">
+        <div class="card market-sim-card border-light h-100 shadow-sm transition-base hover-shadow-md bg-light-hover">
+          <div class="card-body d-flex flex-column p-4">
+            
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <span class="badge bg-soft-navy text-navy me-1 px-2 py-1" style="font-size: 0.7rem;">
+                  {{ sim.challenge.company_name }}
+                </span>
+                <span class="badge px-2 py-1 {% if sim.challenge.difficulty == 'beginner' %}bg-soft-success text-success{% elif sim.challenge.difficulty == 'intermediate' %}bg-soft-warning text-orange{% else %}bg-soft-danger text-danger{% endif %}" style="font-size: 0.7rem; text-transform: capitalize;">
+                  {{ sim.challenge.difficulty }}
+                </span>
+              </div>
+              
+              {% if sim.adapt_config_json.confidence_score %}
+              <div class="badge bg-accent-soft text-accent match-badge px-2 py-1 rounded-pill" style="font-size: 0.7rem;" title="AI semantic matching confidence">
+                <i class="fa fa-brain me-1"></i>{{ sim.adapt_config_json.confidence_score|floatformat:0 }}% Match
+              </div>
+              {% endif %}
+            </div>
+
+            <h5 class="fw-bold text-navy mb-2">{{ sim.challenge.title }}</h5>
+            <p class="text-muted small flex-grow-1 line-clamp-3">{{ sim.challenge.description }}</p>
+
+            {% if sim.course_objective %}
+            <div class="p-2 bg-light rounded-3 mb-3 border-dashed border-light border-2">
+              <div class="text-muted" style="font-size: 0.7rem; font-weight: 600;"><i class="fa fa-book me-1"></i>Matched Course Objective</div>
+              <div class="fw-600 text-navy small mt-0.5">{{ sim.course_objective.course_code }}: {{ sim.course_objective.course_title }}</div>
+            </div>
+            {% endif %}
+
+            <!-- Scoring & Progress -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Status: 
+                  <span class="fw-600 {% if sim.status == 'completed' %}text-success{% elif sim.status == 'in_progress' %}text-orange{% else %}text-navy{% endif %}">
+                    {{ sim.get_status_display }}
+                  </span>
+                </span>
+                {% if sim.score_earned is not None %}
+                <span class="text-navy font-monospace small fw-bold">Score: {{ sim.score_earned|floatformat:0 }}%</span>
+                {% endif %}
+              </div>
+              <div class="progress" style="height: 6px; background-color: var(--gp-border);">
+                <div class="progress-bar {% if sim.status == 'completed' %}bg-success{% elif sim.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}" 
+                     role="progressbar" 
+                     style="width: {% if sim.score_earned is not None %}{{ sim.score_earned }}{% elif sim.status == 'completed' %}100{% elif sim.status == 'in_progress' %}50{% else %}0{% endif %}%" 
+                     aria-valuenow="{{ sim.score_earned|default:0 }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid mt-2">
+              <a href="{% url 'market_simulation_workspace' sim.pk %}" class="btn {% if sim.status == 'completed' %}gp-btn-outline-primary{% else %}gp-btn-accent{% endif %} py-2">
+                {% if sim.status == 'completed' %}
+                <i class="fa fa-redo me-2"></i>Review Workspace
+                {% elif sim.status == 'in_progress' %}
+                <i class="fa fa-play me-2"></i>Resume simulation
+                {% else %}
+                <i class="fa fa-rocket me-2"></i>Launch Workspace
+                {% endif %}
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+      <div class="p-4 bg-light rounded-circle d-inline-flex mb-3 text-muted">
+        <i class="fa fa-laptop-code fa-3x opacity-40"></i>
+      </div>
+      
+      {% if not has_grades %}
+      <h4 class="fw-bold text-navy">Upload your Transcript First</h4>
+      <p class="text-muted mx-auto" style="max-width: 450px;">
+        To match market simulations to your curriculum, our AI needs to analyze your active university courses.
+      </p>
+      <a href="{% url 'transcript_upload' %}" class="btn gp-btn-primary px-4 py-2 mt-2">
+        <i class="fa fa-upload me-2"></i>Upload Transcript PDF
+      </a>
+      {% else %}
+      <h4 class="fw-bold text-navy">No Simulations Matched Yet</h4>
+      <p class="text-muted mx-auto" style="max-width: 450px;">
+        Let our AI engine parse your transcript grades and semantically match them to corporate challenges submitted by local businesses.
+      </p>
+      <form action="{% url 'trigger_matching' %}" method="post" class="mt-3">
+        {% csrf_token %}
+        <button type="submit" class="btn gp-btn-accent px-4 py-2 shadow-sm">
+          <i class="fa fa-magic me-2"></i>Match My Courses
+        </button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
