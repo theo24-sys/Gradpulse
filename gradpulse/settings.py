@@ -178,6 +178,7 @@ if not DEBUG:
         'http://localhost:3000',
         'https://gradpulse.up.railway.app',
         'https://gradpulse.co.ke',
+        'https://www.gradpulse.co.ke',
     ])
     if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
         CORS_ALLOWED_ORIGINS.append(f"https://{os.environ.get('RENDER_EXTERNAL_HOSTNAME')}")
@@ -189,6 +190,7 @@ if not DEBUG:
 CSRF_TRUSTED_ORIGINS = [
     'https://gradpulse.up.railway.app',
     'https://gradpulse.co.ke',
+    'https://www.gradpulse.co.ke',
     'http://localhost:3000',
 ]
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
