@@ -2,8 +2,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import ProgrammingError
 from django.shortcuts import get_object_or_404, redirect, render
-
-from accounts.ai_utils import generate_simulation_scenario
 from .models import Credential, Enrollment, Simulation
 from scraping.utils import get_items_for_student
 
@@ -103,29 +101,15 @@ def simulation_create(request):
 def simulation_generate_ai(request):
     if not (request.user.is_employer or request.user.is_superuser):
         return redirect('home')
-        
+
     if request.method == 'POST':
         topic = request.POST.get('topic')
         if topic:
-            messages.info(request, f"Gemini is designing a simulation for '{topic}'...")
-            scenario = generate_simulation_scenario(topic)
-            
-            if scenario:
-                simulation = Simulation.objects.create(
-                    title=scenario.get('title', f"AI: {topic}"),
-                    description=scenario.get('situation', ''),
-                    category="AI Generated",
-                    difficulty="Intermediate",
-                    is_premium=True,
-                    is_ai_generated=True,
-                    json_content=scenario,
-                    created_by=request.user
-                )
-                messages.success(request, f"AI Simulation '{simulation.title}' generated successfully!")
-                return redirect('manage_simulations')
-            else:
-                messages.error(request, "AI failed to generate a scenario. Please try a different topic.")
-                
+            from .tasks import generate_simulation_ai_task
+            generate_simulation_ai_task.delay(topic, request.user.id)
+            messages.success(request, f"AI is generating a simulation for '{topic}'. It will appear in your list in ~30 seconds.")
+            return redirect('manage_simulations')
+
     return render(request, 'corporate/simulation_ai_form.html')
 
 
