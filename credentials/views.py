@@ -2,8 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import ProgrammingError
 from django.shortcuts import get_object_or_404, redirect, render
-
-from accounts.ai_utils import generate_simulation_scenario
+from .forms import SimulationForm
 from .models import Credential, Enrollment, Simulation
 from scraping.utils import get_items_for_student
 
@@ -34,8 +33,6 @@ def enroll_credential(request, pk):
     messages.success(request, f'Enrolled in "{credential.name}"!')
     return redirect('credentials_list')
 
-
-from .forms import SimulationForm
 
 @login_required
 def simulations_list(request):
@@ -97,7 +94,20 @@ def simulation_create(request):
     else:
         form = SimulationForm()
     return render(request, 'corporate/simulation_form.html', {'form': form, 'title': 'Create Simulation'})
+@login_required
+def simulation_generate_ai(request):
+    if not (request.user.is_employer or request.user.is_superuser):
+        return redirect('home')
 
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        if topic:
+            from .tasks import generate_simulation_ai_task
+            generate_simulation_ai_task.delay(topic, request.user.id)
+            messages.success(request, f"AI is generating a simulation for '{topic}'. It will appear in your list in ~30 seconds.")
+            return redirect('manage_simulations')
+
+    return render(request, 'corporate/simulation_ai_form.html')
 
 @login_required
 def simulation_generate_ai(request):
@@ -127,7 +137,6 @@ def simulation_generate_ai(request):
                 messages.error(request, "AI failed to generate a scenario. Please try a different topic.")
                 
     return render(request, 'corporate/simulation_ai_form.html')
-
 
 @login_required
 def simulation_play(request, pk):
