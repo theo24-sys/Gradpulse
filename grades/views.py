@@ -55,13 +55,18 @@ def upload_transcript(request):
             
         # 2. Extract Data via OpenAI
         grades_data = parse_transcript_with_ai(text)
-        if not grades_data:
+        if isinstance(grades_data, dict) and grades_data.get('error'):
+            messages.error(request, f"AI parsing failed: {grades_data['error']}")
+            return redirect('grades')
+        if not isinstance(grades_data, list) or not grades_data:
             messages.error(request, 'AI could not parse sufficient academic grades from the document.')
             return redirect('grades')
             
         # 3. Create Records
         count = 0
         for item in grades_data:
+            if not isinstance(item, dict):
+                continue
             try:
                 credit = int(item.get('credit_hours', 3))
             except (ValueError, TypeError):
