@@ -196,7 +196,7 @@
                         
                         <!-- Input -->
                         <div class="p-3 border-top bg-white">
-                            <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-indicator="#chat-loading">
+                            <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-on::after-request="if (event.detail.successful) this.reset()" hx-on::response-error="document.getElementById('chat-error').classList.remove('d-none')" hx-indicator="#chat-loading">
                                 {% csrf_token %}
                                 <div class="input-group">
                                     <input type="text" name="message" class="form-control border-light-orange rounded-pill-start ps-4" placeholder="Ask about cluster points, courses, etc..." style="border-right: none;">
@@ -206,6 +206,9 @@
                                 </div>
                                 <div id="chat-loading" class="htmx-indicator mt-2 small text-muted text-center">
                                     <span class="spinner-border spinner-border-sm me-1"></span> UniSmart AI is thinking...
+                                </div>
+                                <div id="chat-error" class="d-none mt-2 small text-danger text-center">
+                                    The AI request could not be completed. Please try again.
                                 </div>
                             </form>
                         </div>
