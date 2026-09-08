@@ -196,15 +196,15 @@
                         
                         <!-- Input -->
                         <div class="p-3 border-top bg-white">
-                            <form id="unismart-chat-form" hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-on::after-request="if (event.detail.successful) this.reset()" hx-on::response-error="document.getElementById('chat-error').classList.remove('d-none')" hx-indicator="#chat-loading">
+                            <form id="unismart-chat-form" hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% csrf_token %}
                                 <div class="input-group">
                                     <input type="text" name="message" class="form-control border-light-orange rounded-pill-start ps-4" placeholder="Ask about cluster points, courses, etc..." style="border-right: none;">
-                                    <button class="btn btn-orange rounded-pill-end px-4" type="submit">
-                                        <i class="fas fa-paper-plane"></i>
+                                    <button id="chat-submit" class="btn btn-orange rounded-pill-end px-4" type="submit">
+                                        <i class="fas fa-paper-plane"></i> <span>Send</span>
                                     </button>
                                 </div>
-                                <div id="chat-loading" class="htmx-indicator mt-2 small text-muted text-center">
+                                <div id="chat-loading" class="d-none mt-2 small text-muted text-center">
                                     <span class="spinner-border spinner-border-sm me-1"></span> UniSmart AI is thinking...
                                 </div>
                                 <div id="chat-error" class="d-none mt-2 small text-danger text-center">
@@ -406,20 +406,55 @@
     .btn-orange:hover { background-color: #e86400; color: white; }
 </style>
 <script>
-    document.addEventListener('htmx:beforeRequest', function (event) {
+    (() => {
+        let pendingBubble = null;
+
+        function scrollChat() {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        document.addEventListener('htmx:beforeRequest', function (event) {
         const form = event.detail.elt;
         if (!form || form.id !== 'unismart-chat-form') return;
 
         const input = form.elements.message;
         const message = input.value.trim();
-        if (!message) return;
+        if (!message || pendingBubble) {
+            event.preventDefault();
+            return;
+        }
 
         const bubble = document.createElement('div');
         bubble.className = 'chat-message user mb-4 d-flex gap-3 justify-content-end';
         bubble.innerHTML = '<div class="p-3 bg-orange text-white rounded-4" style="max-width: 85%;"><p class="mb-0"></p></div>';
         bubble.querySelector('p').textContent = message;
         document.getElementById('chat-window').appendChild(bubble);
-        document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-    });
+        pendingBubble = document.createElement('div');
+        pendingBubble.className = 'chat-message ai mb-4 d-flex gap-3';
+        pendingBubble.innerHTML = '<div class="rounded-circle bg-orange text-white flex-shrink-0 d-flex align-items-center justify-content-center" style="width:32px;height:32px;"><i class="fas fa-robot small"></i></div><div class="p-3 bg-light rounded-4" style="max-width:85%;"><span class="spinner-border spinner-border-sm me-2"></span>UniSmart AI is thinking...</div>';
+        document.getElementById('chat-window').appendChild(pendingBubble);
+        document.getElementById('chat-submit').disabled = true;
+        document.getElementById('chat-loading').classList.remove('d-none');
+        document.getElementById('chat-error').classList.add('d-none');
+        scrollChat();
+        });
+
+        document.addEventListener('htmx:afterRequest', function (event) {
+            const form = event.detail.elt;
+            if (!form || form.id !== 'unismart-chat-form') return;
+
+            if (pendingBubble) pendingBubble.remove();
+            pendingBubble = null;
+            document.getElementById('chat-submit').disabled = false;
+            document.getElementById('chat-loading').classList.add('d-none');
+            if (event.detail.successful) {
+                form.reset();
+            } else {
+                document.getElementById('chat-error').classList.remove('d-none');
+            }
+            scrollChat();
+        });
+    })();
 </script>
 {% endblock %}
