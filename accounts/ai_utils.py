@@ -13,6 +13,9 @@ logger = logging.getLogger(__name__)
 
 _client = None
 
+def get_model_name():
+    return getattr(settings, 'GEMINI_MODEL', 'gemini-2.5-flash')
+
 def get_client():
     global _client
     if _client is not None:
@@ -97,7 +100,7 @@ def calculate_kcse_clusters(results):
     """
     
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         
         if not response.text:
             # Check for safety blocks
@@ -178,7 +181,7 @@ def extract_courses_from_text(text, level='degree'):
     """
     
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         content = response.text.strip()
         
         if "```json" in content:
@@ -224,7 +227,7 @@ def extract_courses_from_pdf(pdf_file, level='degree'):
     """
     
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         content = response.text.strip()
         
         # Robust JSON cleaning
@@ -252,7 +255,7 @@ def get_academic_guidance(course):
     
     prompt = f"Give one specific academic success tip for a university student studying {course}. Keep it under 150 characters. Be concise and practical."
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         return response.text.strip()
     except Exception as e:
         logger.error(f"Grade AI error: {e}")
@@ -283,7 +286,7 @@ def parse_text_transcript_with_gemini(text):
     Return ONLY JSON.
     """
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         content = response.text.replace('```json', '').replace('```', '').strip()
         data = json.loads(content)
         return data
@@ -335,7 +338,7 @@ def generate_simulation_scenario(topic):
     Return ONLY JSON.
     """
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         content = response.text.replace('```json', '').replace('```', '').strip()
         return json.loads(content)
     except Exception as e:
@@ -355,7 +358,7 @@ def generate_search_queries(traits, category="events"):
     Return ONLY the queries separated by newlines. No numbers, no bullets.
     """
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=prompt)
         queries = response.text.strip().split('\n')
         return [q.strip() for q in queries if q.strip()]
     except Exception as e:
@@ -398,7 +401,7 @@ def unismart_career_chat(query, user_context=""):
     User Query: {query}
     """
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=system_prompt)
+        response = client.models.generate_content(model=get_model_name(), contents=system_prompt)
         if response and response.text:
             return response.text.strip()
         return "I received an empty response. Please try rephrasing your question."

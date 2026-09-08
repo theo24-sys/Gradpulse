@@ -97,7 +97,7 @@ Return ONLY a valid JSON list. No explanation, no HTML tags, no ```json markdown
 """
 
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model=getattr(settings, 'GEMINI_MODEL', 'gemini-2.5-flash'), contents=prompt)
         text = response.text.strip()
         
         # Clean markdown code block wraps if present

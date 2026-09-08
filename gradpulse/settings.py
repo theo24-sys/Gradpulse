@@ -20,6 +20,7 @@ if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
 
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', os.environ.get('GEMINI_API_KEY', ''))).strip().strip('"').strip("'")
+GEMINI_MODEL = env('GEMINI_MODEL', default=os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')).strip()
 APIFY_TOKEN = env('APIFY_TOKEN', default=os.environ.get('APIFY_TOKEN', '')).strip()
 APIFY_ACTOR = env('APIFY_ACTOR', default=os.environ.get('APIFY_ACTOR', 'lUx1E90x9FbPcWvps')).strip()
 
