@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 _client = None
 
 def get_model_name():
-    return getattr(settings, 'GEMINI_MODEL', 'gemini-2.5-flash')
+    return getattr(settings, 'GEMINI_MODEL', 'gemini-3.6-flash')
 
 def get_client():
     global _client
