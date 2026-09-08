@@ -483,10 +483,15 @@ def register_view(request):
         else:
             form = StudentRegisterForm(request.POST, request.FILES)
         
-        # DEBUG BYPASS: Allow registration without reCAPTCHA if ?bypass=true is in URL (and DEBUG is on)
-        if settings.DEBUG and request.GET.get('bypass') == 'true':
-            if 'captcha' in form.fields:
-                form.fields['captcha'].required = False
+        # Check for bypass (development or emergency bypass key)
+        bypass_key = getattr(settings, 'RECAPTCHA_BYPASS_KEY', 'gradpulse2026')
+        bypass_requested = (
+            (settings.DEBUG and request.GET.get('bypass') == 'true')
+            or request.GET.get('bypass') == bypass_key
+            or request.GET.get('bypass_key') == bypass_key
+        )
+        if bypass_requested and 'captcha' in form.fields:
+            form.fields.pop('captcha', None)
         
         # Validate consent checkboxes
         privacy_consent = request.POST.get('privacy_consent')
@@ -515,6 +520,15 @@ def register_view(request):
             form = UniSmartRegisterForm(initial={'student_category': category})
         else:
             form = StudentRegisterForm()
+            
+        bypass_key = getattr(settings, 'RECAPTCHA_BYPASS_KEY', 'gradpulse2026')
+        bypass_requested = (
+            (settings.DEBUG and request.GET.get('bypass') == 'true')
+            or request.GET.get('bypass') == bypass_key
+            or request.GET.get('bypass_key') == bypass_key
+        )
+        if bypass_requested and 'captcha' in form.fields:
+            form.fields.pop('captcha', None)
     return render(request, 'auth/register.html', {'form': form, 'portal': portal})
 
 
@@ -524,10 +538,15 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
         
-        # DEBUG BYPASS: Allow login without reCAPTCHA if ?bypass=true is in URL (and DEBUG is on)
-        if settings.DEBUG and request.GET.get('bypass') == 'true':
-            if 'captcha' in form.fields:
-                form.fields['captcha'].required = False
+        # Check for bypass (development or emergency bypass key)
+        bypass_key = getattr(settings, 'RECAPTCHA_BYPASS_KEY', 'gradpulse2026')
+        bypass_requested = (
+            (settings.DEBUG and request.GET.get('bypass') == 'true')
+            or request.GET.get('bypass') == bypass_key
+            or request.GET.get('bypass_key') == bypass_key
+        )
+        if bypass_requested and 'captcha' in form.fields:
+            form.fields.pop('captcha', None)
         
         if form.is_valid():
             user = form.get_user()
@@ -553,6 +572,14 @@ def login_view(request):
                         messages.error(request, f"{field.capitalize()}: {error}")
     else:
         form = LoginForm(request)
+        bypass_key = getattr(settings, 'RECAPTCHA_BYPASS_KEY', 'gradpulse2026')
+        bypass_requested = (
+            (settings.DEBUG and request.GET.get('bypass') == 'true')
+            or request.GET.get('bypass') == bypass_key
+            or request.GET.get('bypass_key') == bypass_key
+        )
+        if bypass_requested and 'captcha' in form.fields:
+            form.fields.pop('captcha', None)
     return render(request, 'auth/login.html', {'form': form})
 
 

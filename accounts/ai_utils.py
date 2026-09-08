@@ -1,12 +1,13 @@
+import os
+import json
+import logging
+import PyPDF2
+from django.conf import settings
+
 try:
     from google import genai
 except ImportError:
     genai = None
-
-from django.conf import settings
-import PyPDF2
-import json
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -17,16 +18,24 @@ def get_client():
     if _client is not None:
         return _client
     if genai is None:
+        logger.error("google-genai library is not installed or could not be imported.")
         return None
-    api_key = getattr(settings, 'GOOGLE_API_KEY', None)
+    api_key = (
+        getattr(settings, 'GOOGLE_API_KEY', '')
+        or os.environ.get('GOOGLE_API_KEY', '')
+        or os.environ.get('GEMINI_API_KEY', '')
+    )
     if not api_key:
-        logger.warning("GOOGLE_API_KEY not found in settings.")
+        logger.warning("GOOGLE_API_KEY / GEMINI_API_KEY not found in settings or environment.")
+        return None
+    api_key = str(api_key).strip().strip('"').strip("'")
+    if not api_key:
         return None
     try:
         _client = genai.Client(api_key=api_key)
         return _client
     except Exception as e:
-        logger.error(f"Failed to configure Gemini: {e}")
+        logger.error(f"Failed to configure Gemini client: {e}")
         return None
 
 
@@ -52,7 +61,7 @@ def calculate_kcse_clusters(results):
         logger.warning("Gemini client not available for KCSE cluster calculation.")
         return {
             "clusters": {},
-            "summary": "AI calculation failed. Gemini client not available.",
+            "summary": "AI calculation offline. Please configure `GOOGLE_API_KEY` or `GEMINI_API_KEY` in your environment variables.",
             "recommendations": []
         }
 
@@ -361,7 +370,18 @@ def generate_search_queries(traits, category="events"):
 def unismart_career_chat(query, user_context=""):
     client = get_client()
     if client is None:
-        return "I'm sorry, my AI career guidance system is temporarily unavailable. Please try again later."
+        api_key = (
+            getattr(settings, 'GOOGLE_API_KEY', '')
+            or os.environ.get('GOOGLE_API_KEY', '')
+            or os.environ.get('GEMINI_API_KEY', '')
+        )
+        if not api_key:
+            return (
+                "⚠️ **AI Setup Required**: Google Gemini API key is missing. "
+                "Please configure `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) in your Railway / Render environment variables to activate live AI career guidance!\n\n"
+                "💡 In the meantime, you can explore available courses under **Explore Courses** or enter your KCSE grades to compute your cluster points."
+            )
+        return "⚠️ I'm sorry, the AI career guidance service is temporarily reconnecting. Please try asking your question again in a moment."
     
     system_prompt = f"""
     You are 'UniSmart Assistant', a specialized Kenyan academic and career advisor for high school students.
@@ -378,11 +398,18 @@ def unismart_career_chat(query, user_context=""):
     User Query: {query}
     """
     try:
-        response = client.models.generate_content(model='gemini-1.5-flash', contents=system_prompt)
-        return response.text
+        response = client.models.generate_content(model='gemini-2.0-flash', contents=system_prompt)
+        if response and response.text:
+            return response.text.strip()
+        return "I received an empty response. Please try rephrasing your question."
     except Exception as e:
         logger.error(f"Gemini UniSmart chat error: {e}")
-        return "I encountered an error while processing your request. Please try again."
+        err_msg = str(e)
+        if "API_KEY_INVALID" in err_msg or "400" in err_msg or "API key not valid" in err_msg:
+            return "⚠️ **AI Authentication Error**: Your Google API key appears to be invalid or disabled. Please check your `GOOGLE_API_KEY` in Google AI Studio."
+        elif "429" in err_msg or "quota" in err_msg.lower() or "RESOURCE_EXHAUSTED" in err_msg:
+            return "⚠️ **AI Rate Limit**: Quota exceeded for today. Please wait a moment or supply a fresh Google API Key."
+        return f"⚠️ I encountered an error while processing your request: {err_msg[:120]}. Please try again."
 
 
 def get_mentor_recommendation(course_interest=None):

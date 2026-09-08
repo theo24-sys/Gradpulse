@@ -173,6 +173,13 @@ def chat_detail_view(request, pk):
 
 
 @login_required
+def chat_by_username(request, username):
+    target_user = get_object_or_404(CustomUser, username=username)
+    return redirect('chat_detail', pk=target_user.pk)
+
+
+
+@login_required
 def delete_message_view(request, msg_pk):
     message = get_object_or_404(Message, pk=msg_pk)
     if message.sender == request.user:

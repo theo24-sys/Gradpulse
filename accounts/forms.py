@@ -1,10 +1,16 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import CustomUser
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
 
 from .utils import get_institution_choices
+
+
+def is_recaptcha_enabled():
+    return getattr(settings, 'ENABLE_RECAPTCHA', True) and bool(getattr(settings, 'RECAPTCHA_PUBLIC_KEY', ''))
+
 
 SECTOR_CHOICES = [
     ('', '— Select Sector —'),
@@ -50,10 +56,13 @@ class StudentRegisterForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['institution'].choices = get_institution_choices()
+        if not is_recaptcha_enabled():
+            self.fields.pop('captcha', None)
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.portal_type = CustomUser.PORTAL_STUDENT
+        user.admission_number = self.cleaned_data.get('admission_number', '').strip() or None
         if commit:
             user.save()
         return user
@@ -62,7 +71,17 @@ class StudentRegisterForm(UserCreationForm):
 class UniSmartRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
     last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Email Address'}))
+    admission_number = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Admission / Assessment Number (e.g. ADM-1024 or UPI)'}),
+        help_text="Your school Admission Number or Assessment Number (used for login)"
+    )
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={'placeholder': 'Email Address (optional)'}),
+        help_text="Optional. Leave blank if you do not have an email."
+    )
     student_category = forms.ChoiceField(choices=CustomUser.CATEGORY_CHOICES)
     grade_level = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'e.g. Grade 7, Form 4'}))
     target_career = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={'placeholder': 'Target Career (optional)'}))
@@ -71,12 +90,33 @@ class UniSmartRegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'email', 'username', 'student_category',
-                  'grade_level', 'target_career', 'profile_photo', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'admission_number', 'username', 'student_category',
+                  'grade_level', 'target_career', 'email', 'profile_photo', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not is_recaptcha_enabled():
+            self.fields.pop('captcha', None)
+
+    def clean_admission_number(self):
+        adm = self.cleaned_data.get('admission_number', '').strip()
+        if adm:
+            if CustomUser.objects.filter(admission_number__iexact=adm).exists():
+                raise forms.ValidationError("An account with this Admission Number already exists.")
+        return adm
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip()
+        if email:
+            if CustomUser.objects.filter(email__iexact=email).exists():
+                raise forms.ValidationError("An account with this email address already exists.")
+        return email
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.portal_type = CustomUser.PORTAL_UNISMART
+        user.admission_number = self.cleaned_data.get('admission_number', '').strip() or None
+        user.email = self.cleaned_data.get('email', '').strip()
         if commit:
             user.save()
         return user
@@ -97,6 +137,11 @@ class EmployerRegisterForm(UserCreationForm):
         model = CustomUser
         fields = ['first_name', 'email', 'username', 'company_name', 'sector',
                   'company_size', 'kra_pin', 'website', 'company_logo', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not is_recaptcha_enabled():
+            self.fields.pop('captcha', None)
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -137,5 +182,9 @@ class LoginForm(AuthenticationForm):
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'placeholder': 'Username or Email'})
+        self.fields['username'].label = 'Username, Admission Number, or Email'
+        self.fields['username'].widget.attrs.update({'placeholder': 'Username, Admission Number, or Email'})
         self.fields['password'].widget.attrs.update({'placeholder': 'Password'})
+        if not is_recaptcha_enabled():
+            self.fields.pop('captcha', None)
+

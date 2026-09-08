@@ -8,6 +8,7 @@ urlpatterns = [
     path('collaborations/', views.collaborations_view, name='collaborations'),
     path('inbox/', views.inbox_view, name='inbox'),
     path('chat/<int:pk>/', views.chat_detail_view, name='chat_detail'),
+    path('chat/user/<str:username>/', views.chat_by_username, name='networking_chat'),
     path('delete-message/<int:msg_pk>/', views.delete_message_view, name='delete_message'),
     path('agora-token/', views.get_agora_token, name='get_agora_token'),
     path('api/messages/<int:pk>/', views.api_get_messages, name='api_get_messages'),

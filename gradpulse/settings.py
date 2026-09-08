@@ -19,7 +19,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=os.environ.get('ALLOWED_HOSTS'
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
 
-GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', '')).strip()
+GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=os.environ.get('GOOGLE_API_KEY', os.environ.get('GEMINI_API_KEY', ''))).strip().strip('"').strip("'")
 APIFY_TOKEN = env('APIFY_TOKEN', default=os.environ.get('APIFY_TOKEN', '')).strip()
 APIFY_ACTOR = env('APIFY_ACTOR', default=os.environ.get('APIFY_ACTOR', 'lUx1E90x9FbPcWvps')).strip()
 
@@ -141,6 +141,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # ─── Django AllAuth ───────────────────────────────────────────────────────────
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
+    'accounts.backends.MultiFieldAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
@@ -392,10 +393,13 @@ JAZZMIN_UI_TWEAKS = {
 # reCAPTCHA Configuration
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default=os.environ.get('RECAPTCHA_PUBLIC_KEY', '')).strip()
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default=os.environ.get('RECAPTCHA_PRIVATE_KEY', '')).strip()
-RECAPTCHA_DOMAIN = 'www.google.com'
+ENABLE_RECAPTCHA = env.bool('ENABLE_RECAPTCHA', default=bool(RECAPTCHA_PUBLIC_KEY and RECAPTCHA_PRIVATE_KEY))
+RECAPTCHA_DOMAIN = env('RECAPTCHA_DOMAIN', default='www.recaptcha.net').strip()
+RECAPTCHA_BYPASS_KEY = env('RECAPTCHA_BYPASS_KEY', default=os.environ.get('RECAPTCHA_BYPASS_KEY', 'gradpulse2026')).strip()
 # Increase timeout for Railway's outgoing requests
 RECAPTCHA_VERIFY_REQUEST_TIMEOUT = 20
 # Some v4 configurations prefer these names
 RECAPTCHA_SITE_KEY = RECAPTCHA_PUBLIC_KEY
 RECAPTCHA_SECRET_KEY = RECAPTCHA_PRIVATE_KEY
 SILENT_RECAPTCHA_V3 = False
+
