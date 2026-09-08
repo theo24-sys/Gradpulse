@@ -7,7 +7,7 @@
         </div>
         <div class="flex-grow-1">
             <div class="bg-light p-3 rounded-3 shadow-sm">
-                {{ response|safe|linebreaks }}
+                {{ response_html|safe }}
                 
                 {% if mentor %}
                 <div class="mentor-recommendation mt-3 p-3 bg-white rounded-3 border border-warning">

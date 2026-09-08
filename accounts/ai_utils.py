@@ -2,6 +2,8 @@ import os
 import json
 import logging
 import PyPDF2
+import bleach
+import markdown
 from django.conf import settings
 
 try:
@@ -12,6 +14,22 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 _client = None
+
+def render_ai_markdown(text):
+    html = markdown.markdown(
+        str(text or ''),
+        extensions=['extra', 'nl2br', 'sane_lists']
+    )
+    return bleach.clean(
+        html,
+        tags={
+            'p', 'br', 'strong', 'em', 'del', 'ul', 'ol', 'li', 'h3', 'h4',
+            'blockquote', 'code', 'pre', 'a'
+        },
+        attributes={'a': ['href', 'title', 'target', 'rel']},
+        protocols={'http', 'https', 'mailto'},
+        strip=True
+    )
 
 def get_model_name():
     return getattr(settings, 'GEMINI_MODEL', 'gemini-3.6-flash')

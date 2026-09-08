@@ -15,7 +15,7 @@ from .ai_utils import (
     parse_transcript_with_gemini, unismart_career_chat, 
     get_mentor_recommendation, calculate_kcse_clusters, 
     get_academic_guidance, extract_courses_from_pdf,
-    extract_courses_from_text
+    extract_courses_from_text, render_ai_markdown
 )
 from scraping.utils import get_items_for_student
 
@@ -209,7 +209,11 @@ def unismart_chat(request):
     if request.method == 'POST':
         message = request.POST.get('message')
         if not message:
-            return render(request, 'unismart/chat_response.html', {'response': "Please enter a message."})
+            response = "Please enter a message."
+            return render(request, 'unismart/chat_response.html', {
+                'response': response,
+                'response_html': render_ai_markdown(response),
+            })
         
         user_context = f"Category: {request.user.get_student_category_display()}, Grade: {request.user.grade_level}, Interest: {request.user.target_career}"
         ai_response = unismart_career_chat(message, user_context)
@@ -219,6 +223,7 @@ def unismart_chat(request):
         
         return render(request, 'unismart/chat_response.html', {
             'response': ai_response,
+            'response_html': render_ai_markdown(ai_response),
             'mentor': mentor
         })
     return redirect('unismart_dashboard')
