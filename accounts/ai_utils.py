@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import time
 import PyPDF2
 import bleach
 import markdown
@@ -419,7 +420,16 @@ def unismart_career_chat(query, user_context=""):
     User Query: {query}
     """
     try:
-        response = client.models.generate_content(model=get_model_name(), contents=system_prompt)
+        for attempt in range(3):
+            try:
+                response = client.models.generate_content(model=get_model_name(), contents=system_prompt)
+                break
+            except Exception as e:
+                error_text = str(e).lower()
+                transient_error = '503' in error_text or 'unavailable' in error_text or '429' in error_text
+                if not transient_error or attempt == 2:
+                    raise
+                time.sleep(1.5 * (attempt + 1))
         if response and response.text:
             return response.text.strip()
         return "I received an empty response. Please try rephrasing your question."
@@ -430,6 +440,8 @@ def unismart_career_chat(query, user_context=""):
             return "⚠️ **AI Authentication Error**: Your Google API key appears to be invalid or disabled. Please check your `GOOGLE_API_KEY` in Google AI Studio."
         elif "429" in err_msg or "quota" in err_msg.lower() or "RESOURCE_EXHAUSTED" in err_msg:
             return "⚠️ **AI Rate Limit**: Quota exceeded for today. Please wait a moment or supply a fresh Google API Key."
+        elif "503" in err_msg or "unavailable" in err_msg.lower():
+            return "⚠️ **AI Busy**: Gemini is experiencing high demand right now. Please try again in a few seconds."
         return f"⚠️ I encountered an error while processing your request: {err_msg[:120]}. Please try again."
 
 

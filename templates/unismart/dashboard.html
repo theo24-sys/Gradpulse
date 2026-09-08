@@ -196,7 +196,7 @@
                         
                         <!-- Input -->
                         <div class="p-3 border-top bg-white">
-                            <form hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-on::after-request="if (event.detail.successful) this.reset()" hx-on::response-error="document.getElementById('chat-error').classList.remove('d-none')" hx-indicator="#chat-loading">
+                            <form id="unismart-chat-form" hx-post="{% url 'unismart_chat' %}" hx-target="#chat-window" hx-swap="beforeend" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-on::after-request="if (event.detail.successful) this.reset()" hx-on::response-error="document.getElementById('chat-error').classList.remove('d-none')" hx-indicator="#chat-loading">
                                 {% csrf_token %}
                                 <div class="input-group">
                                     <input type="text" name="message" class="form-control border-light-orange rounded-pill-start ps-4" placeholder="Ask about cluster points, courses, etc..." style="border-right: none;">
@@ -405,4 +405,21 @@
     .btn-orange { background-color: var(--gp-orange); color: white; border: none; }
     .btn-orange:hover { background-color: #e86400; color: white; }
 </style>
+<script>
+    document.addEventListener('htmx:beforeRequest', function (event) {
+        const form = event.detail.elt;
+        if (!form || form.id !== 'unismart-chat-form') return;
+
+        const input = form.elements.message;
+        const message = input.value.trim();
+        if (!message) return;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-message user mb-4 d-flex gap-3 justify-content-end';
+        bubble.innerHTML = '<div class="p-3 bg-orange text-white rounded-4" style="max-width: 85%;"><p class="mb-0"></p></div>';
+        bubble.querySelector('p').textContent = message;
+        document.getElementById('chat-window').appendChild(bubble);
+        document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+    });
+</script>
 {% endblock %}
