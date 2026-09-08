@@ -77,11 +77,6 @@ class UniSmartRegisterForm(UserCreationForm):
         widget=forms.TextInput(attrs={'placeholder': 'Admission / Assessment Number (e.g. ADM-1024 or UPI)'}),
         help_text="Your school Admission Number or Assessment Number (used for login)"
     )
-    email = forms.EmailField(
-        required=False,
-        widget=forms.EmailInput(attrs={'placeholder': 'Email Address (optional)'}),
-        help_text="Optional. Leave blank if you do not have an email."
-    )
     student_category = forms.ChoiceField(choices=CustomUser.CATEGORY_CHOICES)
     grade_level = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'e.g. Grade 7, Form 4'}))
     target_career = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={'placeholder': 'Target Career (optional)'}))
@@ -91,7 +86,7 @@ class UniSmartRegisterForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'admission_number', 'username', 'student_category',
-                  'grade_level', 'target_career', 'email', 'profile_photo', 'password1', 'password2']
+                  'grade_level', 'target_career', 'profile_photo', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,18 +100,11 @@ class UniSmartRegisterForm(UserCreationForm):
                 raise forms.ValidationError("An account with this Admission Number already exists.")
         return adm
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email', '').strip()
-        if email:
-            if CustomUser.objects.filter(email__iexact=email).exists():
-                raise forms.ValidationError("An account with this email address already exists.")
-        return email
-
     def save(self, commit=True):
         user = super().save(commit=False)
         user.portal_type = CustomUser.PORTAL_UNISMART
         user.admission_number = self.cleaned_data.get('admission_number', '').strip() or None
-        user.email = self.cleaned_data.get('email', '').strip()
+        user.email = ''
         if commit:
             user.save()
         return user
